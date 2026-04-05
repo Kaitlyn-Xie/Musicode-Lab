@@ -1,0 +1,2553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>MusiCode Lab 🎵</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+<style>
+:root {
+  --bg: #F0EDF8;
+  --surface: #FFFFFF;
+  --border: #DDD8F0;
+  --text: #2D2250;
+  --text-muted: #7A6E9E;
+  --header-bg: #2D2250;
+  --footer-bg: #2D2250;
+  --code-bg: #1A1630;
+
+  --cat-vars: #E07830;
+  --cat-control: #D4A020;
+  --cat-sound: #7050D0;
+  --cat-music: #2E80D0;
+  --cat-output: #C02878;
+
+  --block-play: #2E80D0;
+  --block-say: #C02878;
+  --block-repeat: #D4A020;
+  --block-if: #E07830;
+  --block-sound: #7050D0;
+  --block-note: #2E80D0;
+
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow: 0 2px 12px rgba(45,34,80,0.10);
+  --shadow-lg: 0 4px 24px rgba(45,34,80,0.16);
+
+  --v1-color: #A8D8F0; --v1-dark: #1860A0;
+  --v2-color: #A8F0C8; --v2-dark: #186840;
+  --v3-color: #F0D0A8; --v3-dark: #885020;
+  --v4-color: #E0A8F0; --v4-dark: #682088;
+  --v5-color: #F0A8B8; --v5-dark: #881840;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+}
+
+/* ── HEADER ── */
+#header {
+  height: 52px;
+  background: var(--header-bg);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 16px;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  z-index: 10;
+}
+
+#logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 18px;
+  font-weight: 900;
+  color: white;
+  letter-spacing: -0.3px;
+  white-space: nowrap;
+}
+#logo .logo-icon { font-size: 22px; }
+#logo .logo-accent { color: #A8D4FF; }
+
+.mode-tabs {
+  display: flex;
+  gap: 4px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 10px;
+  padding: 3px;
+}
+.mode-tab {
+  padding: 4px 12px;
+  border-radius: 7px;
+  border: none;
+  background: transparent;
+  color: rgba(255,255,255,0.7);
+  font-family: 'Nunito', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.mode-tab:hover { color: white; background: rgba(255,255,255,0.15); }
+.mode-tab.active { background: white; color: var(--text); }
+
+.header-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.inst-select {
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 8px;
+  color: white;
+  font-family: 'Nunito', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 10px;
+  cursor: pointer;
+  outline: none;
+}
+.inst-select option { background: #2D2250; color: white; }
+
+.score-badge {
+  background: #FFD700;
+  color: #2D2250;
+  border-radius: 20px;
+  padding: 3px 10px;
+  font-size: 12px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+/* ── MAIN LAYOUT ── */
+#main {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+  gap: 0;
+}
+
+/* ── PALETTE ── */
+#palette {
+  width: 220px;
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 2px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.palette-header {
+  padding: 10px 12px 6px;
+  border-bottom: 2px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.palette-title {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text);
+}
+.help-btn {
+  background: none;
+  border: 2px solid var(--border);
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+.help-btn:hover { background: var(--cat-music); color: white; border-color: var(--cat-music); }
+
+.cat-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  padding: 8px 8px 4px;
+  border-bottom: 2px solid var(--border);
+}
+.cat-tab {
+  padding: 3px 8px;
+  border-radius: 6px;
+  border: none;
+  font-family: 'Nunito', sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: white;
+  opacity: 0.5;
+}
+.cat-tab.active { opacity: 1; transform: scale(1.05); box-shadow: 0 2px 6px rgba(0,0,0,0.2); }
+
+.palette-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.palette-scroll::-webkit-scrollbar { width: 4px; }
+.palette-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+.pal-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border-radius: 9px;
+  cursor: grab;
+  font-family: 'Nunito', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: white;
+  transition: all 0.15s;
+  user-select: none;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  position: relative;
+}
+.pal-chip:hover { transform: translateX(3px) scale(1.02); box-shadow: 0 3px 10px rgba(0,0,0,0.2); }
+.pal-chip:active { cursor: grabbing; transform: scale(0.97); }
+
+.pal-chip .chip-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  border: 2px solid rgba(255,255,255,0.5);
+}
+.pal-chip .chip-btns {
+  margin-left: auto;
+  display: flex;
+  gap: 3px;
+}
+.pal-chip .chip-btns button {
+  background: rgba(255,255,255,0.2);
+  border: none;
+  border-radius: 4px;
+  color: white;
+  font-size: 10px;
+  width: 20px; height: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+.pal-chip .chip-btns button:hover { background: rgba(255,255,255,0.35); }
+
+.var-edit-drawer {
+  display: none;
+  background: rgba(0,0,0,0.06);
+  border-radius: 0 0 9px 9px;
+  padding: 8px;
+  margin-top: -4px;
+  border: 1px solid rgba(0,0,0,0.1);
+  border-top: none;
+}
+.var-edit-drawer.open { display: block; }
+.var-edit-drawer label {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin-bottom: 2px;
+  margin-top: 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.var-edit-drawer input {
+  width: 100%;
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  background: white;
+  color: var(--text);
+  outline: none;
+}
+.var-edit-drawer input:focus { border-color: var(--cat-music); }
+
+.palette-divider {
+  border: none;
+  border-top: 2px dashed var(--border);
+  margin: 6px 0;
+}
+.palette-section-title {
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  padding: 2px 2px 4px;
+}
+
+/* ── CANVAS ── */
+#canvas-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-width: 0;
+  background: var(--bg);
+}
+
+.col-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px 8px;
+  border-bottom: 2px solid var(--border);
+  background: var(--surface);
+  flex-shrink: 0;
+}
+.col-title {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.col-title .col-icon { font-size: 16px; }
+
+.clear-btn {
+  background: none;
+  border: 2px solid var(--border);
+  border-radius: 7px;
+  padding: 3px 10px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.clear-btn:hover { background: #FFE0E0; border-color: #FF8888; color: #CC3333; }
+
+#canvas-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+#canvas-scroll::-webkit-scrollbar { width: 4px; }
+#canvas-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+.canvas-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: 100%;
+  opacity: 0.5;
+  border: 3px dashed var(--border);
+  border-radius: 16px;
+  padding: 30px;
+  text-align: center;
+}
+.canvas-empty .empty-icon { font-size: 40px; }
+.canvas-empty p { font-size: 13px; font-weight: 700; color: var(--text-muted); }
+.canvas-empty small { font-size: 11px; color: var(--text-muted); }
+
+/* ── BLOCKS ── */
+.block {
+  border-radius: 10px;
+  padding: 8px 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: white;
+  font-family: 'Nunito', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  position: relative;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  min-height: 38px;
+  cursor: grab;
+  transition: box-shadow 0.15s, transform 0.15s;
+  user-select: none;
+}
+.block:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.22); }
+.block.active-line { outline: 3px solid #FFD700; outline-offset: 1px; }
+
+.block-del {
+  margin-left: auto;
+  background: rgba(0,0,0,0.15);
+  border: none;
+  border-radius: 5px;
+  color: rgba(255,255,255,0.7);
+  font-size: 13px;
+  width: 22px; height: 22px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.15s, background 0.15s;
+  flex-shrink: 0;
+}
+.block:hover .block-del { opacity: 1; }
+.block-del:hover { background: rgba(255,0,0,0.3) !important; color: white !important; opacity: 1 !important; }
+
+.block-badge {
+  padding: 2px 8px;
+  border-radius: 5px;
+  font-size: 12px;
+  font-weight: 800;
+  background: rgba(255,255,255,0.25);
+  white-space: nowrap;
+}
+
+.block input[type=text], .block input[type=number] {
+  background: rgba(255,255,255,0.25);
+  border: 1px solid rgba(255,255,255,0.4);
+  border-radius: 6px;
+  color: white;
+  font-family: 'Nunito', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 2px 7px;
+  outline: none;
+  width: auto;
+  min-width: 40px;
+}
+.block input:focus { background: rgba(255,255,255,0.35); }
+.block input[type=number] { width: 55px; }
+.block select {
+  background: rgba(255,255,255,0.25);
+  border: 1px solid rgba(255,255,255,0.4);
+  border-radius: 6px;
+  color: white;
+  font-family: 'Nunito', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 2px 6px;
+  outline: none;
+  cursor: pointer;
+}
+.block select option { background: #333; color: white; }
+
+/* C-shape loop block */
+.loop-block {
+  display: flex;
+  flex-direction: column;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+.loop-header, .loop-footer {
+  background: var(--block-repeat);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  color: white;
+  font-family: 'Nunito', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+}
+.loop-footer { padding: 5px 10px; }
+.loop-body {
+  background: rgba(212,160,32,0.12);
+  border-left: 4px solid var(--block-repeat);
+  border-right: 4px solid var(--block-repeat);
+  padding: 6px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-height: 44px;
+}
+.loop-body.drag-over { background: rgba(212,160,32,0.25); }
+
+.if-block {
+  display: flex;
+  flex-direction: column;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+.if-header, .else-header, .if-footer {
+  background: var(--block-if);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  color: white;
+  font-family: 'Nunito', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+}
+.else-header { background: #C86820; }
+.if-footer { padding: 5px 10px; }
+.if-body, .else-body {
+  background: rgba(224,120,48,0.10);
+  border-left: 4px solid var(--block-if);
+  border-right: 4px solid var(--block-if);
+  padding: 6px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-height: 44px;
+}
+.else-body { border-color: #C86820; background: rgba(200,104,32,0.10); }
+.if-body.drag-over, .else-body.drag-over { background: rgba(224,120,48,0.22); }
+
+.drop-hint {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(150,130,100,0.6);
+  padding: 8px;
+  font-style: italic;
+}
+
+.count-btns {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(0,0,0,0.15);
+  border-radius: 7px;
+  padding: 2px 4px;
+}
+.count-btns button {
+  background: rgba(255,255,255,0.2);
+  border: none;
+  color: white;
+  font-weight: 800;
+  font-size: 14px;
+  width: 20px; height: 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+.count-btns button:hover { background: rgba(255,255,255,0.35); }
+.count-val {
+  font-size: 13px;
+  font-weight: 800;
+  color: white;
+  min-width: 20px;
+  text-align: center;
+}
+
+/* ── CODE PREVIEW ── */
+#code-col {
+  width: 300px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  border-left: 2px solid var(--border);
+  overflow: hidden;
+}
+
+#code-preview {
+  flex: 1;
+  background: var(--code-bg);
+  overflow-y: auto;
+  padding: 14px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  line-height: 1.7;
+}
+#code-preview::-webkit-scrollbar { width: 4px; }
+#code-preview::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+
+.code-line {
+  display: flex;
+  align-items: flex-start;
+  padding: 1px 6px;
+  border-radius: 4px;
+  border-left: 3px solid transparent;
+  transition: background 0.15s;
+}
+.code-line.hl { background: rgba(255,215,0,0.12); border-left-color: #FFD700; }
+.code-line .ln { color: rgba(255,255,255,0.2); min-width: 24px; font-size: 10px; padding-top: 2px; user-select: none; }
+.code-line .code { color: #D4D0C8; }
+
+.kw-def { color: #C586C0; }
+.kw-play { color: #569CD6; }
+.kw-repeat { color: #CE9178; }
+.kw-if { color: #D4A020; }
+.kw-say { color: #E07878; }
+.kw-wait { color: #2EA870; }
+.kw-set { color: #9070E0; }
+.kw-note { color: #569CD6; }
+.kw-comment { color: #4A504A; font-style: italic; }
+.kw-var { color: #9CDCFE; }
+.kw-num { color: #B5CEA8; }
+.kw-str { color: #CE9178; }
+
+/* ── FOOTER ── */
+#footer {
+  height: 58px;
+  background: var(--footer-bg);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 12px;
+  flex-shrink: 0;
+  box-shadow: 0 -2px 8px rgba(0,0,0,0.2);
+}
+
+#run-btn {
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+  font-weight: 800;
+}
+#run-btn.stopped { background: #4CAF50; color: white; }
+#run-btn.stopped:hover { background: #66BB70; transform: scale(1.08); }
+#run-btn.running { background: #FF5252; color: white; }
+#run-btn.running:hover { background: #FF7070; transform: scale(1.08); }
+
+.run-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.5);
+  white-space: nowrap;
+}
+
+#visualizer {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 32px;
+  flex: 1;
+  overflow: hidden;
+}
+.viz-bar {
+  flex: 1;
+  max-width: 10px;
+  background: rgba(168,212,255,0.3);
+  border-radius: 2px 2px 0 0;
+  height: 4px;
+  transition: height 0.1s ease;
+}
+
+.tempo-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: rgba(255,255,255,0.7);
+}
+.tempo-wrap label { font-size: 11px; font-weight: 700; white-space: nowrap; }
+#tempo-slider {
+  width: 80px;
+  accent-color: #A8D4FF;
+}
+#tempo-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  color: #A8D4FF;
+  min-width: 36px;
+}
+
+.footer-btns {
+  display: flex;
+  gap: 6px;
+}
+.footer-btn {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 8px;
+  color: rgba(255,255,255,0.8);
+  font-family: 'Nunito', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+.footer-btn:hover { background: rgba(255,255,255,0.2); color: white; }
+
+.rec-dot {
+  width: 8px; height: 8px;
+  background: #FF5252;
+  border-radius: 50%;
+  display: none;
+  animation: pulse-red 1s infinite;
+}
+.rec-dot.show { display: block; }
+@keyframes pulse-red { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+
+/* ── CHALLENGE OVERLAY ── */
+#challenge-overlay {
+  position: absolute;
+  top: 0;
+  left: 220px;
+  right: 0;
+  bottom: 0;
+  background: var(--bg);
+  display: none;
+  z-index: 5;
+}
+#challenge-overlay.visible { display: flex; }
+
+.challenge-inner {
+  flex: 1;
+  display: flex;
+  gap: 0;
+  height: 100%;
+}
+
+.ch-left {
+  width: 340px;
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 2px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  gap: 14px;
+  overflow-y: auto;
+}
+
+.ch-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.ch-badge.read { background: #E3F0FF; color: #1860A0; }
+.ch-badge.listen { background: #E3FFE8; color: #186840; }
+
+.ch-title {
+  font-size: 18px;
+  font-weight: 900;
+  color: var(--text);
+  line-height: 1.3;
+}
+.ch-desc {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.6;
+  font-weight: 600;
+}
+
+.ch-code-block {
+  background: var(--code-bg);
+  border-radius: 10px;
+  padding: 14px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  line-height: 1.8;
+  overflow-x: auto;
+}
+
+.ch-options {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.ch-option {
+  padding: 10px 14px;
+  border: 2px solid var(--border);
+  border-radius: 9px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 700;
+  transition: all 0.15s;
+  background: var(--surface);
+  color: var(--text);
+}
+.ch-option:hover { border-color: var(--cat-music); background: #EEF4FF; }
+.ch-option.correct { border-color: #4CAF50; background: #E8F5E9; color: #2E7D32; }
+.ch-option.wrong { border-color: #F44336; background: #FFEBEE; color: #C62828; }
+
+.ch-feedback {
+  font-size: 14px;
+  font-weight: 800;
+  padding: 10px 14px;
+  border-radius: 9px;
+  display: none;
+}
+.ch-feedback.show { display: block; }
+.ch-feedback.ok { background: #E8F5E9; color: #2E7D32; }
+.ch-feedback.bad { background: #FFEBEE; color: #C62828; }
+
+.ch-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+  background: #FFF8E1;
+  border-radius: 8px;
+  padding: 8px 12px;
+  border-left: 3px solid #FFD700;
+  font-weight: 600;
+}
+
+.ch-nav {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.ch-btn {
+  padding: 8px 16px;
+  border-radius: 9px;
+  border: none;
+  font-family: 'Nunito', sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.ch-btn.primary { background: var(--cat-music); color: white; }
+.ch-btn.primary:hover { background: #1A70C0; }
+.ch-btn.secondary { background: var(--border); color: var(--text); }
+.ch-btn.secondary:hover { background: #CCC8E0; }
+.ch-prog {
+  display: flex;
+  gap: 5px;
+}
+.ch-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--border);
+  transition: background 0.2s;
+}
+.ch-dot.done { background: #4CAF50; }
+.ch-dot.active { background: var(--cat-music); }
+
+.ch-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+#ch-blocks-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* ── LYRICS OVERLAY ── */
+#lyrics-overlay {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(20,16,40,0.85);
+  color: white;
+  padding: 12px 28px;
+  border-radius: 30px;
+  font-size: 18px;
+  font-weight: 800;
+  backdrop-filter: blur(8px);
+  border: 2px solid rgba(168,212,255,0.4);
+  z-index: 1000;
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+  text-align: center;
+  max-width: 80vw;
+}
+#lyrics-overlay.show { opacity: 1; }
+
+/* ── MODAL ── */
+.modal-bg {
+  position: fixed;
+  inset: 0;
+  background: rgba(20,16,40,0.7);
+  z-index: 100;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+}
+.modal-bg.open { display: flex; }
+
+.modal-box {
+  background: var(--surface);
+  border-radius: 20px;
+  box-shadow: var(--shadow-lg);
+  padding: 28px;
+  width: min(540px, 92vw);
+  max-height: 88vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.modal-close {
+  position: absolute;
+  top: 14px; right: 14px;
+  background: var(--border);
+  border: none;
+  border-radius: 50%;
+  width: 30px; height: 30px;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  transition: all 0.15s;
+}
+.modal-close:hover { background: #FF8888; color: white; }
+
+.modal-title {
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.modal-sub {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+/* Tutorial */
+.tut-step { display: none; }
+.tut-step.active { display: block; }
+.tut-step h3 {
+  font-size: 18px;
+  font-weight: 900;
+  color: var(--text);
+  margin-bottom: 10px;
+}
+.tut-step p {
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--text-muted);
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+.tut-step p code {
+  background: var(--code-bg);
+  color: #9CDCFE;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+}
+.tut-step p strong { color: var(--text); }
+.tut-demo {
+  background: var(--bg);
+  border-radius: 12px;
+  padding: 14px;
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.tut-block {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+.tut-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+.tut-dots { display: flex; gap: 6px; }
+.tut-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--border);
+  transition: background 0.2s;
+}
+.tut-dot.active { background: var(--cat-music); }
+.tut-dot.done { background: #4CAF50; }
+.tut-btns { display: flex; gap: 8px; }
+.tut-btn {
+  padding: 8px 18px;
+  border-radius: 9px;
+  border: none;
+  font-family: 'Nunito', sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.tut-btn.next { background: var(--cat-music); color: white; }
+.tut-btn.next:hover { background: #1A70C0; }
+.tut-btn.skip { background: var(--border); color: var(--text-muted); }
+.tut-btn.skip:hover { background: #CCC8E0; }
+
+/* Record modal */
+.rec-modal-name {
+  width: 100%;
+  padding: 8px 12px;
+  border: 2px solid var(--border);
+  border-radius: 9px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 14px;
+  outline: none;
+  color: var(--text);
+}
+.rec-modal-name:focus { border-color: var(--cat-music); }
+.rec-timer {
+  text-align: center;
+  font-size: 32px;
+  font-weight: 900;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text);
+  margin-bottom: 10px;
+}
+.rec-volume-bar {
+  width: 100%;
+  height: 8px;
+  background: var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+.rec-volume-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4CAF50, #FFD700, #FF5252);
+  border-radius: 4px;
+  width: 0%;
+  transition: width 0.05s;
+}
+.rec-waveform {
+  width: 100%;
+  height: 60px;
+  background: var(--code-bg);
+  border-radius: 8px;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  padding: 4px;
+  overflow: hidden;
+}
+.rec-waveform-bar {
+  flex: 1;
+  background: rgba(168,212,255,0.5);
+  border-radius: 1px;
+  height: 4px;
+  transition: height 0.05s;
+}
+.rec-btns {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.rec-btn {
+  padding: 8px 20px;
+  border-radius: 9px;
+  border: none;
+  font-family: 'Nunito', sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.rec-btn.start { background: #4CAF50; color: white; }
+.rec-btn.start:hover { background: #66BB70; }
+.rec-btn.stop { background: #FF5252; color: white; }
+.rec-btn.stop:hover { background: #FF7070; }
+.rec-btn.cancel { background: var(--border); color: var(--text-muted); }
+.rec-btn.cancel:hover { background: #CCC8E0; }
+
+/* Toast */
+#toast {
+  position: fixed;
+  top: 70px; right: 16px;
+  background: var(--header-bg);
+  color: white;
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  z-index: 1000;
+  opacity: 0;
+  transform: translateX(20px);
+  transition: all 0.3s;
+  pointer-events: none;
+  box-shadow: var(--shadow-lg);
+  border-left: 4px solid #A8D4FF;
+  max-width: 260px;
+}
+#toast.show { opacity: 1; transform: translateX(0); }
+
+/* Drop zones */
+.drop-zone {
+  min-height: 40px;
+  border: 2px dashed transparent;
+  border-radius: 8px;
+  transition: all 0.15s;
+}
+.drop-zone.drag-over {
+  border-color: var(--cat-music);
+  background: rgba(46,128,208,0.08);
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div id="header">
+  <div id="logo"><span class="logo-icon">🎵</span>Musi<span class="logo-accent">Code</span> Lab</div>
+  <div class="mode-tabs">
+    <button class="mode-tab active" data-mode="free" onclick="setMode('free')">🆓 Free Code</button>
+    <button class="mode-tab" data-mode="read" onclick="setMode('read')">📖 Read Code</button>
+    <button class="mode-tab" data-mode="listen" onclick="setMode('listen')">🎧 Listen &amp; Code</button>
+  </div>
+  <div class="header-right">
+    <select class="inst-select" id="inst-select" onchange="setInstrument(this.value)">
+      <option value="piano">🎹 Piano</option>
+      <option value="marimba">🪘 Marimba</option>
+      <option value="synth">🎛 Synth</option>
+    </select>
+    <div class="score-badge">⭐ <span id="score-display">0</span> pts</div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div id="main">
+
+  <!-- PALETTE -->
+  <div id="palette">
+    <div class="palette-header">
+      <span class="palette-title">🧩 Blocks</span>
+      <button class="help-btn" onclick="openTutorial()" title="Help">?</button>
+    </div>
+    <div class="cat-tabs" id="cat-tabs">
+      <button class="cat-tab active" data-cat="variables" style="background:var(--cat-vars)" onclick="setCat('variables')">Vars</button>
+      <button class="cat-tab" data-cat="control" style="background:var(--cat-control)" onclick="setCat('control')">Loop</button>
+      <button class="cat-tab" data-cat="sound" style="background:var(--cat-sound)" onclick="setCat('sound')">Sound</button>
+      <button class="cat-tab" data-cat="music" style="background:var(--cat-music)" onclick="setCat('music')">Music</button>
+      <button class="cat-tab" data-cat="output" style="background:var(--cat-output)" onclick="setCat('output')">Print</button>
+    </div>
+    <div class="palette-scroll" id="palette-scroll"></div>
+  </div>
+
+  <!-- CANVAS COLUMN -->
+  <div id="canvas-col">
+    <div class="col-header">
+      <div class="col-title"><span class="col-icon">🏗</span> My Program</div>
+      <button class="clear-btn" onclick="clearCanvas()">🗑 Clear</button>
+    </div>
+    <div id="canvas-scroll" class="drop-zone" ondragover="onCanvasDragOver(event)" ondrop="onCanvasDrop(event)">
+      <div class="canvas-empty" id="canvas-empty">
+        <div class="empty-icon">👆</div>
+        <p>Click or drag blocks here!</p>
+        <small>Start by picking a block from the left panel</small>
+      </div>
+    </div>
+  </div>
+
+  <!-- CODE PREVIEW -->
+  <div id="code-col">
+    <div class="col-header">
+      <div class="col-title"><span class="col-icon">💻</span> Live Code</div>
+    </div>
+    <div id="code-preview"></div>
+  </div>
+
+  <!-- CHALLENGE OVERLAY -->
+  <div id="challenge-overlay">
+    <div class="challenge-inner" id="challenge-inner"></div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<div id="footer">
+  <button id="run-btn" class="stopped" onclick="toggleRun()" title="Run (Ctrl+Enter)">▶</button>
+  <span class="run-label" id="run-label">Run</span>
+  <div id="visualizer"></div>
+  <div class="tempo-wrap">
+    <label>🎵 BPM</label>
+    <input type="range" id="tempo-slider" min="60" max="200" value="116" oninput="setTempo(+this.value)">
+    <span id="tempo-val">116</span>
+  </div>
+  <div class="footer-btns">
+    <div class="rec-dot" id="rec-dot"></div>
+    <button class="footer-btn" onclick="downloadProgram()">💾 Save</button>
+    <button class="footer-btn" onclick="downloadAudio()">🎵 Export</button>
+  </div>
+</div>
+
+<!-- LYRICS -->
+<div id="lyrics-overlay"></div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<!-- TUTORIAL MODAL -->
+<div class="modal-bg" id="tutorial-modal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeTutorial()">✕</button>
+    <div class="modal-title">🎵 Welcome to MusiCode Lab!</div>
+    <div class="modal-sub">Learn coding through music — no experience needed!</div>
+
+    <div class="tut-step active" data-step="0">
+      <h3>👋 What is MusiCode Lab?</h3>
+      <p>MusiCode Lab is a <strong>music coding playground</strong> for young coders. You write programs using colorful blocks — and your program <strong>plays as real music!</strong></p>
+      <p>Drag blocks from the left panel into the middle. Watch the <strong>code appear on the right</strong>. Hit ▶ Run to hear it play!</p>
+      <div class="tut-demo">
+        <div class="tut-block" style="background:var(--block-play)">🎵 play( <span style="background:rgba(255,255,255,0.25);padding:1px 8px;border-radius:4px;">variable1</span> )</div>
+        <div class="tut-block" style="background:var(--block-play)">🎵 play( <span style="background:rgba(255,255,255,0.25);padding:1px 8px;border-radius:4px;">variable2</span> )</div>
+      </div>
+    </div>
+
+    <div class="tut-step" data-step="1">
+      <h3>🎼 Music Phrases = Variables</h3>
+      <p>Each <strong>variable</strong> stores a music phrase — a list of notes. Like a variable in Python: <code>variable1 = [E4, G4, A4]</code></p>
+      <p>Click the <strong>✏ edit</strong> button on a variable chip to change its notes. Try adding: <code>C4 E4 G4 C5</code></p>
+      <div class="tut-demo">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#9CDCFE;padding:4px 8px;background:var(--code-bg);border-radius:8px;">
+          <span style="color:#C586C0">def</span> variable1 = [<span style="color:#B5CEA8">E4 G4 A4 G4 E4</span>]
+        </div>
+      </div>
+    </div>
+
+    <div class="tut-step" data-step="2">
+      <h3>🔁 Loops = Repeat Blocks</h3>
+      <p>The <strong>repeat</strong> block is like a <code>for</code> loop in Python. Drag <code>play(variable1)</code> inside it to repeat it 3 times!</p>
+      <div class="tut-demo">
+        <div class="tut-block" style="background:var(--block-repeat);border-radius:8px 8px 0 0">🔁 repeat <span style="background:rgba(255,255,255,0.25);padding:1px 8px;border-radius:4px;">3</span> times:</div>
+        <div style="background:rgba(212,160,32,0.15);border-left:4px solid var(--block-repeat);padding:6px 8px 6px 16px;">
+          <div class="tut-block" style="background:var(--block-play)">🎵 play( variable1 )</div>
+        </div>
+        <div class="tut-block" style="background:var(--block-repeat);border-radius:0 0 8px 8px;justify-content:center;font-size:11px;opacity:0.8">end</div>
+      </div>
+    </div>
+
+    <div class="tut-step" data-step="3">
+      <h3>🎛 More Blocks</h3>
+      <p>Explore all the block categories:</p>
+      <div class="tut-demo">
+        <div class="tut-block" style="background:var(--cat-sound)">🔊 set tempo( 140 )</div>
+        <div class="tut-block" style="background:var(--cat-music)">🎵 play note( C4, 1 beat )</div>
+        <div class="tut-block" style="background:var(--cat-output)">💬 say( "Hello!" )</div>
+      </div>
+      <p>You can also <strong>upload</strong> or <strong>record</strong> your own sound effects as audio variables!</p>
+    </div>
+
+    <div class="tut-step" data-step="4">
+      <h3>🏆 Challenges &amp; Downloads</h3>
+      <p>Try <strong>📖 Read Code</strong> mode to answer questions about code, or <strong>🎧 Listen &amp; Code</strong> to build programs that match a target sound.</p>
+      <p>When you're done, hit <strong>💾 Save</strong> to download your program as JSON, or <strong>🎵 Export</strong> to download the audio!</p>
+      <p>Press <strong>Ctrl+Enter</strong> to run/stop anytime. Happy coding! 🎉</p>
+    </div>
+
+    <div class="tut-nav">
+      <div class="tut-dots" id="tut-dots"></div>
+      <div class="tut-btns">
+        <button class="tut-btn skip" onclick="closeTutorial()">Skip</button>
+        <button class="tut-btn next" id="tut-back" onclick="tutNav(-1)" style="display:none">← Back</button>
+        <button class="tut-btn next" id="tut-next" onclick="tutNav(1)">Next →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- RECORD MODAL -->
+<div class="modal-bg" id="record-modal">
+  <div class="modal-box" style="max-width:400px">
+    <button class="modal-close" onclick="closeRecordModal()">✕</button>
+    <div class="modal-title">🎙 Record Sound</div>
+    <div class="modal-sub">Record up to 10 seconds of audio</div>
+    <input type="text" class="rec-modal-name" id="rec-name" placeholder="Variable name (e.g. mySound)" maxlength="16">
+    <div class="rec-timer" id="rec-timer">0:00</div>
+    <div class="rec-volume-bar"><div class="rec-volume-fill" id="rec-vol-fill"></div></div>
+    <div class="rec-waveform" id="rec-waveform"></div>
+    <div class="rec-btns">
+      <button class="rec-btn start" id="rec-start-btn" onclick="startRecording()">⏺ Start</button>
+      <button class="rec-btn stop" id="rec-stop-btn" onclick="stopRecording()" style="display:none">⏹ Stop</button>
+      <button class="rec-btn cancel" onclick="closeRecordModal()">✕ Cancel</button>
+    </div>
+  </div>
+</div>
+
+<input type="file" id="upload-input" accept="audio/*" style="display:none" onchange="handleUpload(this)">
+
+<script>
+// ════════════════════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════════════════════
+const VARS = [
+  { id:'v1', name:'variable1', color:'#A8D8F0', dark:'#1860A0', notes:['E4','G4','A4','G4','E4'] },
+  { id:'v2', name:'variable2', color:'#A8F0C8', dark:'#186840', notes:['C4','E4','G4','E4','C4'] },
+  { id:'v3', name:'variable3', color:'#F0D0A8', dark:'#885020', notes:['G4','A4','B4','A4','G4'] },
+  { id:'v4', name:'variable4', color:'#E0A8F0', dark:'#682088', notes:['D4','F4','A4','F4','D4'] },
+  { id:'v5', name:'variable5', color:'#F0A8B8', dark:'#881840', notes:['C4','D4','E4','F4','G4'] },
+];
+const CUSTOM_COLORS = ['#20A880','#E03060','#8080D0','#D08020','#20A0D0','#D04040'];
+let customVars = [];
+let customVarCounter = 0;
+function allVars() { return [...VARS, ...customVars]; }
+
+let canvas = [];
+let mode = 'free';
+let instrument = 'piano';
+let tempo = 116;
+let running = false;
+let stopFlag = false;
+let toneReady = false;
+let uidCtr = 1;
+let dragPayload = null;
+let activeCat = 'variables';
+let activeContainer = null;
+let score = 0;
+let tutStep = 0;
+let readIdx = 0;
+let listenIdx = 0;
+
+// ════════════════════════════════════════════════════════════
+// TONE.JS SETUP
+// ════════════════════════════════════════════════════════════
+let synths = {};
+let audioCtx = null;
+
+async function initTone() {
+  if (toneReady) return;
+  await Tone.start();
+  audioCtx = Tone.context.rawContext || Tone.context._context || Tone.context;
+  synths.piano = new Tone.Synth({ oscillator:{type:'triangle'}, envelope:{attack:0.01,decay:0.3,sustain:0.4,release:0.8} }).toDestination();
+  synths.marimba = new Tone.Synth({ oscillator:{type:'sine'}, envelope:{attack:0.005,decay:0.2,sustain:0.1,release:0.4} }).toDestination();
+  synths.synth = new Tone.Synth({ oscillator:{type:'sawtooth'}, envelope:{attack:0.02,decay:0.1,sustain:0.5,release:0.5} }).toDestination();
+  synths.clap = new Tone.NoiseSynth({ noise:{type:'white'}, envelope:{attack:0.001,decay:0.15,sustain:0,release:0.05} }).toDestination();
+  toneReady = true;
+}
+
+function currentSynth() { return synths[instrument] || synths.piano; }
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+function beatMs(beats=1) { return (60/tempo)*1000*beats; }
+
+async function playNote(note, beats=1) {
+  if (!toneReady) return;
+  if (note === 'rest') { await sleep(beatMs(beats)); return; }
+  if (note === 'clap') { synths.clap.triggerAttackRelease('8n'); await sleep(beatMs(beats)); return; }
+  try { currentSynth().triggerAttackRelease(note, `${beats*0.5}n`); } catch(e){}
+  await sleep(beatMs(beats));
+}
+
+async function playVar(varId) {
+  const v = allVars().find(x=>x.id===varId);
+  if (!v) return;
+  if (v.audioBuffer) {
+    await playAudioBuffer(v.audioBuffer);
+    return;
+  }
+  for (const n of v.notes) {
+    if (stopFlag) break;
+    await playNote(n, 1);
+    animViz();
+  }
+}
+
+async function playAudioBuffer(buf) {
+  if (!audioCtx) return;
+  return new Promise(res => {
+    const src = audioCtx.createBufferSource();
+    src.buffer = buf;
+    src.connect(audioCtx.destination);
+    src.start(0);
+    src.onended = res;
+    animViz();
+  });
+}
+
+// ════════════════════════════════════════════════════════════
+// VISUALIZER
+// ════════════════════════════════════════════════════════════
+function buildViz() {
+  const v = document.getElementById('visualizer');
+  v.innerHTML = '';
+  for (let i=0;i<24;i++) {
+    const b = document.createElement('div');
+    b.className = 'viz-bar';
+    v.appendChild(b);
+  }
+}
+
+function animViz() {
+  const bars = document.querySelectorAll('.viz-bar');
+  bars.forEach(b => {
+    b.style.height = (4+Math.random()*26)+'px';
+    b.style.background = `hsl(${200+Math.random()*80},70%,${60+Math.random()*20}%)`;
+  });
+  setTimeout(()=> bars.forEach(b=>{ b.style.height='4px'; b.style.background='rgba(168,212,255,0.3)'; }), 200);
+}
+
+// ════════════════════════════════════════════════════════════
+// UNIQUE IDS
+// ════════════════════════════════════════════════════════════
+function uid() { return 'b'+(uidCtr++); }
+
+// ════════════════════════════════════════════════════════════
+// BLOCK FACTORIES
+// ════════════════════════════════════════════════════════════
+function makeBlock(type, opts={}) {
+  const b = { id: uid(), type, ...opts };
+  if (type === 'play')     { b.varId = opts.varId || VARS[0].id; }
+  if (type === 'say')      { b.text = opts.text || 'Hello!'; }
+  if (type === 'print')    { b.varId = opts.varId || VARS[0].id; }
+  if (type === 'setTempo') { b.value = opts.value || 120; }
+  if (type === 'setInst')  { b.value = opts.value || 'piano'; }
+  if (type === 'wait')     { b.beats = opts.beats || 1; }
+  if (type === 'playNote') { b.note = opts.note || 'C4'; b.beats = opts.beats || 1; }
+  if (type === 'playChord'){ b.notes = opts.notes || 'C4,E4,G4'; }
+  if (type === 'repeat')   { b.count = opts.count || 3; b.body = opts.body || []; }
+  if (type === 'if')       { b.cond = opts.cond || 'always'; b.then = opts.then || []; b.else = opts.else || []; }
+  return b;
+}
+
+// ════════════════════════════════════════════════════════════
+// PALETTE RENDERING
+// ════════════════════════════════════════════════════════════
+function setCat(cat) {
+  activeCat = cat;
+  document.querySelectorAll('.cat-tab').forEach(t => t.classList.toggle('active', t.dataset.cat===cat));
+  renderPalette();
+}
+
+function renderPalette() {
+  const scroll = document.getElementById('palette-scroll');
+  scroll.innerHTML = '';
+
+  if (activeCat === 'variables') {
+    allVars().forEach(v => {
+      const wrap = document.createElement('div');
+      wrap.style.display='flex';wrap.style.flexDirection='column';
+
+      const chip = document.createElement('div');
+      chip.className = 'pal-chip';
+      chip.style.background = v.dark;
+      chip.draggable = true;
+      chip.ondragstart = e => { dragPayload = { type:'play', varId:v.id }; e.dataTransfer.effectAllowed='copy'; };
+      chip.onclick = e => { if(e.target.tagName!=='BUTTON') addBlockToCanvas(makeBlock('play',{varId:v.id})); };
+
+      const dot = document.createElement('div');
+      dot.className='chip-dot';dot.style.background=v.color;
+      chip.appendChild(dot);
+
+      const name = document.createElement('span');
+      name.textContent = v.name;
+      name.style.flex='1';
+      chip.appendChild(name);
+
+      if (v.audioBuffer) {
+        const dur = document.createElement('span');
+        dur.style.cssText='font-size:10px;opacity:0.7;background:rgba(255,255,255,0.15);padding:1px 6px;border-radius:4px;';
+        dur.textContent = v.duration ? v.duration.toFixed(1)+'s' : 'audio';
+        chip.appendChild(dur);
+      }
+
+      const btns = document.createElement('div');
+      btns.className='chip-btns';
+
+      const previewBtn = document.createElement('button');
+      previewBtn.textContent='▶';previewBtn.title='Preview';
+      previewBtn.onclick = async e => { e.stopPropagation(); await initTone(); await playVar(v.id); };
+      btns.appendChild(previewBtn);
+
+      const editBtn = document.createElement('button');
+      editBtn.textContent='✏';editBtn.title='Edit';
+      editBtn.onclick = e => {
+        e.stopPropagation();
+        const drawer = wrap.querySelector('.var-edit-drawer');
+        drawer.classList.toggle('open');
+      };
+      btns.appendChild(editBtn);
+
+      if (v.id.startsWith('cv')) {
+        const delBtn = document.createElement('button');
+        delBtn.textContent='✕';delBtn.title='Delete';
+        delBtn.onclick = e => { e.stopPropagation(); customVars = customVars.filter(x=>x.id!==v.id); renderPalette(); syncAll(); };
+        btns.appendChild(delBtn);
+      }
+
+      chip.appendChild(btns);
+      wrap.appendChild(chip);
+
+      // Edit drawer
+      const drawer = document.createElement('div');
+      drawer.className='var-edit-drawer';
+
+      const nameLabel = document.createElement('label');nameLabel.textContent='Name';
+      drawer.appendChild(nameLabel);
+      const nameInput = document.createElement('input');
+      nameInput.value = v.name;
+      nameInput.oninput = () => {
+        const val = nameInput.value.trim().slice(0,16).replace(/\s/g,'_');
+        if (val && !allVars().find(x=>x.name===val&&x.id!==v.id)) {
+          v.name = val; syncAll();
+        }
+      };
+      drawer.appendChild(nameInput);
+
+      if (!v.audioBuffer) {
+        const notesLabel = document.createElement('label');notesLabel.textContent='Notes (space separated)';
+        drawer.appendChild(notesLabel);
+        const notesInput = document.createElement('input');
+        notesInput.value = v.notes.join(' ');
+        notesInput.placeholder = 'E4 G4 A4 G4 E4';
+        notesInput.oninput = () => {
+          const parts = notesInput.value.trim().split(/\s+/).filter(n=>isValidNote(n));
+          if (parts.length) { v.notes = parts; syncAll(); }
+        };
+        drawer.appendChild(notesInput);
+      }
+
+      wrap.appendChild(drawer);
+      scroll.appendChild(wrap);
+    });
+
+    // Divider + add audio
+    const hr = document.createElement('hr');hr.className='palette-divider';scroll.appendChild(hr);
+    const title = document.createElement('div');title.className='palette-section-title';title.textContent='Add Audio Variable';
+    scroll.appendChild(title);
+
+    const uploadChip = makeChip('📁 Upload Audio File','#448844',()=>document.getElementById('upload-input').click());
+    uploadChip.draggable=false;scroll.appendChild(uploadChip);
+    const recordChip = makeChip('🎙 Record My Voice','#884444',()=>openRecordModal());
+    recordChip.draggable=false;scroll.appendChild(recordChip);
+    return;
+  }
+
+  if (activeCat === 'control') {
+    const defs = [
+      {label:'🔁 repeat … times', bg:'#D4A020', factory:()=>makeBlock('repeat')},
+      {label:'❓ if … else …', bg:'#E07830', factory:()=>makeBlock('if')},
+    ];
+    defs.forEach(d => {
+      const chip = makeChip(d.label, d.bg, ()=>addBlockToCanvas(d.factory()), true, ()=>({ type: d.factory().type }));
+      chip.ondragstart = e => { dragPayload = { makeBlock: d.factory }; e.dataTransfer.effectAllowed='copy'; };
+      scroll.appendChild(chip);
+    });
+    return;
+  }
+
+  if (activeCat === 'sound') {
+    const defs = [
+      {label:'🔊 set tempo', bg:'#7050D0', f:()=>makeBlock('setTempo')},
+      {label:'🎸 set instrument', bg:'#7050D0', f:()=>makeBlock('setInst')},
+      {label:'⏳ wait beats', bg:'#2EA870', f:()=>makeBlock('wait')},
+    ];
+    defs.forEach(d => {
+      const chip = makeChip(d.label, d.bg, ()=>addBlockToCanvas(d.f()));
+      chip.ondragstart = e => { dragPayload = { makeBlock: d.f }; e.dataTransfer.effectAllowed='copy'; };
+      scroll.appendChild(chip);
+    });
+    return;
+  }
+
+  if (activeCat === 'music') {
+    const defs = [
+      {label:'🎵 play note', bg:'#2E80D0', f:()=>makeBlock('playNote')},
+      {label:'🎶 play chord', bg:'#2E80D0', f:()=>makeBlock('playChord')},
+    ];
+    defs.forEach(d => {
+      const chip = makeChip(d.label, d.bg, ()=>addBlockToCanvas(d.f()));
+      chip.ondragstart = e => { dragPayload = { makeBlock: d.f }; e.dataTransfer.effectAllowed='copy'; };
+      scroll.appendChild(chip);
+    });
+    return;
+  }
+
+  if (activeCat === 'output') {
+    const defs = [
+      {label:'💬 say "..."', bg:'#C02878', f:()=>makeBlock('say')},
+      {label:'🖨 print variable', bg:'#C02878', f:()=>makeBlock('print')},
+    ];
+    defs.forEach(d => {
+      const chip = makeChip(d.label, d.bg, ()=>addBlockToCanvas(d.f()));
+      chip.ondragstart = e => { dragPayload = { makeBlock: d.f }; e.dataTransfer.effectAllowed='copy'; };
+      scroll.appendChild(chip);
+    });
+    return;
+  }
+}
+
+function makeChip(label, bg, clickFn, draggable=true, dragFn=null) {
+  const chip = document.createElement('div');
+  chip.className='pal-chip';
+  chip.style.background=bg;
+  chip.draggable=draggable;
+  chip.textContent=label;
+  chip.onclick=clickFn;
+  return chip;
+}
+
+// ════════════════════════════════════════════════════════════
+// BLOCK RENDERING
+// ════════════════════════════════════════════════════════════
+const NOTES_LIST = ['C2','D2','E2','F2','G2','A2','B2','C3','D3','E3','F3','G3','A3','B3',
+  'C4','D4','E4','F4','G4','A4','B4','C5','D5','E5','F5','G5','A5','B5','clap','rest'];
+
+function isValidNote(n) { return NOTES_LIST.includes(n); }
+
+function renderBlockEl(b, isNested=false) {
+  if (b.type === 'play')     return renderPlayBlock(b, isNested);
+  if (b.type === 'say')      return renderSayBlock(b, isNested);
+  if (b.type === 'print')    return renderPrintBlock(b, isNested);
+  if (b.type === 'setTempo') return renderSetTempoBlock(b, isNested);
+  if (b.type === 'setInst')  return renderSetInstBlock(b, isNested);
+  if (b.type === 'wait')     return renderWaitBlock(b, isNested);
+  if (b.type === 'playNote') return renderPlayNoteBlock(b, isNested);
+  if (b.type === 'playChord')return renderPlayChordBlock(b, isNested);
+  if (b.type === 'repeat')   return renderRepeatBlock(b, isNested);
+  if (b.type === 'if')       return renderIfBlock(b, isNested);
+  return document.createElement('div');
+}
+
+function delBtn(b, arr) {
+  const btn = document.createElement('button');
+  btn.className='block-del';btn.textContent='✕';btn.title='Delete';
+  btn.onclick = e => { e.stopPropagation(); removeBlock(b.id, arr||canvas); syncAll(); };
+  return btn;
+}
+
+function renderPlayBlock(b, isNested) {
+  const v = allVars().find(x=>x.id===b.varId)||VARS[0];
+  const el = document.createElement('div');
+  el.className='block';el.style.background='#2E80D0';
+  el.dataset.bid=b.id;
+  el.draggable=true;
+  el.ondragstart=e=>{dragPayload={moveId:b.id};e.dataTransfer.effectAllowed='move';};
+
+  const lbl=document.createElement('span');lbl.textContent='🎵 play( ';el.appendChild(lbl);
+  const badge=document.createElement('span');badge.className='block-badge';badge.textContent=v.name;
+  badge.style.background=v.dark||'#1860A0';el.appendChild(badge);
+  const lbl2=document.createElement('span');lbl2.textContent=' )';el.appendChild(lbl2);
+
+  // var selector (hidden, shown on click badge)
+  const sel=document.createElement('select');
+  sel.style.cssText='margin-left:4px;display:none;';
+  allVars().forEach(vv=>{const o=document.createElement('option');o.value=vv.id;o.textContent=vv.name;if(vv.id===b.varId)o.selected=true;sel.appendChild(o);});
+  sel.onchange=()=>{b.varId=sel.value;syncAll();};
+  badge.onclick=e=>{e.stopPropagation();sel.style.display=sel.style.display==='none'?'inline':'none';};
+  el.appendChild(sel);
+  el.appendChild(delBtn(b));
+  return el;
+}
+
+function renderSayBlock(b, isNested) {
+  const el=document.createElement('div');el.className='block';el.style.background='#C02878';
+  el.dataset.bid=b.id;el.draggable=true;
+  el.ondragstart=e=>{dragPayload={moveId:b.id};e.dataTransfer.effectAllowed='move';};
+  const lbl=document.createElement('span');lbl.textContent='💬 say( ';el.appendChild(lbl);
+  const inp=document.createElement('input');inp.type='text';inp.value=b.text;inp.size=14;
+  inp.style.maxWidth='160px';
+  inp.oninput=()=>{b.text=inp.value;syncAll();};
+  el.appendChild(inp);
+  const lbl2=document.createElement('span');lbl2.textContent=' )';el.appendChild(lbl2);
+  el.appendChild(delBtn(b));
+  return el;
+}
+
+function renderPrintBlock(b, isNested) {
+  const el=document.createElement('div');el.className='block';el.style.background='#C02878';
+  el.dataset.bid=b.id;el.draggable=true;
+  el.ondragstart=e=>{dragPayload={moveId:b.id};e.dataTransfer.effectAllowed='move';};
+  const lbl=document.createElement('span');lbl.textContent='🖨 print( ';el.appendChild(lbl);
+  const sel=document.createElement('select');
+  allVars().forEach(v=>{const o=document.createElement('option');o.value=v.id;o.textContent=v.name;if(v.id===b.varId)o.selected=true;sel.appendChild(o);});
+  sel.onchange=()=>{b.varId=sel.value;syncAll();};
+  el.appendChild(sel);
+  const lbl2=document.createElement('span');lbl2.textContent=' )';el.appendChild(lbl2);
+  el.appendChild(delBtn(b));
+  return el;
+}
+
+function renderSetTempoBlock(b, isNested) {
+  const el=document.createElement('div');el.className='block';el.style.background='#7050D0';
+  el.dataset.bid=b.id;el.draggable=true;
+  el.ondragstart=e=>{dragPayload={moveId:b.id};e.dataTransfer.effectAllowed='move';};
+  const lbl=document.createElement('span');lbl.textContent='🔊 set tempo( ';el.appendChild(lbl);
+  const inp=document.createElement('input');inp.type='number';inp.value=b.value;inp.min=40;inp.max=240;inp.style.width='60px';
+  inp.oninput=()=>{b.value=+inp.value||120;syncAll();};
+  el.appendChild(inp);
+  const lbl2=document.createElement('span');lbl2.textContent=' )';el.appendChild(lbl2);
+  el.appendChild(delBtn(b));
+  return el;
+}
+
+function renderSetInstBlock(b, isNested) {
+  const el=document.createElement('div');el.className='block';el.style.background='#7050D0';
+  el.dataset.bid=b.id;el.draggable=true;
+  el.ondragstart=e=>{dragPayload={moveId:b.id};e.dataTransfer.effectAllowed='move';};
+  const lbl=document.createElement('span');lbl.textContent='🎸 set instrument( ';el.appendChild(lbl);
+  const sel=document.createElement('select');
+  ['piano','marimba','synth'].forEach(i=>{const o=document.createElement('option');o.value=i;o.textContent=i;if(i===b.value)o.selected=true;sel.appendChild(o);});
+  sel.onchange=()=>{b.value=sel.value;syncAll();};
+  el.appendChild(sel);
+  const lbl2=document.createElement('span');lbl2.textContent=' )';el.appendChild(lbl2);
+  el.appendChild(delBtn(b));
+  return el;
+}
+
+function renderWaitBlock(b, isNested) {
+  const el=document.createElement('div');el.className='block';el.style.background='#2EA870';
+  el.dataset.bid=b.id;el.draggable=true;
+  el.ondragstart=e=>{dragPayload={moveId:b.id};e.dataTransfer.effectAllowed='move';};
+  const lbl=document.createElement('span');lbl.textContent='⏳ wait( ';el.appendChild(lbl);
+  const inp=document.createElement('input');inp.type='number';inp.value=b.beats;inp.min=0.5;inp.max=16;inp.step=0.5;inp.style.width='55px';
+  inp.oninput=()=>{b.beats=+inp.value||1;syncAll();};
+  el.appendChild(inp);
+  const lbl2=document.createElement('span');lbl2.textContent=' beats )';el.appendChild(lbl2);
+  el.appendChild(delBtn(b));
+  return el;
+}
+
+function renderPlayNoteBlock(b, isNested) {
+  const el=document.createElement('div');el.className='block';el.style.background='#2E80D0';
+  el.dataset.bid=b.id;el.draggable=true;
+  el.ondragstart=e=>{dragPayload={moveId:b.id};e.dataTransfer.effectAllowed='move';};
+  const lbl=document.createElement('span');lbl.textContent='🎵 play note( ';el.appendChild(lbl);
+  const sel=document.createElement('select');
+  NOTES_LIST.forEach(n=>{const o=document.createElement('option');o.value=n;o.textContent=n;if(n===b.note)o.selected=true;sel.appendChild(o);});
+  sel.onchange=()=>{b.note=sel.value;syncAll();};
+  el.appendChild(sel);
+  const lbl2=document.createElement('span');lbl2.textContent=', ';el.appendChild(lbl2);
+  const inp=document.createElement('input');inp.type='number';inp.value=b.beats;inp.min=0.5;inp.max=8;inp.step=0.5;inp.style.width='50px';
+  inp.oninput=()=>{b.beats=+inp.value||1;syncAll();};
+  el.appendChild(inp);
+  const lbl3=document.createElement('span');lbl3.textContent=' beats )';el.appendChild(lbl3);
+  el.appendChild(delBtn(b));
+  return el;
+}
+
+function renderPlayChordBlock(b, isNested) {
+  const el=document.createElement('div');el.className='block';el.style.background='#2E80D0';
+  el.dataset.bid=b.id;el.draggable=true;
+  el.ondragstart=e=>{dragPayload={moveId:b.id};e.dataTransfer.effectAllowed='move';};
+  const lbl=document.createElement('span');lbl.textContent='🎶 play chord( ';el.appendChild(lbl);
+  const inp=document.createElement('input');inp.type='text';inp.value=b.notes;inp.size=12;
+  inp.oninput=()=>{b.notes=inp.value;syncAll();};
+  el.appendChild(inp);
+  const lbl2=document.createElement('span');lbl2.textContent=' )';el.appendChild(lbl2);
+  el.appendChild(delBtn(b));
+  return el;
+}
+
+function renderRepeatBlock(b, isNested) {
+  const wrap=document.createElement('div');wrap.className='loop-block';wrap.dataset.bid=b.id;
+
+  const header=document.createElement('div');header.className='loop-header';
+  const ic=document.createElement('span');ic.textContent='🔁 repeat ';header.appendChild(ic);
+  const cbs=document.createElement('div');cbs.className='count-btns';
+  const minus=document.createElement('button');minus.textContent='−';minus.onclick=e=>{e.stopPropagation();b.count=Math.max(1,b.count-1);syncAll();};
+  const val=document.createElement('span');val.className='count-val';val.textContent=b.count;
+  const plus=document.createElement('button');plus.textContent='+';plus.onclick=e=>{e.stopPropagation();b.count=Math.min(99,b.count+1);syncAll();};
+  cbs.appendChild(minus);cbs.appendChild(val);cbs.appendChild(plus);
+  header.appendChild(cbs);
+  const lbl2=document.createElement('span');lbl2.textContent=' times:';header.appendChild(lbl2);
+  const db=document.createElement('button');db.className='block-del';db.textContent='✕';db.style.opacity='0';
+  db.onclick=e=>{e.stopPropagation();removeBlock(b.id,canvas);syncAll();};
+  header.addEventListener('mouseenter',()=>db.style.opacity='1');
+  header.addEventListener('mouseleave',()=>db.style.opacity='0');
+  header.appendChild(db);
+  wrap.appendChild(header);
+
+  const body=document.createElement('div');body.className='loop-body';
+  body.ondragover=e=>{e.preventDefault();e.stopPropagation();body.classList.add('drag-over');};
+  body.ondragleave=()=>body.classList.remove('drag-over');
+  body.ondrop=e=>{e.preventDefault();e.stopPropagation();body.classList.remove('drag-over');handleDropInto(b.body,e);syncAll();};
+
+  if (b.body.length===0) {
+    const hint=document.createElement('div');hint.className='drop-hint';hint.textContent='← drop blocks here';body.appendChild(hint);
+  } else {
+    b.body.forEach(child=>body.appendChild(renderBlockEl(child,true)));
+  }
+  wrap.appendChild(body);
+
+  const footer=document.createElement('div');footer.className='loop-footer';
+  const fe=document.createElement('span');fe.textContent='end';fe.style.opacity='0.6';fe.style.fontSize='11px';footer.appendChild(fe);
+  wrap.appendChild(footer);
+
+  return wrap;
+}
+
+function renderIfBlock(b, isNested) {
+  const wrap=document.createElement('div');wrap.className='if-block';wrap.dataset.bid=b.id;
+
+  const header=document.createElement('div');header.className='if-header';
+  const ic=document.createElement('span');ic.textContent='❓ if ';header.appendChild(ic);
+  const sel=document.createElement('select');
+  [{v:'always',l:'always'},{v:'tempo>120',l:'tempo > 120'},{v:'tempo<80',l:'tempo < 80'}].forEach(c=>{
+    const o=document.createElement('option');o.value=c.v;o.textContent=c.l;if(c.v===b.cond)o.selected=true;sel.appendChild(o);
+  });
+  sel.onchange=()=>{b.cond=sel.value;syncAll();};
+  header.appendChild(sel);
+  const lbl=document.createElement('span');lbl.textContent=':';header.appendChild(lbl);
+  const db=document.createElement('button');db.className='block-del';db.textContent='✕';db.style.opacity='0';
+  db.onclick=e=>{e.stopPropagation();removeBlock(b.id,canvas);syncAll();};
+  header.addEventListener('mouseenter',()=>db.style.opacity='1');
+  header.addEventListener('mouseleave',()=>db.style.opacity='0');
+  header.appendChild(db);
+  wrap.appendChild(header);
+
+  const thenBody=document.createElement('div');thenBody.className='if-body';
+  thenBody.ondragover=e=>{e.preventDefault();e.stopPropagation();thenBody.classList.add('drag-over');};
+  thenBody.ondragleave=()=>thenBody.classList.remove('drag-over');
+  thenBody.ondrop=e=>{e.preventDefault();e.stopPropagation();thenBody.classList.remove('drag-over');handleDropInto(b.then,e);syncAll();};
+  if(b.then.length===0){const h=document.createElement('div');h.className='drop-hint';h.textContent='← then: drop blocks';thenBody.appendChild(h);}
+  else b.then.forEach(child=>thenBody.appendChild(renderBlockEl(child,true)));
+  wrap.appendChild(thenBody);
+
+  const elseHeader=document.createElement('div');elseHeader.className='else-header';
+  elseHeader.textContent='else:';wrap.appendChild(elseHeader);
+
+  const elseBody=document.createElement('div');elseBody.className='else-body';
+  elseBody.ondragover=e=>{e.preventDefault();e.stopPropagation();elseBody.classList.add('drag-over');};
+  elseBody.ondragleave=()=>elseBody.classList.remove('drag-over');
+  elseBody.ondrop=e=>{e.preventDefault();e.stopPropagation();elseBody.classList.remove('drag-over');handleDropInto(b.else,e);syncAll();};
+  if(b.else.length===0){const h=document.createElement('div');h.className='drop-hint';h.textContent='← else: drop blocks';elseBody.appendChild(h);}
+  else b.else.forEach(child=>elseBody.appendChild(renderBlockEl(child,true)));
+  wrap.appendChild(elseBody);
+
+  const footer=document.createElement('div');footer.className='if-footer';
+  footer.innerHTML='<span style="opacity:0.6;font-size:11px">end if</span>';
+  wrap.appendChild(footer);
+  return wrap;
+}
+
+// ════════════════════════════════════════════════════════════
+// CANVAS RENDERING
+// ════════════════════════════════════════════════════════════
+function renderBlocks() {
+  const scroll = document.getElementById('canvas-scroll');
+  // Keep empty state
+  const empty = document.getElementById('canvas-empty');
+  // Remove old blocks (not the empty div)
+  Array.from(scroll.children).forEach(c=>{ if(c!==empty) scroll.removeChild(c); });
+  empty.style.display = canvas.length===0 ? 'flex' : 'none';
+  canvas.forEach(b => scroll.appendChild(renderBlockEl(b)));
+}
+
+function renderBlocksInto(container) {
+  if (!container) return;
+  container.innerHTML = '';
+  if (canvas.length===0) {
+    const hint=document.createElement('div');hint.className='canvas-empty';
+    hint.innerHTML='<div class="empty-icon">👆</div><p>Build your answer here!</p><small>Click or drag blocks from the left panel</small>';
+    container.appendChild(hint);
+  }
+  canvas.forEach(b=>container.appendChild(renderBlockEl(b)));
+}
+
+function syncAll() {
+  if (activeContainer) renderBlocksInto(activeContainer);
+  else renderBlocks();
+  updateCodePreview();
+}
+
+// ════════════════════════════════════════════════════════════
+// DRAG & DROP
+// ════════════════════════════════════════════════════════════
+function onCanvasDragOver(e) {
+  e.preventDefault();
+  document.getElementById('canvas-scroll').classList.add('drag-over');
+}
+
+function onCanvasDrop(e) {
+  e.preventDefault();
+  document.getElementById('canvas-scroll').classList.remove('drag-over');
+  if (!dragPayload) return;
+  if (dragPayload.makeBlock) { addBlockToCanvas(dragPayload.makeBlock()); }
+  else if (dragPayload.type === 'play') { addBlockToCanvas(makeBlock('play',{varId:dragPayload.varId})); }
+  else if (dragPayload.moveId) { /* reorder not implemented for simplicity */ }
+  dragPayload = null;
+}
+
+function handleDropInto(arr, e) {
+  if (!dragPayload) return;
+  let nb;
+  if (dragPayload.makeBlock) nb = dragPayload.makeBlock();
+  else if (dragPayload.type==='play') nb = makeBlock('play',{varId:dragPayload.varId});
+  else if (dragPayload.moveId) {
+    // move from canvas to nested
+    const found = extractBlock(dragPayload.moveId, canvas);
+    if (found) { arr.push(found); return; }
+  }
+  if (nb) arr.push(nb);
+  dragPayload = null;
+}
+
+function addBlockToCanvas(b) {
+  canvas.push(b);
+  syncAll();
+}
+
+function removeBlock(id, arr) {
+  const idx = arr.findIndex(b=>b.id===id);
+  if (idx>=0) { arr.splice(idx,1); return true; }
+  for (const b of arr) {
+    if (b.body && removeBlock(id,b.body)) return true;
+    if (b.then && removeBlock(id,b.then)) return true;
+    if (b.else && removeBlock(id,b.else)) return true;
+  }
+  return false;
+}
+
+function extractBlock(id, arr) {
+  const idx = arr.findIndex(b=>b.id===id);
+  if (idx>=0) return arr.splice(idx,1)[0];
+  for (const b of arr) {
+    let f;
+    if (b.body && (f=extractBlock(id,b.body))) return f;
+    if (b.then && (f=extractBlock(id,b.then))) return f;
+    if (b.else && (f=extractBlock(id,b.else))) return f;
+  }
+  return null;
+}
+
+function clearCanvas() {
+  canvas = [];
+  syncAll();
+}
+
+// ════════════════════════════════════════════════════════════
+// CODE PREVIEW
+// ════════════════════════════════════════════════════════════
+let lineMap = {}; // blockId -> lineNumber
+let lineCounter = 0;
+
+function updateCodePreview() {
+  lineCounter = 1;
+  lineMap = {};
+  const preview = document.getElementById('code-preview');
+  preview.innerHTML = '';
+
+  function addLine(html, blockId=null) {
+    const div=document.createElement('div');div.className='code-line';
+    if(blockId){div.dataset.bid=blockId;lineMap[blockId]=lineCounter;}
+    const ln=document.createElement('span');ln.className='ln';ln.textContent=lineCounter++;
+    const code=document.createElement('span');code.className='code';code.innerHTML=html;
+    div.appendChild(ln);div.appendChild(code);
+    preview.appendChild(div);
+    return div;
+  }
+
+  // Variable defs
+  addLine(`<span class="kw-comment"># variable definitions</span>`);
+  allVars().forEach(v=>{
+    if(v.audioBuffer){
+      addLine(`<span class="kw-def">def</span> <span class="kw-var">${v.name}</span> = <span class="kw-str">[audio: ${v.duration?v.duration.toFixed(1)+'s':'?'}]</span>`);
+    } else {
+      addLine(`<span class="kw-def">def</span> <span class="kw-var">${v.name}</span> = [<span class="kw-str">${v.notes.join(', ')}</span>]`);
+    }
+  });
+  addLine('');
+  addLine(`<span class="kw-comment"># program</span>`);
+
+  function renderLines(blocks, indent=0) {
+    const sp='  '.repeat(indent);
+    blocks.forEach(b=>{
+      if(b.type==='play'){
+        const v=allVars().find(x=>x.id===b.varId)||VARS[0];
+        addLine(`${sp}<span class="kw-play">play</span>(<span class="kw-var">${v.name}</span>)`,b.id);
+      } else if(b.type==='say'){
+        addLine(`${sp}<span class="kw-say">say</span>(<span class="kw-str">"${b.text}"</span>)`,b.id);
+      } else if(b.type==='print'){
+        const v=allVars().find(x=>x.id===b.varId)||VARS[0];
+        addLine(`${sp}<span class="kw-say">print</span>(<span class="kw-var">${v.name}</span>)`,b.id);
+      } else if(b.type==='setTempo'){
+        addLine(`${sp}<span class="kw-set">set_tempo</span>(<span class="kw-num">${b.value}</span>)`,b.id);
+      } else if(b.type==='setInst'){
+        addLine(`${sp}<span class="kw-set">set_instrument</span>(<span class="kw-str">"${b.value}"</span>)`,b.id);
+      } else if(b.type==='wait'){
+        addLine(`${sp}<span class="kw-wait">wait</span>(<span class="kw-num">${b.beats}</span> beats)`,b.id);
+      } else if(b.type==='playNote'){
+        addLine(`${sp}<span class="kw-note">play_note</span>(<span class="kw-str">"${b.note}"</span>, <span class="kw-num">${b.beats}</span>)`,b.id);
+      } else if(b.type==='playChord'){
+        addLine(`${sp}<span class="kw-note">play_chord</span>([<span class="kw-str">${b.notes}</span>])`,b.id);
+      } else if(b.type==='repeat'){
+        addLine(`${sp}<span class="kw-repeat">repeat</span> <span class="kw-num">${b.count}</span> times:`,b.id);
+        renderLines(b.body, indent+1);
+        addLine(`${sp}<span class="kw-repeat">end</span>`);
+      } else if(b.type==='if'){
+        addLine(`${sp}<span class="kw-if">if</span> <span class="kw-str">${b.cond}</span>:`,b.id);
+        renderLines(b.then, indent+1);
+        addLine(`${sp}<span class="kw-if">else</span>:`);
+        renderLines(b.else, indent+1);
+        addLine(`${sp}<span class="kw-if">end if</span>`);
+      }
+    });
+  }
+
+  renderLines(canvas);
+}
+
+function highlightCodeLine(blockId) {
+  document.querySelectorAll('.code-line.hl').forEach(el=>el.classList.remove('hl'));
+  if (blockId && lineMap[blockId]) {
+    const lines = document.querySelectorAll('.code-line');
+    // find line with blockId
+    const el = document.querySelector(`.code-line[data-bid="${blockId}"]`);
+    if (el) { el.classList.add('hl'); el.scrollIntoView({block:'nearest'}); }
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+// PLAYBACK ENGINE
+// ════════════════════════════════════════════════════════════
+async function execBlocks(blocks) {
+  for (const b of blocks) {
+    if (stopFlag) break;
+    highlightCodeLine(b.id);
+    animViz();
+
+    if (b.type === 'play') {
+      await playVar(b.varId);
+    } else if (b.type === 'say') {
+      showLyrics(b.text);
+      await sleep(beatMs(2));
+      hideLyrics();
+    } else if (b.type === 'print') {
+      const v=allVars().find(x=>x.id===b.varId)||VARS[0];
+      showToast(`📋 ${v.name}: [${v.notes?v.notes.join(', '):'audio'}]`);
+      await sleep(beatMs(1));
+    } else if (b.type === 'setTempo') {
+      tempo = b.value;
+      document.getElementById('tempo-slider').value = tempo;
+      document.getElementById('tempo-val').textContent = tempo;
+    } else if (b.type === 'setInst') {
+      instrument = b.value;
+      document.getElementById('inst-select').value = instrument;
+    } else if (b.type === 'wait') {
+      await sleep(beatMs(b.beats));
+    } else if (b.type === 'playNote') {
+      await playNote(b.note, b.beats);
+    } else if (b.type === 'playChord') {
+      const notes=b.notes.split(',').map(n=>n.trim());
+      notes.forEach(n=>{ try{ currentSynth().triggerAttackRelease(n,'8n'); }catch(e){} });
+      await sleep(beatMs(1));
+    } else if (b.type === 'repeat') {
+      for (let i=0;i<b.count;i++) {
+        if (stopFlag) break;
+        await execBlocks(b.body);
+      }
+    } else if (b.type === 'if') {
+      let cond=false;
+      if(b.cond==='always') cond=true;
+      else if(b.cond==='tempo>120') cond=tempo>120;
+      else if(b.cond==='tempo<80') cond=tempo<80;
+      await execBlocks(cond?b.then:b.else);
+    }
+  }
+}
+
+async function toggleRun() {
+  if (running) { stopFlag=true; return; }
+  await initTone();
+  running=true; stopFlag=false;
+  const btn=document.getElementById('run-btn');
+  const lbl=document.getElementById('run-label');
+  btn.className='running';btn.textContent='⏹';
+  lbl.textContent='Stop';
+  await execBlocks(canvas);
+  running=false; stopFlag=false;
+  btn.className='stopped';btn.textContent='▶';
+  lbl.textContent='Run';
+  document.querySelectorAll('.code-line.hl').forEach(el=>el.classList.remove('hl'));
+}
+
+// ════════════════════════════════════════════════════════════
+// LYRICS / TOAST
+// ════════════════════════════════════════════════════════════
+function showLyrics(text) {
+  const el=document.getElementById('lyrics-overlay');
+  el.textContent=text;el.classList.add('show');
+}
+function hideLyrics() {
+  document.getElementById('lyrics-overlay').classList.remove('show');
+}
+let toastTimer;
+function showToast(text) {
+  const el=document.getElementById('toast');
+  el.textContent=text;el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>el.classList.remove('show'),3000);
+}
+
+// ════════════════════════════════════════════════════════════
+// INSTRUMENT / TEMPO
+// ════════════════════════════════════════════════════════════
+function setInstrument(val) { instrument=val; }
+function setTempo(val) {
+  tempo=val;
+  document.getElementById('tempo-val').textContent=val;
+}
+
+// ════════════════════════════════════════════════════════════
+// MODE SWITCHING
+// ════════════════════════════════════════════════════════════
+function setMode(m) {
+  mode=m;
+  document.querySelectorAll('.mode-tab').forEach(t=>t.classList.toggle('active',t.dataset.mode===m));
+  const overlay=document.getElementById('challenge-overlay');
+  if(m==='free') {
+    overlay.classList.remove('visible');
+    activeContainer=null;
+    syncAll();
+  } else if(m==='read') {
+    overlay.classList.add('visible');
+    activeContainer=null;
+    renderReadChallenge();
+  } else if(m==='listen') {
+    overlay.classList.add('visible');
+    activeContainer=null;
+    canvas=[];
+    renderListenChallenge();
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+// READ CHALLENGES
+// ════════════════════════════════════════════════════════════
+const READ_CHALLENGES = [
+  {
+    title:"How many times does it play?",
+    desc:"Look at this code carefully. How many times does <code>variable1</code> get played in total?",
+    code:`<span class="kw-repeat">repeat</span> <span class="kw-num">3</span> times:\n  <span class="kw-play">play</span>(<span class="kw-var">variable1</span>)\n<span class="kw-repeat">end</span>`,
+    options:['1','2','3','4'],correct:2,
+    playCode:[makeBlock('repeat',{count:3,body:[makeBlock('play',{varId:'v1'})]})]
+  },
+  {
+    title:"Two variables in a loop",
+    desc:"This loop plays two variables each time. How many <em>total</em> plays happen?",
+    code:`<span class="kw-repeat">repeat</span> <span class="kw-num">2</span> times:\n  <span class="kw-play">play</span>(<span class="kw-var">variable1</span>)\n  <span class="kw-play">play</span>(<span class="kw-var">variable2</span>)\n<span class="kw-repeat">end</span>`,
+    options:['2','3','4','6'],correct:2,
+    playCode:[makeBlock('repeat',{count:2,body:[makeBlock('play',{varId:'v1'}),makeBlock('play',{varId:'v2'})]})]
+  },
+  {
+    title:"Nested loops!",
+    desc:"This is a loop inside a loop! How many total plays of <code>variable1</code>?",
+    code:`<span class="kw-repeat">repeat</span> <span class="kw-num">2</span> times:\n  <span class="kw-repeat">repeat</span> <span class="kw-num">3</span> times:\n    <span class="kw-play">play</span>(<span class="kw-var">variable1</span>)\n  <span class="kw-repeat">end</span>\n<span class="kw-repeat">end</span>`,
+    options:['3','4','5','6'],correct:3,
+    playCode:[makeBlock('repeat',{count:2,body:[makeBlock('repeat',{count:3,body:[makeBlock('play',{varId:'v1'})]})]})]
+  },
+  {
+    title:"What appears first?",
+    desc:"This program has two <code>say</code> blocks. Which text appears on screen FIRST?",
+    code:`<span class="kw-play">play</span>(<span class="kw-var">variable1</span>)\n<span class="kw-say">say</span>(<span class="kw-str">"Hello!"</span>)\n<span class="kw-play">play</span>(<span class="kw-var">variable2</span>)\n<span class="kw-say">say</span>(<span class="kw-str">"Goodbye!"</span>)`,
+    options:['"Hello!"','"Goodbye!"','variable1','variable2'],correct:0,
+    playCode:[makeBlock('play',{varId:'v1'}),makeBlock('say',{text:'Hello!'}),makeBlock('play',{varId:'v2'}),makeBlock('say',{text:'Goodbye!'})]
+  }
+];
+
+let readAnswered=false;
+
+function renderReadChallenge() {
+  readAnswered=false;
+  const c=READ_CHALLENGES[readIdx%READ_CHALLENGES.length];
+  const inner=document.getElementById('challenge-inner');
+  inner.innerHTML='';
+
+  const left=document.createElement('div');left.className='ch-left';
+
+  const badge=document.createElement('div');badge.className='ch-badge read';badge.textContent=`📖 Read Code — Challenge ${readIdx%READ_CHALLENGES.length+1}/${READ_CHALLENGES.length}`;
+  left.appendChild(badge);
+
+  const prog=document.createElement('div');prog.className='ch-prog';
+  READ_CHALLENGES.forEach((_,i)=>{
+    const d=document.createElement('div');d.className='ch-dot';
+    if(i<readIdx%READ_CHALLENGES.length)d.classList.add('done');
+    if(i===readIdx%READ_CHALLENGES.length)d.classList.add('active');
+    prog.appendChild(d);
+  });
+  left.appendChild(prog);
+
+  const title=document.createElement('div');title.className='ch-title';title.innerHTML=c.title;left.appendChild(title);
+  const desc=document.createElement('div');desc.className='ch-desc';desc.innerHTML=c.desc;left.appendChild(desc);
+
+  const codeBlock=document.createElement('div');codeBlock.className='ch-code-block';
+  codeBlock.innerHTML=c.code.replace(/\n/g,'<br>');
+  left.appendChild(codeBlock);
+
+  const hearBtn=document.createElement('button');hearBtn.className='ch-btn secondary';hearBtn.textContent='▶ Hear it';
+  hearBtn.onclick=async()=>{ await initTone(); await execBlocks(c.playCode); };
+  left.appendChild(hearBtn);
+
+  const opts=document.createElement('div');opts.className='ch-options';
+  c.options.forEach((opt,i)=>{
+    const btn=document.createElement('button');btn.className='ch-option';btn.textContent=opt;
+    btn.onclick=()=>{
+      if(readAnswered) return;
+      readAnswered=true;
+      const correct=i===c.correct;
+      btn.classList.add(correct?'correct':'wrong');
+      if(correct){ score+=10; document.getElementById('score-display').textContent=score; }
+      else { opts.children[c.correct].classList.add('correct'); }
+      fb.textContent=correct?'✅ Correct! Great job!':'❌ Not quite. The correct answer is highlighted.';
+      fb.className='ch-feedback show '+(correct?'ok':'bad');
+      nextBtn.style.display='inline-flex';
+    };
+    opts.appendChild(btn);
+  });
+  left.appendChild(opts);
+
+  const fb=document.createElement('div');fb.className='ch-feedback';left.appendChild(fb);
+
+  const nav=document.createElement('div');nav.className='ch-nav';
+  const nextBtn=document.createElement('button');nextBtn.className='ch-btn primary';nextBtn.textContent='Next Challenge →';
+  nextBtn.style.display='none';
+  nextBtn.onclick=()=>{ readIdx++; renderReadChallenge(); };
+  nav.appendChild(nextBtn);
+  const backBtn=document.createElement('button');backBtn.className='ch-btn secondary';backBtn.textContent='← Back to Code';
+  backBtn.onclick=()=>setMode('free');
+  nav.appendChild(backBtn);
+  left.appendChild(nav);
+
+  inner.appendChild(left);
+}
+
+// ════════════════════════════════════════════════════════════
+// LISTEN CHALLENGES
+// ════════════════════════════════════════════════════════════
+const LISTEN_CHALLENGES = [
+  {
+    title:"Play variable2 twice",
+    desc:"Build a program that plays <strong>variable2 two times in a row</strong>.",
+    hint:"Drag two 'play(variable2)' blocks into your program.",
+    target:[makeBlock('play',{varId:'v2'}),makeBlock('play',{varId:'v2'})],
+    check:(c)=>c.length===2&&c.every(b=>b.type==='play'&&b.varId==='v2')
+  },
+  {
+    title:"Loop variable1 × 3",
+    desc:"Use a <strong>repeat block</strong> to play variable1 three times using a loop.",
+    hint:"Try: repeat(3) → play(variable1) inside.",
+    target:[makeBlock('repeat',{count:3,body:[makeBlock('play',{varId:'v1'})]})],
+    check:(c)=>c.length===1&&c[0].type==='repeat'&&c[0].count===3&&c[0].body.length===1&&c[0].body[0].type==='play'&&c[0].body[0].varId==='v1'
+  },
+  {
+    title:"Two variables, repeated twice",
+    desc:"Play both <strong>variable1 and variable2</strong> inside a <strong>repeat(2)</strong> loop.",
+    hint:"Put both play blocks inside a repeat(2) block.",
+    target:[makeBlock('repeat',{count:2,body:[makeBlock('play',{varId:'v1'}),makeBlock('play',{varId:'v2'})]})],
+    check:(c)=>c.length===1&&c[0].type==='repeat'&&c[0].count===2&&c[0].body.length===2&&c[0].body[0].varId==='v1'&&c[0].body[1].varId==='v2'
+  }
+];
+
+function renderListenChallenge() {
+  const c=LISTEN_CHALLENGES[listenIdx%LISTEN_CHALLENGES.length];
+  const inner=document.getElementById('challenge-inner');
+  inner.innerHTML='';canvas=[];
+
+  const left=document.createElement('div');left.className='ch-left';
+
+  const badge=document.createElement('div');badge.className='ch-badge listen';badge.textContent=`🎧 Listen & Code — Challenge ${listenIdx%LISTEN_CHALLENGES.length+1}/${LISTEN_CHALLENGES.length}`;
+  left.appendChild(badge);
+
+  const prog=document.createElement('div');prog.className='ch-prog';
+  LISTEN_CHALLENGES.forEach((_,i)=>{
+    const d=document.createElement('div');d.className='ch-dot';
+    if(i<listenIdx%LISTEN_CHALLENGES.length)d.classList.add('done');
+    if(i===listenIdx%LISTEN_CHALLENGES.length)d.classList.add('active');
+    prog.appendChild(d);
+  });
+  left.appendChild(prog);
+
+  const title=document.createElement('div');title.className='ch-title';title.innerHTML=c.title;left.appendChild(title);
+  const desc=document.createElement('div');desc.className='ch-desc';desc.innerHTML=c.desc;left.appendChild(desc);
+  const hint=document.createElement('div');hint.className='ch-hint';hint.textContent='💡 Hint: '+c.hint;left.appendChild(hint);
+
+  const hearBtn=document.createElement('button');hearBtn.className='ch-btn secondary';hearBtn.textContent='▶ Hear Target';
+  hearBtn.onclick=async()=>{ await initTone(); await execBlocks(c.target); };
+  left.appendChild(hearBtn);
+
+  const fb=document.createElement('div');fb.className='ch-feedback';left.appendChild(fb);
+
+  const nav=document.createElement('div');nav.className='ch-nav';
+  const checkBtn=document.createElement('button');checkBtn.className='ch-btn primary';checkBtn.textContent='✓ Check Answer';
+  checkBtn.onclick=async()=>{
+    const ok=c.check(canvas);
+    fb.textContent=ok?'✅ Perfect! That matches the target!':'❌ Not quite right. Try again!';
+    fb.className='ch-feedback show '+(ok?'ok':'bad');
+    if(ok){ score+=15;document.getElementById('score-display').textContent=score;nextBtn.style.display='inline-flex';}
+  };
+  nav.appendChild(checkBtn);
+
+  const nextBtn=document.createElement('button');nextBtn.className='ch-btn primary';nextBtn.textContent='Next →';
+  nextBtn.style.display='none';
+  nextBtn.onclick=()=>{ listenIdx++;canvas=[];renderListenChallenge(); };
+  nav.appendChild(nextBtn);
+
+  const backBtn=document.createElement('button');backBtn.className='ch-btn secondary';backBtn.textContent='← Free Code';
+  backBtn.onclick=()=>setMode('free');
+  nav.appendChild(backBtn);
+  left.appendChild(nav);
+
+  inner.appendChild(left);
+
+  // Right side: block canvas
+  const right=document.createElement('div');right.className='ch-right';
+  const rHeader=document.createElement('div');rHeader.className='col-header';
+  rHeader.innerHTML='<div class="col-title"><span class="col-icon">🏗</span> Your Answer</div>';
+  const clrBtn=document.createElement('button');clrBtn.className='clear-btn';clrBtn.textContent='🗑 Clear';
+  clrBtn.onclick=()=>{canvas=[];syncAll();};
+  rHeader.appendChild(clrBtn);
+  right.appendChild(rHeader);
+
+  const scroll=document.createElement('div');scroll.id='ch-blocks-scroll';
+  scroll.className='drop-zone';
+  scroll.style.cssText='flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:6px;';
+  scroll.ondragover=e=>{e.preventDefault();scroll.classList.add('drag-over');};
+  scroll.ondragleave=()=>scroll.classList.remove('drag-over');
+  scroll.ondrop=e=>{e.preventDefault();scroll.classList.remove('drag-over');onCanvasDrop(e);};
+  right.appendChild(scroll);
+  inner.appendChild(right);
+
+  activeContainer=scroll;
+  syncAll();
+}
+
+// ════════════════════════════════════════════════════════════
+// AUDIO UPLOAD & RECORD
+// ════════════════════════════════════════════════════════════
+async function handleUpload(input) {
+  const file=input.files[0];if(!file)return;
+  await initTone();
+  const buf=await file.arrayBuffer();
+  const decoded=await audioCtx.decodeAudioData(buf);
+  const name=file.name.replace(/\.[^.]+$/,'').slice(0,12).replace(/\s/g,'_')||'audio';
+  addCustomVar(name,decoded);
+  input.value='';
+}
+
+function addCustomVar(name, audioBuffer) {
+  const id='cv'+(++customVarCounter);
+  const dedupedName=dedupeVarName(name);
+  const color=CUSTOM_COLORS[customVarCounter%CUSTOM_COLORS.length];
+  customVars.push({id,name:dedupedName,color,dark:darken(color),audioBuffer,duration:audioBuffer?audioBuffer.duration:0});
+  renderPalette();
+  updateCodePreview();
+  showToast(`🎵 Added "${dedupedName}"!`);
+}
+
+function dedupeVarName(name) {
+  let n=name,i=1;
+  while(allVars().find(v=>v.name===n)) n=name+(i++);
+  return n;
+}
+function darken(hex) {
+  const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+  return `rgb(${Math.floor(r*0.5)},${Math.floor(g*0.5)},${Math.floor(b*0.5)})`;
+}
+
+// Record
+let mediaRecorder=null,recChunks=[],recTimer=null,recAnalyser=null;
+
+function openRecordModal() {
+  document.getElementById('rec-name').value='';
+  document.getElementById('rec-timer').textContent='0:00';
+  document.getElementById('rec-vol-fill').style.width='0%';
+  document.getElementById('rec-start-btn').style.display='inline-flex';
+  document.getElementById('rec-stop-btn').style.display='none';
+  buildRecWaveform();
+  document.getElementById('record-modal').classList.add('open');
+}
+function closeRecordModal() {
+  if(mediaRecorder&&mediaRecorder.state!=='inactive') mediaRecorder.stop();
+  clearInterval(recTimer);
+  document.getElementById('record-modal').classList.remove('open');
+}
+
+function buildRecWaveform() {
+  const wf=document.getElementById('rec-waveform');wf.innerHTML='';
+  for(let i=0;i<48;i++){const b=document.createElement('div');b.className='rec-waveform-bar';wf.appendChild(b);}
+}
+
+async function startRecording() {
+  await initTone();
+  const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+  mediaRecorder=new MediaRecorder(stream);recChunks=[];
+  mediaRecorder.ondataavailable=e=>recChunks.push(e.data);
+
+  // analyser
+  recAnalyser=audioCtx.createAnalyser();recAnalyser.fftSize=128;
+  const src=audioCtx.createMediaStreamSource(stream);src.connect(recAnalyser);
+
+  let secs=0;
+  recTimer=setInterval(()=>{
+    secs++;
+    const m=Math.floor(secs/60),s=secs%60;
+    document.getElementById('rec-timer').textContent=`${m}:${s.toString().padStart(2,'0')}`;
+
+    // Update vol + waveform
+    const data=new Uint8Array(recAnalyser.frequencyBinCount);
+    recAnalyser.getByteFrequencyData(data);
+    const avg=data.reduce((a,b)=>a+b,0)/data.length;
+    document.getElementById('rec-vol-fill').style.width=Math.min(100,avg/128*100*2.5)+'%';
+    const bars=document.querySelectorAll('.rec-waveform-bar');
+    bars.forEach((b,i)=>{b.style.height=Math.max(4,data[i]||0)/255*56+'px';});
+
+    if(secs>=10) stopRecording();
+  },1000);
+
+  mediaRecorder.start();
+  document.getElementById('rec-start-btn').style.display='none';
+  document.getElementById('rec-stop-btn').style.display='inline-flex';
+}
+
+function stopRecording() {
+  clearInterval(recTimer);
+  mediaRecorder.onstop=async()=>{
+    const blob=new Blob(recChunks,{type:'audio/webm'});
+    const arrBuf=await blob.arrayBuffer();
+    const decoded=await audioCtx.decodeAudioData(arrBuf);
+    const name=document.getElementById('rec-name').value.trim().slice(0,12).replace(/\s/g,'_')||'mySound';
+    addCustomVar(name,decoded);
+    closeRecordModal();
+  };
+  mediaRecorder.stop();
+}
+
+// ════════════════════════════════════════════════════════════
+// DOWNLOAD
+// ════════════════════════════════════════════════════════════
+function downloadProgram() {
+  const data={version:'1.0',tempo,instrument,program:JSON.stringify(canvas)};
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='my-music-program.json';a.click();
+  showToast('💾 Program saved!');
+}
+
+async function downloadAudio() {
+  await initTone();
+  const dest=Tone.context.createMediaStreamDestination();
+  Tone.getDestination().connect(dest);
+  const mr=new MediaRecorder(dest.stream);
+  const chunks=[];
+  mr.ondataavailable=e=>chunks.push(e.data);
+  mr.onstop=()=>{
+    const blob=new Blob(chunks,{type:'audio/webm'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='my-music.webm';a.click();
+    document.getElementById('rec-dot').classList.remove('show');
+    showToast('🎵 Audio downloaded!');
+  };
+  mr.start();
+  document.getElementById('rec-dot').classList.add('show');
+  await execBlocks(canvas);
+  await sleep(400);
+  mr.stop();
+  Tone.getDestination().disconnect(dest);
+}
+
+// ════════════════════════════════════════════════════════════
+// TUTORIAL
+// ════════════════════════════════════════════════════════════
+function openTutorial() {
+  tutStep=0;renderTutStep();
+  document.getElementById('tutorial-modal').classList.add('open');
+}
+function closeTutorial() { document.getElementById('tutorial-modal').classList.remove('open'); }
+
+function renderTutStep() {
+  document.querySelectorAll('.tut-step').forEach((el,i)=>el.classList.toggle('active',i===tutStep));
+  const dots=document.getElementById('tut-dots');dots.innerHTML='';
+  document.querySelectorAll('.tut-step').forEach((_,i)=>{
+    const d=document.createElement('div');d.className='tut-dot';
+    if(i<tutStep)d.classList.add('done');
+    if(i===tutStep)d.classList.add('active');
+    dots.appendChild(d);
+  });
+  const total=document.querySelectorAll('.tut-step').length;
+  document.getElementById('tut-back').style.display=tutStep>0?'inline-flex':'none';
+  document.getElementById('tut-next').textContent=tutStep>=total-1?'🎉 Start Coding!':'Next →';
+}
+
+function tutNav(dir) {
+  const total=document.querySelectorAll('.tut-step').length;
+  tutStep+=dir;
+  if(tutStep>=total){closeTutorial();return;}
+  if(tutStep<0)tutStep=0;
+  renderTutStep();
+}
+
+// ════════════════════════════════════════════════════════════
+// KEYBOARD
+// ════════════════════════════════════════════════════════════
+document.addEventListener('keydown',e=>{
+  if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault();toggleRun();}
+  if(e.key==='Escape'){
+    if(running){stopFlag=true;}
+    closeTutorial();
+  }
+});
+
+// ════════════════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════════════════
+function init() {
+  buildViz();
+  renderPalette();
+  syncAll();
+  // Add a starter block
+  canvas=[makeBlock('play',{varId:'v1'}),makeBlock('play',{varId:'v2'})];
+  syncAll();
+  // Tutorial on first visit
+  if(!localStorage.getItem('mcl-visited')) {
+    localStorage.setItem('mcl-visited','1');
+    openTutorial();
+  }
+}
+
+init();
+</script>
+</body>
+</html>
