@@ -155,6 +155,7 @@ body {
   flex-direction: column;
   overflow: hidden;
 }
+#palette.hidden-in-challenge { display: none; }
 
 .palette-header {
   padding: 10px 12px 6px;
@@ -720,7 +721,7 @@ body {
 #challenge-overlay {
   position: absolute;
   top: 0;
-  left: 220px;
+  left: 0;
   right: 0;
   bottom: 0;
   background: var(--bg);
@@ -1127,6 +1128,406 @@ body {
 }
 #toast.show { opacity: 1; transform: translateX(0); }
 
+/* ── LOGIN SCREEN ── */
+#login-screen {
+  position: fixed;
+  inset: 0;
+  background: var(--header-bg);
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+#login-screen.hidden { display: none; }
+
+.login-card {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 24px;
+  padding: 40px 44px;
+  width: min(400px, 90vw);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+.login-logo {
+  font-size: 28px;
+  font-weight: 900;
+  color: white;
+  letter-spacing: -0.5px;
+}
+.login-logo span { color: #A8D4FF; }
+.login-tagline {
+  font-size: 13px;
+  color: rgba(255,255,255,0.5);
+  font-weight: 600;
+  text-align: center;
+  margin-top: -10px;
+}
+.login-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.5);
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  align-self: flex-start;
+  margin-bottom: -12px;
+}
+.login-input {
+  width: 100%;
+  padding: 13px 18px;
+  border-radius: 12px;
+  border: 1.5px solid rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.08);
+  color: white;
+  font-family: 'Nunito', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.login-input::placeholder { color: rgba(255,255,255,0.25); }
+.login-input:focus { border-color: #A8D4FF; background: rgba(255,255,255,0.12); }
+.login-btn {
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  border: none;
+  background: #A8D4FF;
+  color: #2D2250;
+  font-family: 'Nunito', sans-serif;
+  font-size: 15px;
+  font-weight: 900;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.2px;
+}
+.login-btn:hover { background: white; transform: translateY(-1px); }
+.login-btn:active { transform: none; }
+.login-divider {
+  width: 100%;
+  border: none;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+.login-returning {
+  font-size: 12px;
+  color: rgba(255,255,255,0.35);
+  font-weight: 600;
+  text-align: center;
+}
+.login-returning button {
+  background: none;
+  border: none;
+  color: rgba(168,212,255,0.7);
+  cursor: pointer;
+  font-family: 'Nunito', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: underline;
+}
+.login-returning button:hover { color: #A8D4FF; }
+
+/* ── HOME SCREEN ── */
+#home-screen {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  padding: 24px;
+}
+#home-screen.hidden { display: none; }
+
+.home-header {
+  text-align: center;
+}
+.home-greeting {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.3px;
+  margin-bottom: 4px;
+}
+.home-title {
+  font-size: 26px;
+  font-weight: 900;
+  color: var(--text);
+  letter-spacing: -0.5px;
+}
+.home-title span { color: var(--cat-music); }
+
+.home-modes {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.home-mode-card {
+  width: 220px;
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: 20px;
+  padding: 28px 24px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+}
+.home-mode-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+.home-mode-card.primary {
+  border-color: var(--cat-music);
+  background: #EEF4FF;
+}
+.home-mode-card.primary:hover { background: #E3EEFF; }
+
+.home-mode-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+}
+.home-mode-title {
+  font-size: 16px;
+  font-weight: 900;
+  color: var(--text);
+}
+.home-mode-desc {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 600;
+  line-height: 1.5;
+}
+.home-mode-badge {
+  font-size: 11px;
+  font-weight: 800;
+  padding: 3px 10px;
+  border-radius: 20px;
+  margin-top: 4px;
+}
+.home-progress {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+.home-footer {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+.home-footer button {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-family: 'Nunito', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: underline;
+}
+.home-footer button:hover { color: var(--text); }
+
+/* ── LEVEL SELECT SCREEN ── */
+#level-select {
+  position: absolute;
+  inset: 0;
+  background: var(--bg);
+  z-index: 6;
+  display: none;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: 24px;
+}
+#level-select.visible { display: flex; }
+
+.ls-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+.ls-title {
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.ls-sub {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.ls-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+  max-width: 900px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.ls-card {
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: 16px;
+  padding: 18px;
+  cursor: pointer;
+  transition: all 0.18s;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+  overflow: hidden;
+}
+.ls-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--cat-music);
+}
+.ls-card.locked {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.ls-card.locked:hover { transform: none; box-shadow: none; border-color: var(--border); }
+.ls-card.completed { border-color: #4CAF50; }
+
+.ls-card-icon {
+  font-size: 32px;
+  line-height: 1;
+}
+.ls-card-level {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-muted);
+}
+.ls-card-title {
+  font-size: 15px;
+  font-weight: 900;
+  color: var(--text);
+  line-height: 1.3;
+}
+.ls-card-desc {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 600;
+  line-height: 1.5;
+}
+.ls-card-tag {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 20px;
+  margin-top: 2px;
+  align-self: flex-start;
+}
+.ls-lock-icon {
+  position: absolute;
+  top: 10px; right: 12px;
+  font-size: 16px;
+  opacity: 0.4;
+}
+.ls-card-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+.ls-phases-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 6px;
+  align-items: center;
+}
+.ls-phase-chip {
+  font-size: 9px;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 10px;
+  background: var(--hover);
+  color: var(--text-muted);
+  letter-spacing: 0.3px;
+}
+.ls-done-chip {
+  font-size: 9px;
+  font-weight: 900;
+  background: #4CAF50;
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-left: auto;
+  letter-spacing: 0.3px;
+}
+/* Level shell "coming soon" preview */
+.lvsh-coming {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 24px 0 8px;
+}
+.lvsh-phases-preview {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.lvsh-phase-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.lvsh-phase-num {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: var(--border);
+  color: var(--text-muted);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 900;
+}
+.lvsh-phase-name {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-align: center;
+  max-width: 80px;
+}
+.lvsh-phase-arrow {
+  font-size: 18px;
+  color: var(--border);
+  margin-bottom: 20px;
+}
+.lvsh-badge {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+  background: var(--border);
+  padding: 7px 18px;
+  border-radius: 20px;
+  letter-spacing: 0.3px;
+}
+
 /* Drop zones */
 .drop-zone {
   min-height: 40px;
@@ -1138,6 +1539,600 @@ body {
   border-color: var(--cat-music);
   background: rgba(46,128,208,0.08);
 }
+
+/* ══════════════════════════════════════════════════════
+   LEVEL 1 LAYOUT
+══════════════════════════════════════════════════════ */
+.lv1-wrap {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+.lv1-topbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+.lv1-back {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 5px 12px;
+  cursor: pointer;
+  font-family: inherit;
+}
+.lv1-back:hover { background: var(--hover); color: var(--text); }
+.lv1-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.lv1-lvbadge {
+  font-size: 10px;
+  font-weight: 900;
+  padding: 3px 10px;
+  border-radius: 20px;
+  background: #E3EEFF;
+  color: #1860A0;
+}
+.lv1-title-text {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--text);
+}
+.lv1-phases {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-left: auto;
+}
+.lv1-phase {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  padding: 3px 10px;
+  border-radius: 20px;
+  border: 1.5px solid transparent;
+}
+.lv1-phase.active {
+  color: #1860A0;
+  background: #E3EEFF;
+  border-color: #1860A0;
+}
+.lv1-phase.done { color: #4CAF50; }
+.lv1-phase-sep { color: var(--text-muted); font-size: 12px; }
+
+.lv1-body { flex: 1; overflow: hidden; }
+.lv1-scroll {
+  height: 100%;
+  overflow-y: auto;
+  padding: 20px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-sizing: border-box;
+}
+
+/* Concept box */
+.lv1-concept {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-left: 4px solid #2E80D0;
+  border-radius: 12px;
+  padding: 14px 18px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text);
+}
+.lv1-concept p { margin: 0 0 8px; }
+.lv1-concept p:last-child { margin-bottom: 0; }
+.lv1-concept-label {
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: #2E80D0;
+  margin-bottom: 8px;
+}
+.lv1-activity-heading {
+  font-size: 14px;
+  font-weight: 900;
+  color: var(--text);
+  margin: 0;
+}
+.lv1-activity-sub {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  font-weight: 600;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Source cards (scrambled notes) */
+.lv1-source {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  min-height: 64px;
+  padding: 10px;
+  background: rgba(0,0,0,0.03);
+  border-radius: 10px;
+  border: 1.5px dashed var(--border);
+  align-items: center;
+}
+.lv1-source-empty {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 700;
+  font-style: italic;
+  padding: 4px 8px;
+}
+.lv1-note-card {
+  background: #2E80D0;
+  color: #fff;
+  border-radius: 10px;
+  padding: 10px 16px;
+  cursor: pointer;
+  text-align: center;
+  min-width: 62px;
+  transition: all 0.15s;
+  border: 2px solid transparent;
+  user-select: none;
+}
+.lv1-note-card.picked {
+  border-color: #fff;
+  box-shadow: 0 0 0 3px #2E80D0;
+  transform: scale(1.07);
+}
+.lv1-note-card.placed { background: #2EA870; }
+.lv1-note-card:hover { opacity: 0.85; }
+.lv1-note-name {
+  font-size: 15px;
+  font-weight: 900;
+  font-family: 'JetBrains Mono', monospace;
+}
+.lv1-note-label { font-size: 9px; font-weight: 700; opacity: 0.7; margin-top: 2px; }
+
+.lv1-target-row { display: flex; gap: 10px; }
+.lv1-target-slot {
+  flex: 1;
+  min-height: 72px;
+  border: 2px dashed var(--border);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s;
+  background: var(--surface);
+}
+.lv1-target-slot:hover { border-color: #2E80D0; background: rgba(46,128,208,0.05); }
+.lv1-slot-num { font-size: 11px; font-weight: 800; color: var(--text-muted); }
+
+/* Feedback */
+.lv1-feedback {
+  padding: 11px 15px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+.lv1-feedback.success { background: #E8F5E9; color: #2E7D32; border: 1px solid #A5D6A7; }
+.lv1-feedback.error   { background: #FFEBEE; color: #C62828; border: 1px solid #EF9A9A; }
+
+/* Actions row */
+.lv1-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.lv1-btn {
+  padding: 9px 20px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s;
+  font-family: inherit;
+}
+.lv1-btn.primary { background: #2E80D0; color: #fff; }
+.lv1-btn.primary:hover { background: #1860A0; }
+.lv1-btn.secondary { background: var(--surface); color: var(--text); border: 1.5px solid var(--border); }
+.lv1-btn.secondary:hover { background: var(--hover); }
+.lv1-btn.success { background: #4CAF50; color: #fff; }
+.lv1-btn.success:hover { background: #388E3C; }
+
+/* Block-code phase */
+.lv1-blocks-area {
+  display: grid;
+  grid-template-columns: 170px 1fr;
+  gap: 12px;
+  min-height: 180px;
+}
+.lv1-mini-palette {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.lv1-palette-label {
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--text-muted);
+  margin-bottom: 2px;
+}
+.lv1-palette-hint { font-size: 10px; color: var(--text-muted); font-weight: 600; text-align: center; margin-top: 4px; }
+.lv1-block-chip {
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: grab;
+  user-select: none;
+  color: #fff;
+  transition: opacity 0.12s;
+  background: var(--block-play);
+}
+.lv1-block-chip:hover { opacity: 0.82; }
+.lv1-dropzone {
+  background: var(--surface);
+  border: 2px dashed var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  min-height: 160px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: all 0.15s;
+}
+.lv1-dropzone.drag-over { border-color: #2E80D0; background: rgba(46,128,208,0.06); }
+.lv1-dz-placeholder {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-align: center;
+  padding: 24px 0;
+  font-style: italic;
+}
+.lv1-seq-block {
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--block-play);
+}
+.lv1-rm-btn { background: none; border: none; color: rgba(255,255,255,0.7); cursor: pointer; font-size: 12px; padding: 0 2px; }
+.lv1-rm-btn:hover { color: #fff; }
+
+/* Python phase */
+.lv1-code-panel {
+  background: #1E1E1E;
+  border-radius: 12px;
+  padding: 16px 20px;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 13px;
+  line-height: 1.8;
+}
+.lv1-code-line { display: block; }
+.py-comment { color: #6A9955; }
+.py-kw  { color: #C586C0; }
+.py-var { color: #9CDCFE; }
+.py-str { color: #CE9178; }
+.py-fn  { color: #DCDCAA; }
+.py-op  { color: #D4D4D4; }
+
+.lv1-compare-grid { display: flex; gap: 12px; align-items: flex-start; }
+.lv1-compare-card {
+  flex: 1;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+}
+.lv1-compare-title {
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+.lv1-block-preview { display: flex; flex-direction: column; gap: 5px; }
+.lv1-prev-block {
+  padding: 6px 10px;
+  border-radius: 7px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #fff;
+  background: var(--block-play);
+}
+.lv1-compare-arrow { font-size: 22px; color: var(--text-muted); flex-shrink: 0; margin-top: 40px; }
+.lv1-code-mini { background: #1E1E1E; border-radius: 8px; padding: 10px 12px; }
+.lv1-code-mini code {
+  color: #9CDCFE;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  line-height: 1.7;
+  white-space: pre;
+}
+
+/* Quiz */
+.lv1-quiz-options { display: flex; flex-direction: column; gap: 8px; }
+.lv1-quiz-opt {
+  text-align: left;
+  padding: 11px 16px;
+  border-radius: 10px;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: inherit;
+}
+.lv1-quiz-opt:hover:not([disabled]) { border-color: #2E80D0; background: rgba(46,128,208,0.06); }
+.lv1-quiz-opt.correct { background: #E8F5E9; border-color: #4CAF50; color: #2E7D32; }
+.lv1-quiz-opt.wrong   { background: #FFEBEE; border-color: #EF5350; color: #C62828; }
+
+/* Note card speaker + pitch bar */
+.lv1-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+}
+.lv1-play-btn {
+  background: rgba(255,255,255,0.22);
+  border: none;
+  border-radius: 6px;
+  color: #fff;
+  cursor: pointer;
+  font-size: 13px;
+  padding: 2px 6px;
+  line-height: 1;
+  flex-shrink: 0;
+  transition: background 0.12s;
+}
+.lv1-play-btn:hover { background: rgba(255,255,255,0.42); }
+.lv1-pitch-track {
+  height: 5px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 3px;
+  margin: 5px 0 3px;
+  overflow: hidden;
+}
+.lv1-pitch-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: rgba(255,255,255,0.75);
+  transition: width 0.2s;
+}
+
+/* Hint box */
+.lv1-hint-box {
+  background: #FFFBEA;
+  border: 1.5px solid #F5C842;
+  border-radius: 10px;
+  padding: 11px 16px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #7A5800;
+  line-height: 1.5;
+  display: none;
+}
+.lv1-hint-box.visible { display: block; }
+.lv1-hint-pitch-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 14px;
+  margin-top: 10px;
+}
+.lv1-hint-note {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.lv1-hint-bar {
+  width: 28px;
+  background: #F5C842;
+  border-radius: 3px 3px 0 0;
+}
+.lv1-hint-label {
+  font-size: 11px;
+  font-weight: 800;
+  color: #7A5800;
+  font-family: 'JetBrains Mono', monospace;
+}
+.lv1-success-concept {
+  background: #E8F5E9;
+  border: 1.5px solid #A5D6A7;
+  border-left: 4px solid #4CAF50;
+  border-radius: 12px;
+  padding: 14px 18px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #1B5E20;
+  display: none;
+}
+.lv1-success-concept.visible { display: block; }
+.lv1-success-concept-label {
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: #388E3C;
+  margin-bottom: 8px;
+}
+
+/* Phase 3 split layout */
+.lv1-p3-split {
+  display: flex;
+  height: 100%;
+  overflow: hidden;
+}
+.lv1-p3-sidebar {
+  width: 210px;
+  min-width: 140px;
+  max-width: 420px;
+  flex-shrink: 0;
+  padding: 14px 14px;
+  overflow-y: auto;
+  background: var(--surface);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.lv1-p3-resizer {
+  width: 5px;
+  flex-shrink: 0;
+  cursor: col-resize;
+  background: var(--border);
+  transition: background 0.15s;
+  position: relative;
+}
+.lv1-p3-resizer:hover,
+.lv1-p3-resizer.dragging {
+  background: #2E80D0;
+}
+.lv1-p3-resizer::after {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0;
+  left: -4px; right: -4px;
+}
+.lv1-p3-sidebar-label {
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-muted);
+}
+.lv1-p3-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-width: 0;
+}
+.lv1-p3-nav-bar {
+  padding: 10px 18px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  flex-shrink: 0;
+}
+.lv1-p3-right-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Phase 3 mini-stepper */
+.lv1-p3-nav {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.lv1-p3-dot {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 900;
+  background: var(--border); color: var(--text-muted);
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+.lv1-p3-dot.active { background: #2E80D0; color: #fff; }
+.lv1-p3-dot.done   { background: #4CAF50; color: #fff; }
+.lv1-p3-nav-label  { font-size: 11px; font-weight: 700; color: var(--text-muted); }
+.lv1-p3-nav-label.active { color: var(--text); }
+.lv1-p3-nav-sep    { font-size: 11px; color: var(--text-muted); }
+
+/* Read-step: clickable code lines */
+.lv1-read-block {
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.lv1-read-line-btn {
+  width: 100%; text-align: left;
+  background: #1E1E1E; border: none; cursor: pointer;
+  padding: 10px 14px; font-family: 'JetBrains Mono', monospace;
+  font-size: 12.5px; color: #9CDCFE;
+  display: flex; align-items: center; gap: 8px;
+  transition: background 0.12s;
+}
+.lv1-read-line-btn:hover { background: #252525; }
+.lv1-read-line-btn.opened { background: #1a2a3a; }
+.lv1-read-expand-icon { font-size: 11px; color: rgba(255,255,255,0.35); flex-shrink: 0; transition: transform 0.15s; }
+.lv1-read-line-btn.opened .lv1-read-expand-icon { transform: rotate(90deg); color: #7EB8F7; }
+.lv1-read-explanation {
+  display: none; padding: 10px 14px 12px;
+  background: rgba(46,128,208,0.06);
+  border-top: 1px solid var(--border);
+  font-size: 12.5px; color: var(--text);
+  font-family: 'Nunito', sans-serif; line-height: 1.55;
+}
+.lv1-read-explanation.open { display: block; }
+
+/* Fill-in-blank inputs */
+.lv1-code-blank {
+  background: rgba(255,255,255,0.1);
+  border: 1.5px dashed rgba(255,255,255,0.45);
+  border-radius: 4px;
+  color: #CE9178;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  padding: 1px 6px;
+  width: 62px;
+  outline: none;
+  vertical-align: middle;
+}
+.lv1-code-blank:focus { border-color: #CE9178; background: rgba(206,145,120,0.12); }
+.lv1-code-blank.ok   { border-color: #4CAF50; color: #4CAF50; }
+.lv1-code-blank.bad  { border-color: #EF5350; color: #EF5350; }
+
+/* Write-your-own note input */
+.lv1-note-input {
+  background: rgba(255,255,255,0.1);
+  border: 1.5px dashed rgba(255,255,255,0.45);
+  border-radius: 4px;
+  color: #CE9178;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  padding: 1px 8px;
+  width: 48px;
+  outline: none;
+  vertical-align: middle;
+  text-align: center;
+}
+.lv1-note-input:focus { border-color: #A8D4FF; }
+
+/* Confetti */
+@keyframes confettiFall {
+  0%   { transform: translateY(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+}
 </style>
 </head>
 <body>
@@ -1146,17 +2141,19 @@ body {
 <div id="header">
   <div id="logo"><span class="logo-icon">🎵</span>Musi<span class="logo-accent">Code</span> Lab</div>
   <div class="mode-tabs">
-    <button class="mode-tab active" data-mode="free" onclick="setMode('free')">🆓 Free Code</button>
-    <button class="mode-tab" data-mode="read" onclick="setMode('read')">📖 Read Code</button>
-    <button class="mode-tab" data-mode="listen" onclick="setMode('listen')">🎧 Listen &amp; Code</button>
+    <button class="mode-tab" data-mode="challenge" onclick="setMode('challenge')">🏆 Challenge</button>
+    <button class="mode-tab active" data-mode="free" onclick="setMode('free')">🆓 Free Create</button>
   </div>
   <div class="header-right">
+    <div id="user-chip" style="display:none;align-items:center;gap:5px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);border-radius:20px;color:rgba(255,255,255,0.9);font-size:12px;font-weight:700;padding:3px 10px;cursor:pointer;" onclick="showHomeFromApp()">
+      <span id="user-name-display"></span>
+    </div>
     <select class="inst-select" id="inst-select" onchange="setInstrument(this.value)">
-      <option value="piano">🎹 Piano</option>
-      <option value="marimba">🪘 Marimba</option>
-      <option value="synth">🎛 Synth</option>
+      <option value="piano">Piano</option>
+      <option value="marimba">Marimba</option>
+      <option value="synth">Synth</option>
     </select>
-    <div class="score-badge">⭐ <span id="score-display">0</span> pts</div>
+    <div class="score-badge"><span id="score-display">0</span> pts</div>
   </div>
 </div>
 
@@ -1202,6 +2199,15 @@ body {
     <div id="code-preview"></div>
   </div>
 
+  <!-- LEVEL SELECT SCREEN -->
+  <div id="level-select">
+    <div class="ls-header">
+      <div class="ls-title">🏆 Choose Your Challenge</div>
+      <div class="ls-sub">7 levels · sequencing, variables, loops, binary, debugging, searching &amp; more</div>
+    </div>
+    <div class="ls-grid" id="ls-grid"></div>
+  </div>
+
   <!-- CHALLENGE OVERLAY -->
   <div id="challenge-overlay">
     <div class="challenge-inner" id="challenge-inner"></div>
@@ -1231,6 +2237,47 @@ body {
 
 <!-- TOAST -->
 <div id="toast"></div>
+
+<!-- LOGIN SCREEN -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">Musi<span>Code</span> Lab</div>
+    <div class="login-tagline">Learn coding through music</div>
+    <hr class="login-divider">
+    <div class="login-label">Your name</div>
+    <input class="login-input" id="login-name" placeholder="e.g. Alex" maxlength="20" autocomplete="off">
+    <button class="login-btn" onclick="doLogin()">Start</button>
+    <div class="login-returning">
+      Returning? <button onclick="doGuestLogin()">Continue as guest</button>
+    </div>
+  </div>
+</div>
+
+<!-- HOME SCREEN -->
+<div id="home-screen" class="hidden">
+  <div class="home-header">
+    <div class="home-greeting" id="home-greeting">Welcome back</div>
+    <div class="home-title">What do you want to<br><span>create today?</span></div>
+  </div>
+  <div class="home-modes">
+    <div class="home-mode-card primary" onclick="enterMode('challenge')">
+      <div class="home-mode-icon" style="background:#E3EEFF">&#9654;</div>
+      <div class="home-mode-title">Challenge Mode</div>
+      <div class="home-mode-desc">Complete levels, learn coding concepts through music step by step.</div>
+      <div class="home-mode-badge" style="background:#E3EEFF;color:#1860A0" id="home-progress-badge">0 / 6 levels done</div>
+    </div>
+    <div class="home-mode-card" onclick="enterMode('free')">
+      <div class="home-mode-icon" style="background:#F0EDF8">&#9835;</div>
+      <div class="home-mode-title">Free Create</div>
+      <div class="home-mode-desc">Open sandbox — build any music program you like with all blocks.</div>
+      <div class="home-mode-badge" style="background:#F0EDF8;color:#7A6E9E">No limits</div>
+    </div>
+  </div>
+  <div class="home-footer">
+    Logged in as <strong id="home-username"></strong> &nbsp;·&nbsp;
+    <button onclick="doLogout()">Switch user</button>
+  </div>
+</div>
 
 <!-- TUTORIAL MODAL -->
 <div class="modal-bg" id="tutorial-modal">
@@ -2140,20 +3187,1115 @@ function setMode(m) {
   mode=m;
   document.querySelectorAll('.mode-tab').forEach(t=>t.classList.toggle('active',t.dataset.mode===m));
   const overlay=document.getElementById('challenge-overlay');
+  const levelSelect=document.getElementById('level-select');
   if(m==='free') {
     overlay.classList.remove('visible');
+    levelSelect.classList.remove('visible');
+    document.getElementById('palette').classList.remove('hidden-in-challenge');
     activeContainer=null;
     syncAll();
-  } else if(m==='read') {
-    overlay.classList.add('visible');
-    activeContainer=null;
-    renderReadChallenge();
-  } else if(m==='listen') {
-    overlay.classList.add('visible');
-    activeContainer=null;
-    canvas=[];
-    renderListenChallenge();
+  } else if(m==='challenge') {
+    overlay.classList.remove('visible');
+    levelSelect.classList.add('visible');
+    renderLevelSelect();
   }
+}
+
+// ════════════════════════════════════════════════════════════
+// LEVEL SELECT
+// ════════════════════════════════════════════════════════════
+const LEVELS = [
+  {
+    id: 1,
+    icon: '🎼',
+    title: 'Algorithms & Sequencing',
+    desc: 'Sort musical notes into the right order, then code it with blocks and Python.',
+    tag: 'CT: Sequencing',
+    tagColor: '#1860A0', tagBg: '#E3F0FF',
+    color: '#2E80D0',
+    phases: ['Intro Activity','Block Code','Python'],
+  },
+  {
+    id: 2,
+    icon: '📦',
+    title: 'Variables & Music Phrases',
+    desc: 'Store a melody in a variable, give it a name, and play it back.',
+    tag: 'Coding: Variables',
+    tagColor: '#186858', tagBg: '#E3FBF5',
+    color: '#20A880',
+    phases: ['What is a variable?','Name your melody','Play it in Python'],
+  },
+  {
+    id: 3,
+    icon: '🔁',
+    title: 'Loops & Repetition',
+    desc: 'Music loves repetition. Use a loop to play a phrase multiple times.',
+    tag: 'Coding: Loops',
+    tagColor: '#885800', tagBg: '#FFF8E1',
+    color: '#D4A020',
+    phases: ['Patterns in music','Build a loop','Loop in Python'],
+  },
+  {
+    id: 4,
+    icon: '01',
+    title: 'Binary Music',
+    desc: 'Clap = 1, Rest = 0. Decode a binary rhythm and encode your own!',
+    tag: 'CT: Binary',
+    tagColor: '#186840', tagBg: '#E3FFE8',
+    color: '#2EA870',
+    phases: ['What is binary?','Decode the beat','Encode your own'],
+  },
+  {
+    id: 5,
+    icon: '🐛',
+    title: 'Debug the Music',
+    desc: 'Something sounds wrong. Read the code, find the bug, and fix it.',
+    tag: 'CT: Debugging',
+    tagColor: '#882000', tagBg: '#FFE8E3',
+    color: '#D04040',
+    phases: ['Reading code','Spot the bug','Fix & test'],
+  },
+  {
+    id: 6,
+    icon: '🔍',
+    title: 'Search & Sort',
+    desc: 'Find the highest note in a melody, then sort a scrambled sequence.',
+    tag: 'CT: Algorithms',
+    tagColor: '#885020', tagBg: '#FFF3E0',
+    color: '#E07830',
+    phases: ['Linear search','Bubble sort','Efficiency'],
+  },
+  {
+    id: 7,
+    icon: '🎹',
+    title: 'Create Your Song',
+    desc: 'Use everything you\'ve learned — variables, loops, and more — to compose your own piece.',
+    tag: 'Create',
+    tagColor: '#681888', tagBg: '#F5E8FF',
+    color: '#9030D0',
+    phases: ['Plan your song','Build & refine','Share'],
+  },
+];
+
+let completedLevels = JSON.parse(localStorage.getItem('mcl-completed') || '[]');
+
+function renderLevelSelect() {
+  const grid = document.getElementById('ls-grid');
+  grid.innerHTML = '';
+  LEVELS.forEach((lv, i) => {
+    const card = document.createElement('div');
+    const isCompleted = completedLevels.includes(lv.id);
+    const isLocked = i > 0 && !completedLevels.includes(LEVELS[i-1].id);
+    card.className = 'ls-card' + (isLocked ? ' locked' : '') + (isCompleted ? ' completed' : '');
+    card.style.setProperty('--lv-color', lv.color);
+
+    const phaseDots = (lv.phases || []).map(ph =>
+      `<span class="ls-phase-chip">${ph}</span>`
+    ).join('');
+
+    card.innerHTML = `
+      <div class="ls-card-top-row">
+        <span class="ls-card-level">Level ${lv.id}</span>
+        <span class="ls-card-tag" style="background:${lv.tagBg};color:${lv.tagColor}">${lv.tag}</span>
+      </div>
+      <div class="ls-card-title">${lv.title}</div>
+      <div class="ls-card-desc">${lv.desc}</div>
+      <div class="ls-phases-row">
+        ${phaseDots}
+        ${isCompleted ? '<span class="ls-done-chip">Done</span>' : ''}
+      </div>
+      ${isLocked ? '<div class="ls-lock-icon">&#128274;</div>' : ''}
+    `;
+    if (!isLocked) card.onclick = () => startLevel(lv.id);
+    grid.appendChild(card);
+  });
+}
+
+function startLevel(levelId) {
+  document.getElementById('level-select').classList.remove('visible');
+  document.getElementById('challenge-overlay').classList.add('visible');
+  document.getElementById('palette').classList.add('hidden-in-challenge');
+  activeContainer = null;
+  canvas = [];
+  const fn = [null, renderLevel1, renderLevel2, renderLevel3,
+               renderLevel4, renderLevel5, renderLevel6, renderLevel7][levelId];
+  if (fn) fn();
+}
+
+function completeLevel(levelId) {
+  if (!completedLevels.includes(levelId)) {
+    completedLevels.push(levelId);
+    localStorage.setItem('mcl-completed', JSON.stringify(completedLevels));
+  }
+  score += 20;
+  document.getElementById('score-display').textContent = score;
+  fireConfetti(80);
+}
+
+function backToLevels() {
+  document.getElementById('challenge-overlay').classList.remove('visible');
+  document.getElementById('level-select').classList.add('visible');
+  document.getElementById('palette').classList.remove('hidden-in-challenge');
+  renderLevelSelect();
+  canvas = [];
+  activeContainer = null;
+}
+
+// ─── Shared level shell builder ───────────────────────────
+function buildLevelShell(levelId, bodyHTML) {
+  const lv = LEVELS[levelId - 1];
+  const inner = document.getElementById('challenge-inner');
+  const phasePills = (lv.phases || []).map((ph, i) =>
+    `<div class="lv1-phase" id="lvsh-ph-${levelId}-${i}">${i+1} — ${ph}</div>` +
+    (i < lv.phases.length - 1 ? '<div class="lv1-phase-sep">›</div>' : '')
+  ).join('');
+
+  inner.innerHTML = `
+    <div class="lv1-wrap">
+      <div class="lv1-topbar">
+        <button class="lv1-back" onclick="backToLevels()">← Levels</button>
+        <div class="lv1-breadcrumb">
+          <span class="lv1-lvbadge" style="background:${lv.tagBg};color:${lv.tagColor}">Level ${lv.id}</span>
+          <span class="lv1-title-text">${lv.title}</span>
+        </div>
+        <div class="lv1-phases">${phasePills}</div>
+      </div>
+      <div class="lv1-body" id="lvsh-body-${levelId}">${bodyHTML}</div>
+    </div>
+  `;
+}
+
+function setShellPhase(levelId, activeIdx) {
+  const lv = LEVELS[levelId - 1];
+  (lv.phases || []).forEach((_, i) => {
+    const el = document.getElementById(`lvsh-ph-${levelId}-${i}`);
+    if (!el) return;
+    el.className = 'lv1-phase' + (i === activeIdx ? ' active' : (i < activeIdx ? ' done' : ''));
+  });
+}
+
+// ─── Levels 2–7 shells (content coming soon) ─────────────
+
+function renderLevel2() {
+  buildLevelShell(2, `
+    <div class="lv1-scroll">
+      <div class="lv1-concept">
+        <div class="lv1-concept-label">Coming up in Level 2</div>
+        <p>You'll learn what a <strong>variable</strong> is — a named container for storing data. In music, a variable holds a melody phrase. You'll name your own melody, edit its notes, and play it back.</p>
+      </div>
+      <div class="lvsh-coming">
+        <div class="lvsh-phases-preview">
+          ${LEVELS[1].phases.map((ph, i) =>
+            `<div class="lvsh-phase-item">
+              <div class="lvsh-phase-num">${i+1}</div>
+              <div class="lvsh-phase-name">${ph}</div>
+            </div>`
+          ).join('<div class="lvsh-phase-arrow">→</div>')}
+        </div>
+        <div class="lvsh-badge">🚧 In Development</div>
+      </div>
+      <div class="lv1-actions">
+        <button class="lv1-btn secondary" onclick="backToLevels()">← Back to Levels</button>
+      </div>
+    </div>
+  `);
+}
+
+function renderLevel3() {
+  buildLevelShell(3, `
+    <div class="lv1-scroll">
+      <div class="lv1-concept">
+        <div class="lv1-concept-label">Coming up in Level 3</div>
+        <p>Music is full of repetition — choruses, beats, riffs. You'll use a <strong>loop</strong> (repeat block) to play a phrase multiple times, write it in Python, and understand why loops make code shorter and smarter.</p>
+      </div>
+      <div class="lvsh-coming">
+        <div class="lvsh-phases-preview">
+          ${LEVELS[2].phases.map((ph, i) =>
+            `<div class="lvsh-phase-item">
+              <div class="lvsh-phase-num">${i+1}</div>
+              <div class="lvsh-phase-name">${ph}</div>
+            </div>`
+          ).join('<div class="lvsh-phase-arrow">→</div>')}
+        </div>
+        <div class="lvsh-badge">🚧 In Development</div>
+      </div>
+      <div class="lv1-actions">
+        <button class="lv1-btn secondary" onclick="backToLevels()">← Back to Levels</button>
+      </div>
+    </div>
+  `);
+}
+
+function renderLevel4() {
+  buildLevelShell(4, `
+    <div class="lv1-scroll">
+      <div class="lv1-concept">
+        <div class="lv1-concept-label">Coming up in Level 4</div>
+        <p>Computers store everything as 0s and 1s. In this level you'll decode a binary rhythm — <strong>1 = clap, 0 = rest</strong> — and encode your own beat in binary. You'll see how binary connects to music timing and data.</p>
+      </div>
+      <div class="lvsh-coming">
+        <div class="lvsh-phases-preview">
+          ${LEVELS[3].phases.map((ph, i) =>
+            `<div class="lvsh-phase-item">
+              <div class="lvsh-phase-num">${i+1}</div>
+              <div class="lvsh-phase-name">${ph}</div>
+            </div>`
+          ).join('<div class="lvsh-phase-arrow">→</div>')}
+        </div>
+        <div class="lvsh-badge">🚧 In Development</div>
+      </div>
+      <div class="lv1-actions">
+        <button class="lv1-btn secondary" onclick="backToLevels()">← Back to Levels</button>
+      </div>
+    </div>
+  `);
+}
+
+function renderLevel5() {
+  buildLevelShell(5, `
+    <div class="lv1-scroll">
+      <div class="lv1-concept">
+        <div class="lv1-concept-label">Coming up in Level 5</div>
+        <p>Good coders read code carefully and <strong>debug</strong> — find and fix errors. You'll listen to a melody that sounds wrong, read the block code, spot the bug, fix it, and test again. Just like a real programmer.</p>
+      </div>
+      <div class="lvsh-coming">
+        <div class="lvsh-phases-preview">
+          ${LEVELS[4].phases.map((ph, i) =>
+            `<div class="lvsh-phase-item">
+              <div class="lvsh-phase-num">${i+1}</div>
+              <div class="lvsh-phase-name">${ph}</div>
+            </div>`
+          ).join('<div class="lvsh-phase-arrow">→</div>')}
+        </div>
+        <div class="lvsh-badge">🚧 In Development</div>
+      </div>
+      <div class="lv1-actions">
+        <button class="lv1-btn secondary" onclick="backToLevels()">← Back to Levels</button>
+      </div>
+    </div>
+  `);
+}
+
+function renderLevel6() {
+  buildLevelShell(6, `
+    <div class="lv1-scroll">
+      <div class="lv1-concept">
+        <div class="lv1-concept-label">Coming up in Level 6</div>
+        <p>How do computers find the highest note in a list? How do they sort a scrambled melody? You'll implement <strong>linear search</strong> and understand how sorting algorithms work — step by step, like a computer.</p>
+      </div>
+      <div class="lvsh-coming">
+        <div class="lvsh-phases-preview">
+          ${LEVELS[5].phases.map((ph, i) =>
+            `<div class="lvsh-phase-item">
+              <div class="lvsh-phase-num">${i+1}</div>
+              <div class="lvsh-phase-name">${ph}</div>
+            </div>`
+          ).join('<div class="lvsh-phase-arrow">→</div>')}
+        </div>
+        <div class="lvsh-badge">🚧 In Development</div>
+      </div>
+      <div class="lv1-actions">
+        <button class="lv1-btn secondary" onclick="backToLevels()">← Back to Levels</button>
+      </div>
+    </div>
+  `);
+}
+
+function renderLevel7() {
+  buildLevelShell(7, `
+    <div class="lv1-scroll">
+      <div class="lv1-concept">
+        <div class="lv1-concept-label">Level 7 — The Final Stage</div>
+        <p>You've learned sequencing, variables, loops, binary, debugging, and searching. Now it's time to <strong>compose your own song</strong> using everything — plan it, build it with blocks and Python, and share it!</p>
+      </div>
+      <div class="lvsh-coming">
+        <div class="lvsh-phases-preview">
+          ${LEVELS[6].phases.map((ph, i) =>
+            `<div class="lvsh-phase-item">
+              <div class="lvsh-phase-num">${i+1}</div>
+              <div class="lvsh-phase-name">${ph}</div>
+            </div>`
+          ).join('<div class="lvsh-phase-arrow">→</div>')}
+        </div>
+        <div class="lvsh-badge">🚧 In Development</div>
+      </div>
+      <div class="lv1-actions">
+        <button class="lv1-btn secondary" onclick="backToLevels()">← Back to Levels</button>
+      </div>
+    </div>
+  `);
+}
+
+// ════════════════════════════════════════════════════════════
+// LEVEL 1 — ALGORITHMS & SEQUENCING
+// ════════════════════════════════════════════════════════════
+let lv1Phase = 1;
+const LV1_CORRECT_ORDER = ['C4','E4','G4','A4'];
+let lv1ScrambleSrc = [];
+let lv1Target = [null, null, null, null];
+let lv1PickedIdx = null;
+let lv1BlockSeq = [];
+let lv1DraggedNote = null;
+
+function renderLevel1() {
+  const inner = document.getElementById('challenge-inner');
+  inner.innerHTML = `
+    <div class="lv1-wrap">
+      <div class="lv1-topbar">
+        <button class="lv1-back" onclick="backToLevels()">← Levels</button>
+        <div class="lv1-breadcrumb">
+          <span class="lv1-lvbadge">Level 1</span>
+          <span class="lv1-title-text">Algorithms &amp; Sequencing</span>
+        </div>
+        <div class="lv1-phases">
+          <div class="lv1-phase active" id="lv1-ph1">1 — Intro</div>
+          <div class="lv1-phase-sep">›</div>
+          <div class="lv1-phase" id="lv1-ph2">2 — Blocks</div>
+          <div class="lv1-phase-sep">›</div>
+          <div class="lv1-phase" id="lv1-ph3">3 — Python</div>
+        </div>
+      </div>
+      <div class="lv1-body" id="lv1-body"></div>
+    </div>
+  `;
+  lv1Phase = 1;
+  lv1ShowPhase(1);
+}
+
+function lv1SetPhaseBar(p) {
+  for (let i = 1; i <= 3; i++) {
+    const el = document.getElementById('lv1-ph' + i);
+    if (!el) continue;
+    el.className = 'lv1-phase' + (i === p ? ' active' : (i < p ? ' done' : ''));
+  }
+}
+
+function lv1ShowPhase(p) {
+  lv1Phase = p;
+  lv1SetPhaseBar(p);
+  const body = document.getElementById('lv1-body');
+  if (!body) return;
+  if (p === 1) lv1RenderPhase1(body);
+  else if (p === 2) lv1RenderPhase2(body);
+  else if (p === 3) lv1RenderPhase3(body);
+}
+
+// Pitch bar widths (%) — proportional to real frequency (C4=low, A4=high)
+const LV1_PITCH_PCT = { 'C4': 20, 'E4': 48, 'G4': 76, 'A4': 100 };
+
+/* ── Phase 1: Intro — Sort the Scale ─────────────────── */
+function lv1RenderPhase1(body) {
+  lv1ScrambleSrc = [
+    {note:'G4', placed:false},
+    {note:'C4', placed:false},
+    {note:'A4', placed:false},
+    {note:'E4', placed:false}
+  ];
+  lv1Target = [null, null, null, null];
+  lv1PickedIdx = null;
+
+  body.innerHTML = `
+    <div class="lv1-scroll">
+      <div class="lv1-activity-heading">Sort the Notes — Lowest to Highest</div>
+      <p class="lv1-activity-sub">
+        Four notes are scrambled below. Click <strong>🔊</strong> on each card to hear how it sounds,
+        then pick a card and place it in the right slot — <strong>lowest pitch first</strong>.
+      </p>
+
+      <div class="lv1-source" id="lv1-source"></div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+        <div style="font-size:11px;font-weight:700;color:var(--text-muted)">
+          lowest pitch → → → highest pitch
+        </div>
+        <button class="lv1-btn secondary" style="font-size:11px;padding:5px 12px" onclick="lv1ToggleHint()">Need a hint?</button>
+      </div>
+
+      <div class="lv1-hint-box" id="lv1-hint">
+        <strong>Hint:</strong> A higher bar means a higher pitch. Lower sounds come first!
+        <div class="lv1-hint-pitch-row">
+          <div class="lv1-hint-note">
+            <div class="lv1-hint-bar" style="height:18px"></div>
+            <div class="lv1-hint-label">C4</div>
+          </div>
+          <div class="lv1-hint-note">
+            <div class="lv1-hint-bar" style="height:28px"></div>
+            <div class="lv1-hint-label">E4</div>
+          </div>
+          <div class="lv1-hint-note">
+            <div class="lv1-hint-bar" style="height:40px"></div>
+            <div class="lv1-hint-label">G4</div>
+          </div>
+          <div class="lv1-hint-note">
+            <div class="lv1-hint-bar" style="height:52px"></div>
+            <div class="lv1-hint-label">A4</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="lv1-target-row">
+        <div class="lv1-target-slot" id="lv1-slot-0" onclick="lv1ClickSlot(0)"><span class="lv1-slot-num">1st</span></div>
+        <div class="lv1-target-slot" id="lv1-slot-1" onclick="lv1ClickSlot(1)"><span class="lv1-slot-num">2nd</span></div>
+        <div class="lv1-target-slot" id="lv1-slot-2" onclick="lv1ClickSlot(2)"><span class="lv1-slot-num">3rd</span></div>
+        <div class="lv1-target-slot" id="lv1-slot-3" onclick="lv1ClickSlot(3)"><span class="lv1-slot-num">4th</span></div>
+      </div>
+
+      <div class="lv1-actions">
+        <button class="lv1-btn secondary" id="lv1-p1-check" onclick="lv1CheckPhase1()" style="display:none">Check my order</button>
+        <button class="lv1-btn primary" id="lv1-p1-next" onclick="lv1ShowPhase(2)" style="display:none">Next: Block Code →</button>
+      </div>
+      <div id="lv1-p1-feedback" class="lv1-feedback" style="display:none"></div>
+
+      <!-- Revealed AFTER success -->
+      <div class="lv1-success-concept" id="lv1-algo-reveal">
+        <div class="lv1-success-concept-label">What you just did = an Algorithm!</div>
+        <p>An <strong>algorithm</strong> is a precise, step-by-step set of instructions. By putting the notes in order, you told the computer <em>exactly</em> what to play first, second, third...</p>
+        <p>That ordered sequence <strong>is</strong> the algorithm. Now let's write it as code!</p>
+      </div>
+    </div>
+  `;
+  lv1RenderSource();
+  lv1RenderSlots();
+}
+
+function lv1ToggleHint() {
+  const h = document.getElementById('lv1-hint');
+  if (h) h.classList.toggle('visible');
+}
+
+// Build one note card (shared by source + placed slots)
+function lv1BuildNoteCard(note, options) {
+  // options: { picked, placed, onclick, onunplace }
+  const pct = LV1_PITCH_PCT[note] || 50;
+  const card = document.createElement('div');
+  card.className = 'lv1-note-card' +
+    (options.picked ? ' picked' : '') +
+    (options.placed ? ' placed' : '');
+
+  card.innerHTML =
+    '<div class="lv1-card-top">' +
+      '<div class="lv1-note-name">' + note + '</div>' +
+      '<button class="lv1-play-btn" title="Hear this note">🔊</button>' +
+    '</div>' +
+    '<div class="lv1-pitch-track"><div class="lv1-pitch-fill" style="width:' + pct + '%"></div></div>' +
+    '<div class="lv1-note-label">' +
+      (options.picked ? 'selected — now click a slot' :
+       options.placed ? 'tap to remove' : 'tap to pick') +
+    '</div>';
+
+  // Speaker: play note, don't bubble to pick
+  card.querySelector('.lv1-play-btn').addEventListener('click', function(e) {
+    e.stopPropagation();
+    lv1PlaySingleNote(note);
+  });
+
+  // Main card click
+  if (options.onclick) card.addEventListener('click', options.onclick);
+
+  return card;
+}
+
+function lv1RenderSource() {
+  const src = document.getElementById('lv1-source');
+  if (!src) return;
+  src.innerHTML = '';
+  const unplaced = lv1ScrambleSrc.filter(x => !x.placed);
+  if (unplaced.length === 0) {
+    src.innerHTML = '<div class="lv1-source-empty">All notes placed!</div>';
+    return;
+  }
+  lv1ScrambleSrc.forEach((item, idx) => {
+    if (item.placed) return;
+    const card = lv1BuildNoteCard(item.note, {
+      picked: lv1PickedIdx === idx,
+      placed: false,
+      onclick: () => lv1PickCard(idx)
+    });
+    src.appendChild(card);
+  });
+}
+
+function lv1RenderSlots() {
+  lv1Target.forEach((val, i) => {
+    const slot = document.getElementById('lv1-slot-' + i);
+    if (!slot) return;
+    slot.innerHTML = '';
+    if (val) {
+      const card = lv1BuildNoteCard(val, {
+        placed: true,
+        onclick: () => lv1UnplaceSlot(i)
+      });
+      slot.appendChild(card);
+    } else {
+      slot.innerHTML = '<span class="lv1-slot-num">' + ['1st','2nd','3rd','4th'][i] + '</span>';
+    }
+  });
+  const allFilled = lv1Target.every(x => x !== null);
+  const checkBtn = document.getElementById('lv1-p1-check');
+  if (checkBtn) checkBtn.style.display = allFilled ? 'inline-flex' : 'none';
+}
+
+async function lv1PlaySingleNote(note) {
+  await initTone();
+  await playNote(note, 1);
+}
+
+function lv1PickCard(idx) {
+  lv1PickedIdx = (lv1PickedIdx === idx) ? null : idx;
+  lv1RenderSource();
+}
+
+function lv1ClickSlot(slotIdx) {
+  if (lv1PickedIdx === null) return;
+  if (lv1Target[slotIdx] !== null) return; // slot occupied
+  lv1Target[slotIdx] = lv1ScrambleSrc[lv1PickedIdx].note;
+  lv1ScrambleSrc[lv1PickedIdx].placed = true;
+  lv1PickedIdx = null;
+  lv1RenderSource();
+  lv1RenderSlots();
+}
+
+function lv1UnplaceSlot(slotIdx) {
+  const note = lv1Target[slotIdx];
+  if (!note) return;
+  const item = lv1ScrambleSrc.find(x => x.note === note && x.placed);
+  if (item) item.placed = false;
+  lv1Target[slotIdx] = null;
+  lv1PickedIdx = null;
+  lv1RenderSource();
+  lv1RenderSlots();
+}
+
+async function lv1CheckPhase1() {
+  const correct = LV1_CORRECT_ORDER;
+  const isCorrect = lv1Target.every((n, i) => n === correct[i]);
+  const fb = document.getElementById('lv1-p1-feedback');
+  if (!fb) return;
+  fb.style.display = 'block';
+  if (isCorrect) {
+    fb.className = 'lv1-feedback success';
+    fb.textContent = 'Correct! Listen to your scale play...';
+    await initTone();
+    for (const n of correct) { await playNote(n, 1); }
+    fb.textContent = 'C4 → E4 → G4 → A4 — from lowest to highest. Great ear!';
+    document.getElementById('lv1-p1-check').style.display = 'none';
+    document.getElementById('lv1-p1-next').style.display = 'inline-flex';
+    // Reveal the "what is an algorithm" concept AFTER they succeed
+    const reveal = document.getElementById('lv1-algo-reveal');
+    if (reveal) reveal.classList.add('visible');
+  } else {
+    fb.className = 'lv1-feedback error';
+    fb.innerHTML = 'Not quite! Click <strong>🔊</strong> on each card to hear the notes — lower sounds come first. Try the hint button if you need help!';
+  }
+}
+
+/* ── Phase 2: Block Code ──────────────────────────────── */
+function lv1RenderPhase2(body) {
+  lv1BlockSeq = [];
+  lv1DraggedNote = null;
+
+  body.innerHTML = `
+    <div class="lv1-scroll">
+      <div class="lv1-concept">
+        <div class="lv1-concept-label">From Algorithm to Block Code</div>
+        <p>You just wrote the algorithm in plain language. Now let's tell the computer using <strong>blocks</strong> — each block is one instruction.</p>
+        <p>Goal: build the sequence <strong>C4 → E4 → G4 → A4</strong> by dragging (or tapping) blocks into the canvas below.</p>
+      </div>
+
+      <div class="lv1-activity-heading">Build the sequence</div>
+
+      <div class="lv1-blocks-area">
+        <div class="lv1-mini-palette">
+          <div class="lv1-palette-label">Blocks</div>
+          ${['C4','E4','G4','A4'].map(n =>
+            `<div style="display:flex;align-items:center;gap:4px">
+               <div class="lv1-block-chip" style="flex:1" draggable="true"
+                 ondragstart="lv1DragStart(event,'${n}')"
+                 onclick="lv1TapAdd('${n}')">play note ${n}</div>
+               <button class="lv1-play-btn" style="background:rgba(46,128,208,0.18);color:var(--text)"
+                 onclick="lv1PlaySingleNote('${n}')">🔊</button>
+             </div>`
+          ).join('')}
+          <div class="lv1-palette-hint">drag or tap to add</div>
+        </div>
+        <div class="lv1-dropzone" id="lv1-dropzone"
+             ondragover="event.preventDefault();this.classList.add('drag-over')"
+             ondragleave="this.classList.remove('drag-over')"
+             ondrop="lv1DropNote(event)">
+          <div class="lv1-dz-placeholder" id="lv1-dz-ph">Drop blocks here...</div>
+        </div>
+      </div>
+
+      <div class="lv1-actions">
+        <button class="lv1-btn secondary" onclick="lv1ClearBlocks()">Clear</button>
+        <button class="lv1-btn secondary" onclick="lv1PlayBlocks()">Play</button>
+        <button class="lv1-btn secondary" onclick="lv1CheckPhase2()">Check</button>
+        <button class="lv1-btn primary" id="lv1-p2-next" onclick="lv1ShowPhase(3)" style="display:none">Next: Python →</button>
+      </div>
+      <div id="lv1-p2-feedback" class="lv1-feedback" style="display:none"></div>
+    </div>
+  `;
+}
+
+function lv1DragStart(event, note) {
+  lv1DraggedNote = note;
+  event.dataTransfer.setData('text/plain', note);
+}
+
+function lv1DropNote(event) {
+  event.preventDefault();
+  document.getElementById('lv1-dropzone').classList.remove('drag-over');
+  const note = lv1DraggedNote || event.dataTransfer.getData('text/plain');
+  if (note) lv1AddBlock(note);
+  lv1DraggedNote = null;
+}
+
+function lv1TapAdd(note) { lv1AddBlock(note); }
+
+function lv1AddBlock(note) {
+  lv1BlockSeq.push(note);
+  lv1RenderBlocks();
+}
+
+function lv1RemoveBlock(idx) {
+  lv1BlockSeq.splice(idx, 1);
+  lv1RenderBlocks();
+}
+
+function lv1ClearBlocks() {
+  lv1BlockSeq = [];
+  lv1RenderBlocks();
+}
+
+function lv1RenderBlocks() {
+  const dz = document.getElementById('lv1-dropzone');
+  const ph = document.getElementById('lv1-dz-ph');
+  if (!dz) return;
+  dz.querySelectorAll('.lv1-seq-block').forEach(e => e.remove());
+  if (ph) ph.style.display = lv1BlockSeq.length ? 'none' : 'block';
+  lv1BlockSeq.forEach((note, idx) => {
+    const el = document.createElement('div');
+    el.className = 'lv1-seq-block';
+    el.innerHTML = 'play note <strong style="margin-left:4px">' + note + '</strong>' +
+      '<button class="lv1-rm-btn" onclick="lv1RemoveBlock(' + idx + ')">✕</button>';
+    dz.appendChild(el);
+  });
+}
+
+async function lv1PlayBlocks() {
+  if (!lv1BlockSeq.length) return;
+  await initTone();
+  for (const n of lv1BlockSeq) { await playNote(n, 1); }
+}
+
+function lv1CheckPhase2() {
+  const correct = LV1_CORRECT_ORDER;
+  const fb = document.getElementById('lv1-p2-feedback');
+  if (!fb) return;
+  fb.style.display = 'block';
+  const hasAll = correct.every(n => lv1BlockSeq.includes(n));
+  if (!hasAll) {
+    fb.className = 'lv1-feedback error';
+    fb.textContent = 'Make sure you include all four notes: C4, E4, G4, and A4.';
+    return;
+  }
+  // Check order
+  let lastIdx = -1, inOrder = true;
+  for (const n of correct) {
+    const idx = lv1BlockSeq.indexOf(n, lastIdx + 1);
+    if (idx <= lastIdx) { inOrder = false; break; }
+    lastIdx = idx;
+  }
+  if (inOrder) {
+    fb.className = 'lv1-feedback success';
+    fb.textContent = 'Nice! Your blocks play C4 → E4 → G4 → A4 in order. That\'s an algorithm expressed as code!';
+    document.getElementById('lv1-p2-next').style.display = 'inline-flex';
+  } else {
+    fb.className = 'lv1-feedback error';
+    fb.textContent = 'All four notes are there, but the order isn\'t right. They should go C4 → E4 → G4 → A4.';
+  }
+}
+
+/* ── Phase 3: Python — 4 steps ───────────────────────── */
+let lv1P3Step = 0; // 0=read 1=quiz1 2=quiz2 3=quiz3 4=fillin 5=write
+
+const LV1_QUIZZES = [
+  {
+    q: 'What is <code>scale</code> in <code>scale = ["C4","E4","G4","A4"]</code>?',
+    opts: [
+      { t: 'A variable that stores a list of 4 notes', ok: true },
+      { t: 'A function that plays the notes automatically', ok: false },
+      { t: 'A loop that repeats 4 times', ok: false },
+      { t: 'The name of the song being played', ok: false }
+    ],
+    exp: '<strong>Correct!</strong> <code>scale</code> is a <em>variable</em> — a named container. Here it holds a <em>list</em> of strings, each being a note name.'
+  },
+  {
+    q: 'If <code>scale</code> has 4 notes, how many times does <code>play(note)</code> run?',
+    opts: [
+      { t: '1 time — the loop runs once', ok: false },
+      { t: '2 times — half of 4', ok: false },
+      { t: '4 times — once per note in the list', ok: true },
+      { t: '8 times — each note plays twice', ok: false }
+    ],
+    exp: '<strong>Right!</strong> The <code>for</code> loop runs <em>once per item</em>. 4 notes in <code>scale</code> → <code>play(note)</code> runs 4 times.'
+  },
+  {
+    q: 'We change the code to <code>scale = ["C4", "E4"]</code>. How many notes play now?',
+    opts: [
+      { t: '4 — the loop always runs 4 times', ok: false },
+      { t: '2 — one for each item in the new list', ok: true },
+      { t: '0 — the list is too short to work', ok: false },
+      { t: 'It depends on how fast the tempo is', ok: false }
+    ],
+    exp: '<strong>Exactly!</strong> The loop adapts to the list size. Fewer items = fewer runs. This is what makes algorithms <em>flexible</em>!'
+  }
+];
+
+function lv1RenderPhase3(body) {
+  lv1P3Step = 0;
+  body.innerHTML = `
+    <div class="lv1-p3-split">
+
+      <!-- Left sidebar: always-visible reference -->
+      <div class="lv1-p3-sidebar">
+        <div class="lv1-p3-sidebar-label">Reference</div>
+
+        <div>
+          <div class="lv1-compare-title">Your block code</div>
+          <div class="lv1-block-preview" style="margin-top:7px">
+            ${LV1_CORRECT_ORDER.map(n =>
+              '<div class="lv1-prev-block" style="font-size:11px;padding:5px 9px">play note ' + n + '</div>'
+            ).join('')}
+          </div>
+        </div>
+
+        <div>
+          <div class="lv1-compare-title" style="margin-bottom:7px">Python equivalent</div>
+          <div class="lv1-code-panel" style="font-size:11.5px;padding:11px 13px;line-height:1.85">
+            <span class="lv1-code-line"><span class="py-var">scale</span><span class="py-op"> = </span>[<span class="py-str">"C4"</span><span class="py-op">, </span><span class="py-str">"E4"</span><span class="py-op">,</span></span>
+            <span class="lv1-code-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="py-str">"G4"</span><span class="py-op">, </span><span class="py-str">"A4"</span>]</span>
+            <span class="lv1-code-line">&nbsp;</span>
+            <span class="lv1-code-line"><span class="py-kw">for</span> <span class="py-var">note</span> <span class="py-kw">in</span> <span class="py-var">scale</span><span class="py-op">:</span></span>
+            <span class="lv1-code-line">&nbsp;&nbsp;&nbsp;&nbsp;<span class="py-fn">play</span><span class="py-op">(</span><span class="py-var">note</span><span class="py-op">)</span></span>
+          </div>
+        </div>
+
+        <div style="font-size:11px;color:var(--text-muted);font-weight:600;line-height:1.5;padding-top:4px">
+          The name <code style="font-size:11px">scale</code> is just one option — variable names are up to you!
+        </div>
+      </div>
+
+      <!-- Resize handle -->
+      <div class="lv1-p3-resizer" id="lv1-p3-resizer"></div>
+
+      <!-- Right panel: stepper + activities -->
+      <div class="lv1-p3-right">
+        <div class="lv1-p3-nav-bar">
+          <div class="lv1-p3-nav" id="lv1-p3-nav"></div>
+        </div>
+        <div class="lv1-p3-right-scroll">
+          <div id="lv1-p3-main"></div>
+        </div>
+      </div>
+
+    </div>
+  `;
+  lv1P3Goto(0);
+
+  // Draggable sidebar resizer
+  const resizer = document.getElementById('lv1-p3-resizer');
+  const sidebar = resizer && resizer.previousElementSibling;
+  if (resizer && sidebar) {
+    let startX, startW;
+    resizer.addEventListener('mousedown', e => {
+      startX = e.clientX;
+      startW = sidebar.getBoundingClientRect().width;
+      resizer.classList.add('dragging');
+      document.body.style.cursor = 'col-resize';
+      document.body.style.userSelect = 'none';
+      const onMove = ev => {
+        const newW = Math.min(420, Math.max(140, startW + (ev.clientX - startX)));
+        sidebar.style.width = newW + 'px';
+      };
+      const onUp = () => {
+        resizer.classList.remove('dragging');
+        document.body.style.cursor = '';
+        document.body.style.userSelect = '';
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onUp);
+      };
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('mouseup', onUp);
+    });
+  }
+}
+
+function lv1P3UpdateNav(step) {
+  const labels = ['Read','Quiz 1','Quiz 2','Quiz 3','Fill in','Write!'];
+  const nav = document.getElementById('lv1-p3-nav');
+  if (!nav) return;
+  nav.innerHTML = '';
+  labels.forEach((label, i) => {
+    const dot = document.createElement('div');
+    dot.className = 'lv1-p3-dot' + (i === step ? ' active' : (i < step ? ' done' : ''));
+    dot.textContent = i < step ? '✓' : (i + 1);
+    nav.appendChild(dot);
+    const lbl = document.createElement('div');
+    lbl.className = 'lv1-p3-nav-label' + (i === step ? ' active' : '');
+    lbl.textContent = label;
+    nav.appendChild(lbl);
+    if (i < labels.length - 1) {
+      const sep = document.createElement('div');
+      sep.className = 'lv1-p3-nav-sep';
+      sep.textContent = '›';
+      nav.appendChild(sep);
+    }
+  });
+}
+
+function lv1P3Goto(step) {
+  lv1P3Step = step;
+  lv1P3UpdateNav(step);
+  const main = document.getElementById('lv1-p3-main');
+  if (!main) return;
+  if (step === 0) lv1P3Read(main);
+  else if (step >= 1 && step <= 3) lv1P3Quiz(main, step - 1);
+  else if (step === 4) lv1P3FillIn(main);
+  else if (step === 5) lv1P3WriteOwn(main);
+}
+
+/* Step 0 — Read the code */
+const LV1_CODE_LINES = [
+  {
+    code: '<span class="py-var">scale</span> <span class="py-op">=</span> [<span class="py-str">"C4"</span><span class="py-op">,</span> <span class="py-str">"E4"</span><span class="py-op">,</span> <span class="py-str">"G4"</span><span class="py-op">,</span> <span class="py-str">"A4"</span>]',
+    explain: '<strong>scale</strong> is a <em>variable</em> — a named box that stores data. The square brackets <code>[ ]</code> mean it\'s a <em>list</em>. This list holds 4 note names as text strings.<br><br><strong>Note on naming:</strong> the name <code>scale</code> is just what the programmer chose. You could call it <code>melody</code>, <code>my_notes</code>, or anything else — as long as you use the same name consistently throughout your code.'
+  },
+  {
+    code: '<span class="py-kw">for</span> <span class="py-var">note</span> <span class="py-kw">in</span> <span class="py-var">scale</span><span class="py-op">:</span>',
+    explain: 'This is a <strong>for loop</strong>. It goes through every item in <code>scale</code> one by one. Each time, it puts the current item into a temporary variable called <code>note</code>.'
+  },
+  {
+    code: '&nbsp;&nbsp;&nbsp;&nbsp;<span class="py-fn">play</span><span class="py-op">(</span><span class="py-var">note</span><span class="py-op">)</span>',
+    explain: 'This line is <em>indented</em> (shifted right) — that tells Python it\'s <em>inside</em> the loop. It plays whatever note is currently in <code>note</code>. This runs once for each item in <code>scale</code>.'
+  }
+];
+
+let lv1ReadOpened = [false, false, false];
+
+function lv1P3Read(main) {
+  lv1ReadOpened = [false, false, false];
+  main.innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:12px;padding-top:4px">
+      <div class="lv1-concept">
+        <div class="lv1-concept-label">From Blocks to Python</div>
+        <p>Your block code and Python express the <em>same algorithm</em>. Click each line below to understand what it means.</p>
+      </div>
+      <div class="lv1-read-block" id="lv1-read-0">
+        <button class="lv1-read-line-btn" onclick="lv1ReadToggle(0)">
+          <span class="lv1-read-expand-icon">▶</span>
+          <span class="lv1-read-code">${LV1_CODE_LINES[0].code}</span>
+        </button>
+        <div class="lv1-read-explanation" id="lv1-re-0">${LV1_CODE_LINES[0].explain}</div>
+      </div>
+      <div class="lv1-read-block" id="lv1-read-1">
+        <button class="lv1-read-line-btn" onclick="lv1ReadToggle(1)">
+          <span class="lv1-read-expand-icon">▶</span>
+          <span class="lv1-read-code">${LV1_CODE_LINES[1].code}</span>
+        </button>
+        <div class="lv1-read-explanation" id="lv1-re-1">${LV1_CODE_LINES[1].explain}</div>
+      </div>
+      <div class="lv1-read-block" id="lv1-read-2">
+        <button class="lv1-read-line-btn" onclick="lv1ReadToggle(2)">
+          <span class="lv1-read-expand-icon">▶</span>
+          <span class="lv1-read-code">${LV1_CODE_LINES[2].code}</span>
+        </button>
+        <div class="lv1-read-explanation" id="lv1-re-2">${LV1_CODE_LINES[2].explain}</div>
+      </div>
+      <div class="lv1-actions">
+        <button class="lv1-btn primary" id="lv1-read-next" onclick="lv1P3Goto(1)" style="display:none">Next: Quiz →</button>
+      </div>
+    </div>
+  `;
+}
+
+function lv1ReadToggle(idx) {
+  lv1ReadOpened[idx] = !lv1ReadOpened[idx];
+  const btn = document.querySelector('#lv1-read-' + idx + ' .lv1-read-line-btn');
+  const exp = document.getElementById('lv1-re-' + idx);
+  if (btn) btn.classList.toggle('opened', lv1ReadOpened[idx]);
+  if (exp) exp.classList.toggle('open', lv1ReadOpened[idx]);
+  // show next button once all 3 opened
+  if (lv1ReadOpened.every(x => x)) {
+    const nb = document.getElementById('lv1-read-next');
+    if (nb) nb.style.display = 'inline-flex';
+  }
+}
+
+/* Steps 1-3 — Quizzes */
+function lv1P3Quiz(main, qIdx) {
+  const q = LV1_QUIZZES[qIdx];
+  main.innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:12px;padding-top:4px">
+      <p class="lv1-activity-sub" style="font-size:13px;color:var(--text)">Question ${qIdx+1} of 3</p>
+      <div class="lv1-activity-heading" style="font-size:14px">${q.q}</div>
+      <div class="lv1-quiz-options" id="lv1-qz-opts">
+        ${q.opts.map((o, i) =>
+          `<button class="lv1-quiz-opt" onclick="lv1P3Answer(this,${o.ok},${qIdx})">${o.t}</button>`
+        ).join('')}
+      </div>
+      <div id="lv1-qz-fb" class="lv1-feedback" style="display:none"></div>
+      <div class="lv1-actions">
+        <button class="lv1-btn primary" id="lv1-qz-next" onclick="lv1P3Goto(${lv1P3Step + 1})" style="display:none">
+          ${qIdx < 2 ? 'Next question →' : 'Next: Fill in the blanks →'}
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+function lv1P3Answer(btn, correct, qIdx) {
+  document.querySelectorAll('#lv1-qz-opts .lv1-quiz-opt').forEach(b => {
+    b.disabled = true; b.style.opacity = '0.55';
+  });
+  btn.style.opacity = '1';
+  btn.classList.add(correct ? 'correct' : 'wrong');
+  // Also highlight the correct answer if they got it wrong
+  if (!correct) {
+    document.querySelectorAll('#lv1-qz-opts .lv1-quiz-opt').forEach(b => {
+      if (b.onclick && b.textContent === LV1_QUIZZES[qIdx].opts.find(o => o.ok).t) {
+        b.classList.add('correct'); b.style.opacity = '1';
+      }
+    });
+  }
+  const fb = document.getElementById('lv1-qz-fb');
+  if (fb) {
+    fb.style.display = 'block';
+    fb.className = 'lv1-feedback ' + (correct ? 'success' : 'error');
+    fb.innerHTML = correct ? LV1_QUIZZES[qIdx].exp :
+      'Not quite! ' + LV1_QUIZZES[qIdx].exp;
+  }
+  const nb = document.getElementById('lv1-qz-next');
+  if (nb) nb.style.display = 'inline-flex';
+}
+
+/* Step 4 — Fill in the blanks */
+function lv1P3FillIn(main) {
+  main.innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:12px;padding-top:4px">
+      <div class="lv1-activity-heading">Fill in the Blanks</div>
+      <p class="lv1-activity-sub">
+        Look at the Python code in the <strong>left panel</strong> — what variable name was used there?
+        Type it into both blanks below.
+      </p>
+      <div class="lv1-code-panel" style="line-height:2">
+        <span class="lv1-code-line">
+          <input class="lv1-code-blank" id="lv1-blank1" placeholder="your_name" autocomplete="off" spellcheck="false" style="width:90px">
+          <span class="py-op"> = </span>[<span class="py-str">"C4"</span><span class="py-op">, </span><span class="py-str">"E4"</span><span class="py-op">, </span><span class="py-str">"G4"</span><span class="py-op">, </span><span class="py-str">"A4"</span>]
+        </span>
+        <span class="lv1-code-line">
+          <span class="py-kw">for</span> <span class="py-var">note</span> <span class="py-kw">in</span>
+          <input class="lv1-code-blank" id="lv1-blank2" placeholder="your_name" autocomplete="off" spellcheck="false" style="width:90px"><span class="py-op">:</span>
+        </span>
+        <span class="lv1-code-line">
+          &nbsp;&nbsp;&nbsp;&nbsp;<span class="py-fn">play</span><span class="py-op">(</span><span class="py-var">note</span><span class="py-op">)</span>
+        </span>
+      </div>
+      <div class="lv1-actions">
+        <button class="lv1-btn secondary" onclick="lv1P3CheckFill()">Check</button>
+        <button class="lv1-btn primary" id="lv1-fill-next" onclick="lv1P3Goto(5)" style="display:none">Next: Write your own →</button>
+      </div>
+      <div id="lv1-fill-fb" class="lv1-feedback" style="display:none"></div>
+    </div>
+  `;
+}
+
+function lv1P3CheckFill() {
+  const b1 = document.getElementById('lv1-blank1').value.trim();
+  const b2 = document.getElementById('lv1-blank2').value.trim();
+  const fb = document.getElementById('lv1-fill-fb');
+  const el1 = document.getElementById('lv1-blank1');
+  const el2 = document.getElementById('lv1-blank2');
+  fb.style.display = 'block';
+  const ok1 = b1 === 'scale', ok2 = b2 === 'scale';
+  el1.className = 'lv1-code-blank ' + (ok1 ? 'ok' : 'bad');
+  el2.className = 'lv1-code-blank ' + (ok2 ? 'ok' : 'bad');
+  if (ok1 && ok2) {
+    fb.className = 'lv1-feedback success';
+    fb.innerHTML = 'Correct! The variable in the reference code is called <code>scale</code>. Remember — that name was the programmer\'s choice. In your own programs you could name it anything valid.';
+    document.getElementById('lv1-fill-next').style.display = 'inline-flex';
+  } else {
+    fb.className = 'lv1-feedback error';
+    fb.textContent = 'Check the Python code in the left panel — what is the list variable called?';
+  }
+}
+
+/* Step 5 — Write your own */
+const LV1_VALID_NOTES = ['C3','D3','E3','F3','G3','A3','B3',
+  'C4','D4','E4','F4','G4','A4','B4',
+  'C5','D5','E5','F5','G5','A5','B5'];
+
+function lv1P3WriteOwn(main) {
+  main.innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:12px;padding-top:4px">
+      <div class="lv1-activity-heading">Write Your Own</div>
+      <p class="lv1-activity-sub">Change the last note in the scale to anything you like! Type a note (e.g. <code>B4</code>, <code>D5</code>, <code>F4</code>) into the blank, then hit Play to hear it.</p>
+
+      <div class="lv1-code-panel" style="line-height:2">
+        <span class="lv1-code-line">
+          <span class="py-var">scale</span><span class="py-op"> = </span>[<span class="py-str">"C4"</span><span class="py-op">, </span><span class="py-str">"E4"</span><span class="py-op">, </span><span class="py-str">"G4"</span><span class="py-op">, </span><span class="py-str">"</span><input class="lv1-note-input" id="lv1-own-note" value="A4" maxlength="3" autocomplete="off" spellcheck="false" oninput="lv1OwnPreview()"><span class="py-str">"</span>]
+        </span>
+        <span class="lv1-code-line">
+          <span class="py-kw">for</span> <span class="py-var">note</span> <span class="py-kw">in</span> <span class="py-var">scale</span><span class="py-op">:</span>
+        </span>
+        <span class="lv1-code-line">
+          &nbsp;&nbsp;&nbsp;&nbsp;<span class="py-fn">play</span><span class="py-op">(</span><span class="py-var">note</span><span class="py-op">)</span>
+        </span>
+      </div>
+
+      <div id="lv1-own-invalid" class="lv1-feedback error" style="display:none">
+        That doesn't look like a valid note. Try something like <code>B4</code>, <code>D5</code>, or <code>F4</code>.
+      </div>
+
+      <p style="font-size:11.5px;color:var(--text-muted);font-weight:600">
+        Available notes: C3–B5 &nbsp;·&nbsp; e.g. C4, D4, E4, F4, G4, A4, B4, C5 ...
+      </p>
+
+      <div class="lv1-actions">
+        <button class="lv1-btn secondary" onclick="lv1OwnPlay()">Play my scale</button>
+        <button class="lv1-btn success" onclick="lv1Complete()">Complete Level 1!</button>
+      </div>
+    </div>
+  `;
+}
+
+function lv1OwnPreview() {
+  const inp = document.getElementById('lv1-own-note');
+  const warn = document.getElementById('lv1-own-invalid');
+  if (!inp || !warn) return;
+  const v = inp.value.trim().toUpperCase().replace(/[^A-G#B0-9]/g,'');
+  inp.value = v;
+  const valid = LV1_VALID_NOTES.includes(v) || v === '';
+  warn.style.display = (!valid && v.length >= 2) ? 'block' : 'none';
+}
+
+async function lv1OwnPlay() {
+  const inp = document.getElementById('lv1-own-note');
+  const warn = document.getElementById('lv1-own-invalid');
+  const raw = (inp ? inp.value.trim().toUpperCase() : 'A4');
+  const fourth = LV1_VALID_NOTES.includes(raw) ? raw : 'A4';
+  if (inp && !LV1_VALID_NOTES.includes(raw)) {
+    if (warn) warn.style.display = 'block';
+    return;
+  }
+  if (warn) warn.style.display = 'none';
+  await initTone();
+  for (const n of ['C4','E4','G4', fourth]) { await playNote(n, 1); }
+}
+
+function lv1Complete() {
+  completeLevel(1);
+  backToLevels();
 }
 
 // ════════════════════════════════════════════════════════════
@@ -2531,20 +4673,113 @@ document.addEventListener('keydown',e=>{
 });
 
 // ════════════════════════════════════════════════════════════
+// LOGIN / HOME SCREEN
+// ════════════════════════════════════════════════════════════
+let studentName = '';
+
+function doLogin() {
+  try {
+    const input = document.getElementById('login-name');
+    const name = input.value.trim();
+    if (!name) { input.focus(); input.style.borderColor='#FF8888'; return; }
+    input.style.borderColor='';
+    localStorage.setItem('mcl-name', name);
+    showHomeScreen(name);
+  } catch(err) {
+    alert('Login error: ' + err.message);
+  }
+}
+
+function doGuestLogin() {
+  try {
+    const saved = localStorage.getItem('mcl-name') || 'Guest';
+    showHomeScreen(saved);
+  } catch(err) {
+    alert('Guest login error: ' + err.message);
+  }
+}
+
+function doLogout() {
+  localStorage.removeItem('mcl-name');
+  document.getElementById('home-screen').classList.add('hidden');
+  document.getElementById('login-screen').classList.remove('hidden');
+  document.getElementById('login-name').value = '';
+}
+
+function showHomeScreen(name) {
+  try {
+    studentName = name;
+    document.getElementById('login-screen').classList.add('hidden');
+    document.getElementById('home-screen').classList.remove('hidden');
+    document.getElementById('home-greeting').textContent = 'Hello, ' + name + '!';
+    document.getElementById('home-username').textContent = name;
+    const done = JSON.parse(localStorage.getItem('mcl-completed') || '[]').length;
+    document.getElementById('home-progress-badge').textContent = done + ' / 7 levels done';
+    document.getElementById('user-name-display').textContent = name;
+    document.getElementById('user-chip').style.display = 'inline-flex';
+  } catch(err) {
+    alert('showHomeScreen error: ' + err.message + '\nStack: ' + err.stack);
+  }
+}
+
+function enterMode(m) {
+  document.getElementById('home-screen').classList.add('hidden');
+  setMode(m);
+}
+
+function showHomeFromApp() {
+  // hide any active mode overlays
+  document.getElementById('challenge-overlay').classList.remove('visible');
+  document.getElementById('level-select').classList.remove('visible');
+  // show home screen
+  const done = JSON.parse(localStorage.getItem('mcl-completed') || '[]').length;
+  document.getElementById('home-progress-badge').textContent = done + ' / 7 levels done';
+  document.getElementById('home-screen').classList.remove('hidden');
+}
+
+function fireConfetti(count) {
+  const colors = ['#2E80D0','#4CAF50','#E07830','#7050D0','#D04040','#FFD700','#FF69B4'];
+  for (let i = 0; i < (count || 60); i++) {
+    const dot = document.createElement('div');
+    const size = 6 + Math.random() * 6;
+    dot.style.cssText = [
+      'position:fixed',
+      'left:' + (10 + Math.random() * 80) + 'vw',
+      'top:-12px',
+      'width:' + size + 'px',
+      'height:' + size + 'px',
+      'background:' + colors[Math.floor(Math.random() * colors.length)],
+      'border-radius:' + (Math.random() > 0.5 ? '50%' : '2px'),
+      'pointer-events:none',
+      'z-index:9999',
+      'animation:confettiFall ' + (1.4 + Math.random() * 1.4) + 's ease-in forwards',
+      'animation-delay:' + (Math.random() * 0.6) + 's'
+    ].join(';');
+    document.body.appendChild(dot);
+    setTimeout(() => dot.remove(), 3200);
+  }
+}
+
+// ════════════════════════════════════════════════════════════
 // INIT
 // ════════════════════════════════════════════════════════════
 function init() {
   buildViz();
   renderPalette();
+  canvas = [makeBlock('play',{varId:'v1'}), makeBlock('play',{varId:'v2'})];
   syncAll();
-  // Add a starter block
-  canvas=[makeBlock('play',{varId:'v1'}),makeBlock('play',{varId:'v2'})];
-  syncAll();
-  // Tutorial on first visit
-  if(!localStorage.getItem('mcl-visited')) {
-    localStorage.setItem('mcl-visited','1');
-    openTutorial();
+
+  // Enter key on login
+  document.getElementById('login-name').addEventListener('keydown', e => {
+    if (e.key === 'Enter') doLogin();
+  });
+
+  // Auto-login if name saved
+  const saved = localStorage.getItem('mcl-name');
+  if (saved) {
+    showHomeScreen(saved);
   }
+  // else: login screen shows by default
 }
 
 init();
