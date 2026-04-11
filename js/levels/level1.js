@@ -5,9 +5,10 @@ let lv1Phase = 1;
 const LV1_CORRECT_ORDER = ['C4','E4','G4','A4'];
 let lv1ScrambleSrc = [];
 let lv1Target = [null, null, null, null];
-let lv1PickedIdx = null;
+let lv1PickedIdx = null; // kept for compat, unused in drag mode
 let lv1BlockSeq = [];
 let lv1DraggedNote = null;
+let lv1DragInfo = null; // { from: 'source'|'slot', idx, slotIdx, note }
 
 function renderLevel1() {
   const inner = document.getElementById('challenge-inner');
@@ -106,10 +107,10 @@ function lv1RenderPhase1(body) {
       </div>
 
       <div class="lv1-target-row">
-        <div class="lv1-target-slot" id="lv1-slot-0" onclick="lv1ClickSlot(0)"><span class="lv1-slot-num">1st</span></div>
-        <div class="lv1-target-slot" id="lv1-slot-1" onclick="lv1ClickSlot(1)"><span class="lv1-slot-num">2nd</span></div>
-        <div class="lv1-target-slot" id="lv1-slot-2" onclick="lv1ClickSlot(2)"><span class="lv1-slot-num">3rd</span></div>
-        <div class="lv1-target-slot" id="lv1-slot-3" onclick="lv1ClickSlot(3)"><span class="lv1-slot-num">4th</span></div>
+        <div class="lv1-target-slot" id="lv1-slot-0"><span class="lv1-slot-num">1st</span></div>
+        <div class="lv1-target-slot" id="lv1-slot-1"><span class="lv1-slot-num">2nd</span></div>
+        <div class="lv1-target-slot" id="lv1-slot-2"><span class="lv1-slot-num">3rd</span></div>
+        <div class="lv1-target-slot" id="lv1-slot-3"><span class="lv1-slot-num">4th</span></div>
       </div>
 
       <div class="lv1-actions">
@@ -137,12 +138,11 @@ function lv1ToggleHint() {
 
 // Build one note card (shared by source + placed slots)
 function lv1BuildNoteCard(note, options) {
-  // options: { picked, placed, onclick, onunplace }
+  // options: { placed, dragInfo, onremove }
   const pct = LV1_PITCH_PCT[note] || 50;
   const card = document.createElement('div');
-  card.className = 'lv1-note-card' +
-    (options.picked ? ' picked' : '') +
-    (options.placed ? ' placed' : '');
+  card.className = 'lv1-note-card' + (options.placed ? ' placed' : '');
+  card.draggable = true;
 
   card.innerHTML =
     '<div class="lv1-card-top">' +
@@ -150,19 +150,29 @@ function lv1BuildNoteCard(note, options) {
       '<button class="lv1-play-btn" title="Hear this note">🔊</button>' +
     '</div>' +
     '<div class="lv1-pitch-track"><div class="lv1-pitch-fill" style="width:' + pct + '%"></div></div>' +
-    '<div class="lv1-note-label">' +
-      (options.picked ? 'selected — now click a slot' :
-       options.placed ? 'tap to remove' : 'tap to pick') +
-    '</div>';
+    '<div class="lv1-note-label">' + (options.placed ? 'drag to move' : 'drag to place') + '</div>';
 
-  // Speaker: play note, don't bubble to pick
   card.querySelector('.lv1-play-btn').addEventListener('click', function(e) {
     e.stopPropagation();
     lv1PlaySingleNote(note);
   });
 
-  // Main card click
-  if (options.onclick) card.addEventListener('click', options.onclick);
+  card.addEventListener('dragstart', function(e) {
+    lv1DragInfo = options.dragInfo;
+    card.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+  });
+  card.addEventListener('dragend', function() {
+    card.classList.remove('dragging');
+  });
+
+  // Click placed card to return it to source
+  if (options.onremove) {
+    card.addEventListener('click', function(e) {
+      if (e.target.closest('.lv1-play-btn')) return;
+      options.onremove();
+    });
+  }
 
   return card;
 }
@@ -174,17 +184,28 @@ function lv1RenderSource() {
   const unplaced = lv1ScrambleSrc.filter(x => !x.placed);
   if (unplaced.length === 0) {
     src.innerHTML = '<div class="lv1-source-empty">All notes placed!</div>';
-    return;
-  }
-  lv1ScrambleSrc.forEach((item, idx) => {
-    if (item.placed) return;
-    const card = lv1BuildNoteCard(item.note, {
-      picked: lv1PickedIdx === idx,
-      placed: false,
-      onclick: () => lv1PickCard(idx)
+  } else {
+    lv1ScrambleSrc.forEach((item, idx) => {
+      if (item.placed) return;
+      const card = lv1BuildNoteCard(item.note, {
+        placed: false,
+        dragInfo: { from: 'source', idx }
+      });
+      src.appendChild(card);
     });
-    src.appendChild(card);
-  });
+  }
+  // Source area accepts drops (drag from slot back)
+  src.ondragover = e => { e.preventDefault(); src.classList.add('drag-over'); };
+  src.ondragleave = () => src.classList.remove('drag-over');
+  src.ondrop = e => {
+    e.preventDefault();
+    src.classList.remove('drag-over');
+    if (!lv1DragInfo) return;
+    if (lv1DragInfo.from === 'slot') {
+      lv1UnplaceSlot(lv1DragInfo.slotIdx);
+    }
+    lv1DragInfo = null;
+  };
 }
 
 function lv1RenderSlots() {
@@ -192,15 +213,50 @@ function lv1RenderSlots() {
     const slot = document.getElementById('lv1-slot-' + i);
     if (!slot) return;
     slot.innerHTML = '';
+    // Remove old click handler
+    slot.onclick = null;
     if (val) {
       const card = lv1BuildNoteCard(val, {
         placed: true,
-        onclick: () => lv1UnplaceSlot(i)
+        dragInfo: { from: 'slot', slotIdx: i, note: val },
+        onremove: () => lv1UnplaceSlot(i)
       });
       slot.appendChild(card);
     } else {
       slot.innerHTML = '<span class="lv1-slot-num">' + ['1st','2nd','3rd','4th'][i] + '</span>';
     }
+    // Slot drag-over / drag-leave
+    slot.ondragover = e => { e.preventDefault(); slot.classList.add('drag-over'); };
+    slot.ondragleave = () => slot.classList.remove('drag-over');
+  });
+  // Set drop handlers with correct closure over slot index
+  [0,1,2,3].forEach(i => {
+    const slot = document.getElementById('lv1-slot-' + i);
+    if (!slot) return;
+    slot.ondrop = function(e) {
+      e.preventDefault();
+      slot.classList.remove('drag-over');
+      if (!lv1DragInfo) return;
+      if (lv1DragInfo.from === 'source') {
+        const srcItem = lv1ScrambleSrc[lv1DragInfo.idx];
+        if (!srcItem) return;
+        if (lv1Target[i] !== null) {
+          const evicted = lv1ScrambleSrc.find(x => x.note === lv1Target[i] && x.placed);
+          if (evicted) evicted.placed = false;
+        }
+        lv1Target[i] = srcItem.note;
+        srcItem.placed = true;
+      } else if (lv1DragInfo.from === 'slot') {
+        const fromSlot = lv1DragInfo.slotIdx;
+        if (fromSlot === i) return;
+        const tmp = lv1Target[i];
+        lv1Target[i] = lv1Target[fromSlot];
+        lv1Target[fromSlot] = tmp;
+      }
+      lv1DragInfo = null;
+      lv1RenderSource();
+      lv1RenderSlots();
+    };
   });
   const allFilled = lv1Target.every(x => x !== null);
   const checkBtn = document.getElementById('lv1-p1-check');
@@ -212,28 +268,12 @@ async function lv1PlaySingleNote(note) {
   await playNote(note, 1);
 }
 
-function lv1PickCard(idx) {
-  lv1PickedIdx = (lv1PickedIdx === idx) ? null : idx;
-  lv1RenderSource();
-}
-
-function lv1ClickSlot(slotIdx) {
-  if (lv1PickedIdx === null) return;
-  if (lv1Target[slotIdx] !== null) return; // slot occupied
-  lv1Target[slotIdx] = lv1ScrambleSrc[lv1PickedIdx].note;
-  lv1ScrambleSrc[lv1PickedIdx].placed = true;
-  lv1PickedIdx = null;
-  lv1RenderSource();
-  lv1RenderSlots();
-}
-
 function lv1UnplaceSlot(slotIdx) {
   const note = lv1Target[slotIdx];
   if (!note) return;
   const item = lv1ScrambleSrc.find(x => x.note === note && x.placed);
   if (item) item.placed = false;
   lv1Target[slotIdx] = null;
-  lv1PickedIdx = null;
   lv1RenderSource();
   lv1RenderSlots();
 }

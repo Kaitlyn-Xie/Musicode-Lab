@@ -1548,7 +1548,17 @@ body {
   border-bottom: 1px solid var(--border);
   background: var(--surface);
   flex-shrink: 0;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  overflow: hidden;
+}
+.lv1-title-text {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
 }
 .lv1-back {
   background: none;
@@ -1575,16 +1585,12 @@ body {
   background: #E3EEFF;
   color: #1860A0;
 }
-.lv1-title-text {
-  font-size: 14px;
-  font-weight: 800;
-  color: var(--text);
-}
 .lv1-phases {
   display: flex;
   align-items: center;
   gap: 5px;
   margin-left: auto;
+  flex-shrink: 0;
 }
 .lv1-phase {
   font-size: 11px;
@@ -1671,27 +1677,28 @@ body {
   background: #2E80D0;
   color: #fff;
   border-radius: 10px;
-  padding: 10px 16px;
-  cursor: pointer;
+  padding: 10px 12px;
+  cursor: grab;
   text-align: center;
-  min-width: 62px;
-  transition: all 0.15s;
+  width: 88px;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  transition: opacity 0.15s, transform 0.15s, box-shadow 0.15s;
   border: 2px solid transparent;
   user-select: none;
 }
-.lv1-note-card.picked {
-  border-color: #fff;
-  box-shadow: 0 0 0 3px #2E80D0;
-  transform: scale(1.07);
-}
-.lv1-note-card.placed { background: #2EA870; }
+.lv1-note-card:active { cursor: grabbing; }
+.lv1-note-card.dragging { opacity: 0.35; }
+.lv1-note-card.placed { background: #2EA870; cursor: grab; }
 .lv1-note-card:hover { opacity: 0.85; }
 .lv1-note-name {
   font-size: 15px;
   font-weight: 900;
   font-family: 'JetBrains Mono', monospace;
 }
-.lv1-note-label { font-size: 9px; font-weight: 700; opacity: 0.7; margin-top: 2px; }
+.lv1-note-label { font-size: 9px; font-weight: 700; opacity: 0.7; margin-top: 2px; white-space: nowrap; }
+.lv1-target-slot.drag-over { border-color: #2E80D0; background: rgba(46,128,208,0.12); }
+.lv1-source.drag-over { border-color: #2E80D0; background: rgba(46,128,208,0.06); }
 
 .lv1-target-row { display: flex; gap: 10px; }
 .lv1-target-slot {

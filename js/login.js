@@ -27,6 +27,10 @@ function doGuestLogin() {
 
 function doLogout() {
   localStorage.removeItem('mcl-name');
+  localStorage.removeItem('mcl-completed');
+  completedLevels = [];
+  score = 0;
+  document.getElementById('score-display').textContent = '0';
   document.getElementById('home-screen').classList.add('hidden');
   document.getElementById('login-screen').classList.remove('hidden');
   document.getElementById('login-name').value = '';
