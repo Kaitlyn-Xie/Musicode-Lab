@@ -2189,6 +2189,49 @@ body {
   font-style: italic;
 }
 
+/* Variable name row */
+.lv2-name-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 10px 0 6px;
+  flex-wrap: wrap;
+}
+.lv2-name-input {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  font-weight: 700;
+  color: #1565C0;
+  background: #E3F2FD;
+  border: 2px solid #1565C0;
+  border-radius: 6px;
+  padding: 4px 10px;
+  width: 110px;
+  outline: none;
+}
+.lv2-name-input:focus { border-color: #0D47A1; background: #BBDEFB; }
+.lv2-name-chips {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.lv2-name-chip {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 20px;
+  border: 1.5px solid #1565C0;
+  background: none;
+  color: #1565C0;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+.lv2-name-chip:hover, .lv2-name-chip.active {
+  background: #1565C0;
+  color: #fff;
+}
+
 /* Max-notes stepper row */
 .lv2-max-row {
   display: flex;

@@ -5,6 +5,7 @@
 let lv2Phase = 1;
 let lv2SelectedNotes = [];
 let lv2MaxNotes = 4;
+let lv2VarName = 'melody';
 let lv2BlockSeq = [];
 let lv2DraggedBlock = null;
 let lv2OwnNotes = ['C4', 'E4', 'G4'];
@@ -59,17 +60,28 @@ function lv2ShowPhase(p) {
 // ══════════════════════════════════════════════════════
 function lv2RenderPhase1(body) {
   lv2SelectedNotes = [];
+  lv2VarName = 'melody';
   body.innerHTML = `
     <div class="lv1-scroll">
       <div class="lv1-activity-heading">Pack Your Melody Box</div>
       <p class="lv1-activity-sub">
         In programming, a <strong>variable</strong> is a named box that stores information.
-        Click note buttons below to fill your <code>melody</code> box, then hit <strong>Play</strong> to hear it!
-        You can repeat notes — and set how many notes your melody holds.
+        Pick a name for your variable, fill it with notes, then hit <strong>Play</strong>!
       </p>
 
+      <div class="lv2-name-row">
+        <span class="lv2-max-label">Variable name:</span>
+        <input class="lv2-name-input" id="lv2-name-input" value="melody" maxlength="16"
+          oninput="lv2UpdateVarName(this.value)" autocomplete="off" spellcheck="false">
+        <div class="lv2-name-chips">
+          ${['melody','scale','tune','melody1','melody2'].map(n =>
+            `<button class="lv2-name-chip" onclick="lv2SetVarName('${n}')">${n}</button>`
+          ).join('')}
+        </div>
+      </div>
+
       <div class="lv2-max-row">
-        <span class="lv2-max-label">Melody length:</span>
+        <span class="lv2-max-label">Length:</span>
         <button class="lv2-max-btn" onclick="lv2ChangeMax(-1)">−</button>
         <span class="lv2-max-val" id="lv2-max-val">${lv2MaxNotes}</span>
         <button class="lv2-max-btn" onclick="lv2ChangeMax(1)">+</button>
@@ -77,7 +89,7 @@ function lv2RenderPhase1(body) {
       </div>
 
       <div class="lv2-var-box" id="lv2-var-box">
-        <div class="lv2-var-name">melody</div>
+        <div class="lv2-var-name" id="lv2-var-name-display">melody</div>
         <div class="lv2-var-eq">=</div>
         <div class="lv2-var-contents" id="lv2-var-contents">
           <span class="lv2-var-empty">[ empty ]</span>
@@ -99,7 +111,7 @@ function lv2RenderPhase1(body) {
       </div>
 
       <div class="lv1-actions" style="margin-top:4px">
-        <button class="lv1-btn secondary" onclick="lv2PlayMelody()">▶ Play melody</button>
+        <button class="lv1-btn secondary" id="lv2-play-btn" onclick="lv2PlayMelody()">▶ Play</button>
         <button class="lv1-btn secondary" onclick="lv2ClearMelody()">Clear</button>
         <button class="lv1-btn primary" id="lv2-p1-next" onclick="lv2LockIn()" style="display:none">Lock it in! →</button>
       </div>
@@ -108,8 +120,8 @@ function lv2RenderPhase1(body) {
 
       <div class="lv1-success-concept" id="lv2-var-reveal">
         <div class="lv1-success-concept-label">That's a Variable!</div>
-        <p><strong>Variables</strong> are named containers for data. <code>melody</code> is the label on the box. The notes inside are the <strong>value</strong>.</p>
-        <p>Every time you write <code>melody</code> in your code, Python substitutes in all those notes — without you writing them out again.</p>
+        <p><strong>Variables</strong> are named containers for data. <span id="lv2-reveal-name" style="font-family:monospace;font-weight:700;color:#1565C0">melody</span> is just the <strong>label</strong> on the box — you chose it, and you could call it anything. The notes are the <strong>value</strong>.</p>
+        <p>Every time you write <span id="lv2-reveal-name2" style="font-family:monospace;font-weight:700;color:#1565C0">melody</span> in your code, Python fills in all those notes automatically.</p>
       </div>
     </div>
   `;
@@ -118,6 +130,30 @@ function lv2RenderPhase1(body) {
 async function lv2PlayNote(note) {
   await initTone();
   await playNote(note, 1);
+}
+
+function lv2UpdateVarName(val) {
+  // Allow only valid Python identifier characters
+  val = val.replace(/[^a-zA-Z0-9_]/g, '');
+  lv2VarName = val || 'melody';
+  const display = document.getElementById('lv2-var-name-display');
+  if (display) display.textContent = lv2VarName;
+  const btn = document.getElementById('lv2-play-btn');
+  if (btn) btn.textContent = '▶ Play ' + lv2VarName;
+}
+
+function lv2SetVarName(name) {
+  lv2VarName = name;
+  const input = document.getElementById('lv2-name-input');
+  if (input) input.value = name;
+  const display = document.getElementById('lv2-var-name-display');
+  if (display) display.textContent = name;
+  const btn = document.getElementById('lv2-play-btn');
+  if (btn) btn.textContent = '▶ Play ' + name;
+  // highlight active chip
+  document.querySelectorAll('.lv2-name-chip').forEach(c =>
+    c.classList.toggle('active', c.textContent === name)
+  );
 }
 
 function lv2AddNote(note) {
@@ -179,12 +215,18 @@ async function lv2LockIn() {
   if (lv2SelectedNotes.length < 2) return;
   await lv2PlayMelody();
   const reveal = document.getElementById('lv2-var-reveal');
-  if (reveal) reveal.classList.add('visible');
+  if (reveal) {
+    reveal.classList.add('visible');
+    const r1 = document.getElementById('lv2-reveal-name');
+    const r2 = document.getElementById('lv2-reveal-name2');
+    if (r1) r1.textContent = lv2VarName;
+    if (r2) r2.textContent = lv2VarName;
+  }
   const fb = document.getElementById('lv2-p1-feedback');
   if (fb) {
     fb.style.display = 'block';
     fb.className = 'lv1-feedback success';
-    fb.innerHTML = `melody = [${lv2SelectedNotes.map(n => '<strong>' + n + '</strong>').join(', ')}] — locked in! Now let's use it in block code.`;
+    fb.innerHTML = `${lv2VarName} = [${lv2SelectedNotes.map(n => '<strong>' + n + '</strong>').join(', ')}] — locked in! Now let's use it in block code.`;
   }
   const nextBtn = document.getElementById('lv2-p1-next');
   if (nextBtn) {
@@ -205,12 +247,12 @@ function lv2RenderPhase2(body) {
     <div class="lv1-scroll">
       <div class="lv1-concept">
         <div class="lv1-concept-label">Use Your Variable in Block Code</div>
-        <p>Your variable is already defined below. Now <strong>use it</strong> — drag the <code>play(melody)</code> block into the canvas. One variable name, all your notes!</p>
+        <p>Your variable is already defined below. Now <strong>use it</strong> — drag the <code>play(${lv2VarName})</code> block into the canvas. One variable name, all your notes!</p>
       </div>
 
       <div class="lv2-defined-var">
         <span class="lv2-dv-label">Variable defined:</span>
-        <code class="lv2-dv-code">melody = [${notes.map(n => '"' + n + '"').join(', ')}]</code>
+        <code class="lv2-dv-code">${lv2VarName} = [${notes.map(n => '"' + n + '"').join(', ')}]</code>
         <button class="lv1-play-btn" style="background:rgba(46,128,208,0.15);color:var(--text)" onclick="lv2PlayMelody()">🔊</button>
       </div>
 
@@ -222,14 +264,14 @@ function lv2RenderPhase2(body) {
           <div style="display:flex;align-items:center;gap:4px">
             <div class="lv1-block-chip" style="flex:1;background:var(--block-play)"
               draggable="true" ondragstart="lv2DragStart(event,'play')" onclick="lv2TapAdd('play')">
-              play( <strong>melody</strong> )
+              play( <strong>${lv2VarName}</strong> )
             </div>
           </div>
           <div class="lv1-palette-label" style="margin-top:10px">Bonus</div>
           <div style="display:flex;align-items:center;gap:4px">
             <div class="lv1-block-chip" style="flex:1;background:var(--block-repeat)"
               draggable="true" ondragstart="lv2DragStart(event,'repeat')" onclick="lv2TapAdd('repeat')">
-              repeat( <strong>melody</strong>, 2× )
+              repeat( <strong>${lv2VarName}</strong>, 2× )
             </div>
           </div>
           <div class="lv1-palette-hint">drag or tap to add</div>
