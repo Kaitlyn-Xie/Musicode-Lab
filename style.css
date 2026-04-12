@@ -2150,8 +2150,8 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
-  background: rgba(255,255,255,0.06);
-  border: 2px solid rgba(27,94,32,0.4);
+  background: #E8F5E9;
+  border: 2px solid #2E7D32;
   border-radius: 12px;
   padding: 12px 18px;
   margin: 16px 0 12px;
@@ -2161,13 +2161,14 @@ body {
   font-family: 'JetBrains Mono', monospace;
   font-size: 15px;
   font-weight: 700;
-  color: #9CDCFE;
+  color: #1565C0;
   white-space: nowrap;
 }
 .lv2-var-eq {
   font-family: 'JetBrains Mono', monospace;
   font-size: 15px;
-  color: var(--text-muted);
+  font-weight: 700;
+  color: #37474F;
 }
 .lv2-var-contents {
   display: flex;
@@ -2179,15 +2180,57 @@ body {
 .lv2-var-empty {
   font-family: 'JetBrains Mono', monospace;
   font-size: 13px;
-  color: var(--text-muted);
-  opacity: 0.6;
+  color: #78909C;
   font-style: italic;
 }
 .lv2-add-hint {
   font-size: 11px;
-  color: var(--text-muted);
-  opacity: 0.6;
+  color: #78909C;
   font-style: italic;
+}
+
+/* Max-notes stepper row */
+.lv2-max-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0 4px;
+}
+.lv2-max-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+}
+.lv2-max-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid #2E7D32;
+  background: none;
+  color: #2E7D32;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.lv2-max-btn:hover { background: #E8F5E9; }
+.lv2-max-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 18px;
+  font-weight: 700;
+  color: #2E7D32;
+  min-width: 20px;
+  text-align: center;
+}
+.lv2-max-hint { font-size: 13px; color: var(--text-muted); }
+
+/* Full state — dim tiles when box is full */
+.lv2-note-tile.full {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
 /* Note pills inside the variable box */
@@ -2195,25 +2238,25 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  background: rgba(27,94,32,0.35);
-  border: 1px solid rgba(76,175,80,0.5);
+  background: #2E7D32;
+  border: 1px solid #1B5E20;
   border-radius: 20px;
   padding: 3px 10px 3px 12px;
   font-family: 'JetBrains Mono', monospace;
   font-size: 13px;
   font-weight: 700;
-  color: #A5D6A7;
+  color: #fff;
 }
 .lv2-note-pill button {
   background: none;
   border: none;
-  color: rgba(165,214,167,0.6);
+  color: rgba(255,255,255,0.65);
   font-size: 11px;
   cursor: pointer;
   padding: 0 2px;
   line-height: 1;
 }
-.lv2-note-pill button:hover { color: #EF5350; }
+.lv2-note-pill button:hover { color: #FF5252; }
 
 /* Note picker grid */
 .lv2-note-picker {
@@ -2233,14 +2276,14 @@ body {
   user-select: none;
 }
 .lv2-note-tile:hover {
-  border-color: rgba(76,175,80,0.6);
-  background: rgba(76,175,80,0.1);
+  border-color: #388E3C;
+  background: rgba(56,142,60,0.12);
   transform: translateY(-2px);
 }
 .lv2-note-tile.selected {
-  border-color: #4CAF50;
-  background: rgba(76,175,80,0.2);
-  box-shadow: 0 0 0 2px rgba(76,175,80,0.3);
+  border-color: #2E7D32;
+  background: rgba(46,125,50,0.18);
+  box-shadow: 0 0 0 3px rgba(46,125,50,0.25);
 }
 
 /* Defined-variable display strip (Phase 2) */

@@ -4,6 +4,7 @@
 
 let lv2Phase = 1;
 let lv2SelectedNotes = [];
+let lv2MaxNotes = 4;
 let lv2BlockSeq = [];
 let lv2DraggedBlock = null;
 let lv2OwnNotes = ['C4', 'E4', 'G4'];
@@ -63,9 +64,17 @@ function lv2RenderPhase1(body) {
       <div class="lv1-activity-heading">Pack Your Melody Box</div>
       <p class="lv1-activity-sub">
         In programming, a <strong>variable</strong> is a named box that stores information.
-        Click note buttons below to add up to 4 notes into your <code>melody</code> box,
-        then hit <strong>Play</strong> to hear what you've stored!
+        Click note buttons below to fill your <code>melody</code> box, then hit <strong>Play</strong> to hear it!
+        You can repeat notes — and set how many notes your melody holds.
       </p>
+
+      <div class="lv2-max-row">
+        <span class="lv2-max-label">Melody length:</span>
+        <button class="lv2-max-btn" onclick="lv2ChangeMax(-1)">−</button>
+        <span class="lv2-max-val" id="lv2-max-val">${lv2MaxNotes}</span>
+        <button class="lv2-max-btn" onclick="lv2ChangeMax(1)">+</button>
+        <span class="lv2-max-hint">notes</span>
+      </div>
 
       <div class="lv2-var-box" id="lv2-var-box">
         <div class="lv2-var-name">melody</div>
@@ -77,7 +86,7 @@ function lv2RenderPhase1(body) {
 
       <div class="lv2-note-picker">
         ${LV2_NOTE_OPTIONS.map(note => `
-          <div class="lv2-note-tile" id="lv2-tile-${note}" onclick="lv2ToggleNote('${note}')">
+          <div class="lv2-note-tile" id="lv2-tile-${note}" onclick="lv2AddNote('${note}')">
             <div class="lv1-card-top">
               <div class="lv1-note-name">${note}</div>
               <button class="lv1-play-btn" onclick="event.stopPropagation();lv2PlayNote('${note}')">🔊</button>
@@ -111,21 +120,29 @@ async function lv2PlayNote(note) {
   await playNote(note, 1);
 }
 
-function lv2ToggleNote(note) {
-  const idx = lv2SelectedNotes.indexOf(note);
-  if (idx >= 0) {
-    lv2SelectedNotes.splice(idx, 1);
-  } else {
-    if (lv2SelectedNotes.length >= 4) return;
-    lv2SelectedNotes.push(note);
+function lv2AddNote(note) {
+  if (lv2SelectedNotes.length >= lv2MaxNotes) return;
+  lv2SelectedNotes.push(note);
+  lv2UpdateVarBox();
+}
+
+function lv2ChangeMax(delta) {
+  lv2MaxNotes = Math.max(2, Math.min(8, lv2MaxNotes + delta));
+  const el = document.getElementById('lv2-max-val');
+  if (el) el.textContent = lv2MaxNotes;
+  // trim notes if over new limit
+  if (lv2SelectedNotes.length > lv2MaxNotes) {
+    lv2SelectedNotes = lv2SelectedNotes.slice(0, lv2MaxNotes);
   }
   lv2UpdateVarBox();
 }
 
 function lv2UpdateVarBox() {
+  // Dim tiles when box is full
+  const full = lv2SelectedNotes.length >= lv2MaxNotes;
   LV2_NOTE_OPTIONS.forEach(note => {
     const tile = document.getElementById('lv2-tile-' + note);
-    if (tile) tile.classList.toggle('selected', lv2SelectedNotes.includes(note));
+    if (tile) tile.classList.toggle('full', full);
   });
   const contents = document.getElementById('lv2-var-contents');
   if (!contents) return;
@@ -136,7 +153,7 @@ function lv2UpdateVarBox() {
       lv2SelectedNotes.map((n, i) =>
         `<div class="lv2-note-pill">${n}<button onclick="lv2RemoveNote(${i})">✕</button></div>`
       ).join('') +
-      (lv2SelectedNotes.length < 4 ? '<span class="lv2-add-hint">+ add note</span>' : '');
+      (!full ? '<span class="lv2-add-hint">+ add note</span>' : '');
   }
   const nextBtn = document.getElementById('lv2-p1-next');
   if (nextBtn) nextBtn.style.display = lv2SelectedNotes.length >= 2 ? 'inline-flex' : 'none';
