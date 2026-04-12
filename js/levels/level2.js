@@ -6,6 +6,7 @@ let lv2Phase = 1;
 let lv2SelectedNotes = [];
 let lv2MaxNotes = 4;
 let lv2VarName = 'melody';
+let lv2RepeatCount = 2;
 let lv2BlockSeq = [];
 let lv2DraggedBlock = null;
 let lv2OwnNotes = ['C4', 'E4', 'G4'];
@@ -261,19 +262,28 @@ function lv2RenderPhase2(body) {
       <div class="lv1-blocks-area">
         <div class="lv1-mini-palette">
           <div class="lv1-palette-label">Blocks</div>
-          <div style="display:flex;align-items:center;gap:4px">
-            <div class="lv1-block-chip" style="flex:1;background:var(--block-play)"
-              draggable="true" ondragstart="lv2DragStart(event,'play')" onclick="lv2TapAdd('play')">
-              play( <strong>${lv2VarName}</strong> )
-            </div>
+          <div class="lv2-pal-block" style="background:#2E80D0"
+            draggable="true" ondragstart="lv2DragStart(event,'play')" onclick="lv2TapAdd('play')">
+            <span>🎵 play(</span>
+            <span class="lv2-pal-badge">${lv2VarName}</span>
+            <span>)</span>
           </div>
-          <div class="lv1-palette-label" style="margin-top:10px">Bonus</div>
-          <div style="display:flex;align-items:center;gap:4px">
-            <div class="lv1-block-chip" style="flex:1;background:var(--block-repeat)"
-              draggable="true" ondragstart="lv2DragStart(event,'repeat')" onclick="lv2TapAdd('repeat')">
-              repeat( <strong>${lv2VarName}</strong>, 2× )
-            </div>
+
+          <div class="lv1-palette-label" style="margin-top:10px">Repeat block</div>
+          <div class="lv2-pal-block" style="background:#D4A020"
+            draggable="true" ondragstart="lv2DragStart(event,'repeat')" onclick="lv2TapAdd('repeat')">
+            <span>🔁 repeat(</span>
+            <span class="lv2-pal-badge">${lv2VarName}</span>
+            <span>,</span>
+            <button class="lv2-rep-btn" onclick="event.stopPropagation();lv2ChangeRepeat(-1)">−</button>
+            <span class="lv2-rep-val" id="lv2-rep-val">${lv2RepeatCount}</span>
+            <button class="lv2-rep-btn" onclick="event.stopPropagation();lv2ChangeRepeat(1)">+</button>
+            <span>×)</span>
           </div>
+          <div class="lv2-py-hint">
+            Python: <code>for i in range(<span id="lv2-rep-py">${lv2RepeatCount}</span>):<br>&nbsp;&nbsp;&nbsp;&nbsp;play(<span class="py-var">${lv2VarName}</span>)</code>
+          </div>
+
           <div class="lv1-palette-hint">drag or tap to add</div>
         </div>
         <div class="lv1-dropzone" id="lv2-dropzone"
@@ -310,6 +320,14 @@ function lv2DropBlock(event) {
 
 function lv2TapAdd(bt) { lv2AddBlock(bt); }
 
+function lv2ChangeRepeat(delta) {
+  lv2RepeatCount = Math.max(2, Math.min(8, lv2RepeatCount + delta));
+  const val = document.getElementById('lv2-rep-val');
+  if (val) val.textContent = lv2RepeatCount;
+  const py = document.getElementById('lv2-rep-py');
+  if (py) py.textContent = lv2RepeatCount;
+}
+
 function lv2AddBlock(bt) {
   lv2BlockSeq.push(bt);
   lv2P2Render();
@@ -332,9 +350,10 @@ function lv2P2Render() {
     const el = document.createElement('div');
     el.className = 'lv1-seq-block';
     if (bt === 'repeat') el.style.background = 'var(--block-repeat)';
-    el.innerHTML =
-      (bt === 'play' ? 'play( <strong>melody</strong> )' : 'repeat( <strong>melody</strong>, 2× )') +
-      '<button class="lv1-rm-btn" onclick="lv2RemoveBlock(' + idx + ')">✕</button>';
+    const label = bt === 'play'
+      ? `🎵 play( <span style="background:rgba(255,255,255,0.25);padding:1px 7px;border-radius:4px;font-weight:700">${lv2VarName}</span> )`
+      : `🔁 repeat( <span style="background:rgba(255,255,255,0.25);padding:1px 7px;border-radius:4px;font-weight:700">${lv2VarName}</span>, ${lv2RepeatCount}× )`;
+    el.innerHTML = label + '<button class="lv1-rm-btn" onclick="lv2RemoveBlock(' + idx + ')">✕</button>';
     dz.appendChild(el);
   });
 }
@@ -344,7 +363,7 @@ async function lv2P2Play() {
   const notes = lv2SelectedNotes.length >= 2 ? lv2SelectedNotes : ['C4', 'E4', 'G4', 'A4'];
   await initTone();
   for (const bt of lv2BlockSeq) {
-    const times = bt === 'repeat' ? 2 : 1;
+    const times = bt === 'repeat' ? lv2RepeatCount : 1;
     for (let t = 0; t < times; t++) {
       for (const n of notes) { await playNote(n, 1); }
     }

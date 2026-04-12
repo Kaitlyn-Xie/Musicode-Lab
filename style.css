@@ -2276,6 +2276,71 @@ body {
   cursor: not-allowed;
 }
 
+/* Phase 2 palette blocks — match main app block style */
+.lv2-pal-block {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  cursor: grab;
+  user-select: none;
+  margin-bottom: 6px;
+  transition: opacity 0.12s, transform 0.1s;
+}
+.lv2-pal-block:hover { opacity: 0.85; transform: translateY(-1px); }
+.lv2-pal-badge {
+  background: rgba(255,255,255,0.28);
+  border-radius: 5px;
+  padding: 2px 8px;
+  font-size: 12px;
+}
+
+/* Repeat count stepper inside palette block */
+.lv2-rep-btn {
+  background: rgba(255,255,255,0.25);
+  border: none;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  cursor: pointer;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.lv2-rep-btn:hover { background: rgba(255,255,255,0.45); }
+.lv2-rep-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  font-weight: 700;
+  min-width: 16px;
+  text-align: center;
+}
+
+/* Python hint below repeat block */
+.lv2-py-hint {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin: -2px 0 8px 4px;
+  line-height: 1.6;
+}
+.lv2-py-hint code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  background: rgba(0,0,0,0.06);
+  border-radius: 4px;
+  padding: 2px 6px;
+  display: inline-block;
+}
+
 /* Note pills inside the variable box */
 .lv2-note-pill {
   display: inline-flex;
