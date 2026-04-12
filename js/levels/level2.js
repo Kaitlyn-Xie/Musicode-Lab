@@ -248,7 +248,7 @@ function lv2RenderPhase2(body) {
     <div class="lv1-scroll">
       <div class="lv1-concept">
         <div class="lv1-concept-label">Use Your Variable in Block Code</div>
-        <p>Your variable is already defined below. Now <strong>use it</strong> — drag the <code>play(${lv2VarName})</code> block into the canvas. One variable name, all your notes!</p>
+        <p>Your <code>${lv2VarName}</code> variable is ready. Click blocks below to add them to your program, then hit <strong>Play</strong>!</p>
       </div>
 
       <div class="lv2-defined-var">
@@ -257,47 +257,44 @@ function lv2RenderPhase2(body) {
         <button class="lv1-play-btn" style="background:rgba(46,128,208,0.15);color:var(--text)" onclick="lv2PlayMelody()">🔊</button>
       </div>
 
-      <div class="lv1-activity-heading" style="margin-top:14px">Build your program</div>
-
-      <div class="lv1-blocks-area">
-        <div class="lv1-mini-palette">
-          <div class="lv1-palette-label">Blocks</div>
-          <div class="lv2-pal-block" style="background:#2E80D0"
-            draggable="true" ondragstart="lv2DragStart(event,'play')" onclick="lv2TapAdd('play')">
-            <span>🎵 play(</span>
-            <span class="lv2-pal-badge">${lv2VarName}</span>
-            <span>)</span>
-          </div>
-
-          <div class="lv1-palette-label" style="margin-top:10px">Repeat block</div>
-          <div class="lv2-pal-block" style="background:#D4A020"
-            draggable="true" ondragstart="lv2DragStart(event,'repeat')" onclick="lv2TapAdd('repeat')">
-            <span>🔁 repeat(</span>
-            <span class="lv2-pal-badge">${lv2VarName}</span>
-            <span>,</span>
-            <button class="lv2-rep-btn" onclick="event.stopPropagation();lv2ChangeRepeat(-1)">−</button>
-            <span class="lv2-rep-val" id="lv2-rep-val">${lv2RepeatCount}</span>
-            <button class="lv2-rep-btn" onclick="event.stopPropagation();lv2ChangeRepeat(1)">+</button>
-            <span>×)</span>
-          </div>
-          <div class="lv2-py-hint">
-            Python: <code>for i in range(<span id="lv2-rep-py">${lv2RepeatCount}</span>):<br>&nbsp;&nbsp;&nbsp;&nbsp;play(<span class="py-var">${lv2VarName}</span>)</code>
-          </div>
-
-          <div class="lv1-palette-hint">drag or tap to add</div>
+      <!-- Palette — full-width stacked blocks like main app -->
+      <div class="lv2-p2-palette">
+        <div class="lv1-palette-label" style="margin-bottom:6px">🧩 Available Blocks</div>
+        <div class="lv2-pal-block" style="background:#2E80D0"
+          draggable="true" ondragstart="lv2DragStart(event,'play')" onclick="lv2TapAdd('play')">
+          <span>🎵 play(</span>
+          <span class="lv2-pal-badge">${lv2VarName}</span>
+          <span>)</span>
         </div>
-        <div class="lv1-dropzone" id="lv2-dropzone"
-             ondragover="event.preventDefault();this.classList.add('drag-over')"
-             ondragleave="this.classList.remove('drag-over')"
-             ondrop="lv2DropBlock(event)">
-          <div class="lv1-dz-placeholder" id="lv2-dz-ph">Drop blocks here...</div>
+        <div class="lv2-pal-block" style="background:#D4A020"
+          draggable="true" ondragstart="lv2DragStart(event,'repeat')" onclick="lv2TapAdd('repeat')">
+          <span>🔁 repeat(</span>
+          <span class="lv2-pal-badge">${lv2VarName}</span>
+          <span>)</span>
         </div>
+        <div class="lv2-repeat-ctrl">
+          <span class="lv2-max-label">Repeat:</span>
+          <button class="lv2-max-btn" onclick="lv2ChangeRepeat(-1)">−</button>
+          <span class="lv2-max-val" id="lv2-rep-val">${lv2RepeatCount}</span>
+          <button class="lv2-max-btn" onclick="lv2ChangeRepeat(1)">+</button>
+          <span class="lv2-max-hint">times &nbsp;·&nbsp; Python: <code style="font-size:11px">for i in range(<span id="lv2-rep-py">${lv2RepeatCount}</span>):</code></span>
+        </div>
+        <div class="lv1-palette-hint" style="text-align:left;margin-top:2px">click or drag to add →</div>
       </div>
 
-      <div class="lv1-actions">
-        <button class="lv1-btn secondary" onclick="lv2P2Clear()">Clear</button>
+      <!-- Canvas -->
+      <div class="lv1-activity-heading" style="margin-top:16px">Your Program</div>
+      <div class="lv1-dropzone lv2-p2-canvas" id="lv2-dropzone"
+           ondragover="event.preventDefault();this.classList.add('drag-over')"
+           ondragleave="this.classList.remove('drag-over')"
+           ondrop="lv2DropBlock(event)">
+        <div class="lv1-dz-placeholder" id="lv2-dz-ph">Click a block above or drag it here...</div>
+      </div>
+
+      <div class="lv1-actions" style="margin-top:10px">
+        <button class="lv1-btn secondary" onclick="lv2P2Clear()">🗑 Clear</button>
         <button class="lv1-btn secondary" onclick="lv2P2Play()">▶ Play</button>
-        <button class="lv1-btn secondary" onclick="lv2P2Check()">Check</button>
+        <button class="lv1-btn secondary" onclick="lv2P2Check()">✓ Check</button>
         <button class="lv1-btn primary" id="lv2-p2-next" onclick="lv2ShowPhase(3)" style="display:none">Next: Python →</button>
       </div>
       <div id="lv2-p2-feedback" class="lv1-feedback" style="display:none"></div>
@@ -344,7 +341,7 @@ function lv2P2Render() {
   const dz = document.getElementById('lv2-dropzone');
   const ph = document.getElementById('lv2-dz-ph');
   if (!dz) return;
-  dz.querySelectorAll('.lv1-seq-block').forEach(e => e.remove());
+  dz.querySelectorAll('.lv1-seq-block, .lv2-seq-repeat').forEach(e => e.remove());
   if (ph) ph.style.display = lv2BlockSeq.length ? 'none' : 'block';
   lv2BlockSeq.forEach((bt, idx) => {
     const el = document.createElement('div');

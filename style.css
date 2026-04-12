@@ -2276,6 +2276,26 @@ body {
   cursor: not-allowed;
 }
 
+/* Phase 2 single-column palette */
+.lv2-p2-palette {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-top: 12px;
+}
+.lv2-repeat-ctrl {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+.lv2-p2-canvas {
+  min-height: 220px;
+  padding: 14px;
+}
+
 /* Phase 2 canvas repeat container block */
 .lv2-seq-repeat {
   border-radius: 10px;
