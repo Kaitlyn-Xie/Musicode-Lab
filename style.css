@@ -2296,6 +2296,43 @@ body {
   padding: 14px;
 }
 
+/* Phase 2 palette repeat block — matches main app container style */
+.lv2-pal-repeat-wrap {
+  cursor: pointer;
+  user-select: none;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 4px;
+  transition: opacity 0.12s;
+}
+.lv2-pal-repeat-wrap:hover { opacity: 0.85; }
+.lv2-pal-repeat-header {
+  background: var(--block-repeat);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.lv2-pal-repeat-inner {
+  background: rgba(212,160,32,0.12);
+  border-left: 4px solid var(--block-repeat);
+  border-right: 4px solid var(--block-repeat);
+  padding: 8px 14px;
+  font-size: 12px;
+  color: var(--text-muted);
+  font-style: italic;
+}
+.lv2-pal-repeat-end {
+  background: var(--block-repeat);
+  color: rgba(255,255,255,0.8);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 12px;
+}
+
 /* Phase 2 canvas repeat container block */
 .lv2-seq-repeat {
   border-radius: 10px;

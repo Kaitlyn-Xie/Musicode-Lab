@@ -260,26 +260,32 @@ function lv2RenderPhase2(body) {
       <!-- Palette — full-width stacked blocks like main app -->
       <div class="lv2-p2-palette">
         <div class="lv1-palette-label" style="margin-bottom:6px">🧩 Available Blocks</div>
+
+        <!-- play block -->
         <div class="lv2-pal-block" style="background:#2E80D0"
           draggable="true" ondragstart="lv2DragStart(event,'play')" onclick="lv2TapAdd('play')">
           <span>🎵 play(</span>
           <span class="lv2-pal-badge">${lv2VarName}</span>
           <span>)</span>
         </div>
-        <div class="lv2-pal-block" style="background:#D4A020"
-          draggable="true" ondragstart="lv2DragStart(event,'repeat')" onclick="lv2TapAdd('repeat')">
-          <span>🔁 repeat(</span>
-          <span class="lv2-pal-badge">${lv2VarName}</span>
-          <span>)</span>
+
+        <!-- repeat block — stepper inside header, matches main app -->
+        <div class="lv2-pal-repeat-wrap" onclick="lv2TapAdd('repeat')" draggable="true" ondragstart="lv2DragStart(event,'repeat')">
+          <div class="lv2-pal-repeat-header">
+            <span>🔁 repeat</span>
+            <button class="lv2-rep-btn" onclick="event.stopPropagation();lv2ChangeRepeat(-1)">−</button>
+            <span class="lv2-rep-val" id="lv2-rep-val">${lv2RepeatCount}</span>
+            <button class="lv2-rep-btn" onclick="event.stopPropagation();lv2ChangeRepeat(1)">+</button>
+            <span>times:</span>
+          </div>
+          <div class="lv2-pal-repeat-inner">← drop blocks here</div>
+          <div class="lv2-pal-repeat-end">end</div>
         </div>
-        <div class="lv2-repeat-ctrl">
-          <span class="lv2-max-label">Repeat:</span>
-          <button class="lv2-max-btn" onclick="lv2ChangeRepeat(-1)">−</button>
-          <span class="lv2-max-val" id="lv2-rep-val">${lv2RepeatCount}</span>
-          <button class="lv2-max-btn" onclick="lv2ChangeRepeat(1)">+</button>
-          <span class="lv2-max-hint">times &nbsp;·&nbsp; Python: <code style="font-size:11px">for i in range(<span id="lv2-rep-py">${lv2RepeatCount}</span>):</code></span>
+        <div class="lv2-py-hint" style="margin-top:4px">
+          Python: <code>for i in range(<span id="lv2-rep-py">${lv2RepeatCount}</span>):<br>&nbsp;&nbsp;&nbsp;&nbsp;play(<span class="py-var">${lv2VarName}</span>)</code>
         </div>
-        <div class="lv1-palette-hint" style="text-align:left;margin-top:2px">click or drag to add →</div>
+
+        <div class="lv1-palette-hint" style="text-align:left;margin-top:4px">click or drag to add →</div>
       </div>
 
       <!-- Canvas -->
