@@ -257,44 +257,43 @@ function lv2RenderPhase2(body) {
         <button class="lv1-play-btn" style="background:rgba(46,128,208,0.15);color:var(--text)" onclick="lv2PlayMelody()">🔊</button>
       </div>
 
-      <!-- Palette — full-width stacked blocks like main app -->
-      <div class="lv2-p2-palette">
-        <div class="lv1-palette-label" style="margin-bottom:6px">🧩 Available Blocks</div>
+      <!-- Left-right split: palette | canvas -->
+      <div class="lv1-blocks-area">
+        <div class="lv1-mini-palette">
+          <div class="lv1-palette-label">Blocks</div>
 
-        <!-- play block -->
-        <div class="lv2-pal-block" style="background:#2E80D0"
-          draggable="true" ondragstart="lv2DragStart(event,'play')" onclick="lv2TapAdd('play')">
-          <span>🎵 play(</span>
-          <span class="lv2-pal-badge">${lv2VarName}</span>
-          <span>)</span>
-        </div>
-
-        <!-- repeat block — stepper inside header, matches main app -->
-        <div class="lv2-pal-repeat-wrap" onclick="lv2TapAdd('repeat')" draggable="true" ondragstart="lv2DragStart(event,'repeat')">
-          <div class="lv2-pal-repeat-header">
-            <span>🔁 repeat</span>
-            <button class="lv2-rep-btn" onclick="event.stopPropagation();lv2ChangeRepeat(-1)">−</button>
-            <span class="lv2-rep-val" id="lv2-rep-val">${lv2RepeatCount}</span>
-            <button class="lv2-rep-btn" onclick="event.stopPropagation();lv2ChangeRepeat(1)">+</button>
-            <span>times:</span>
+          <div class="lv2-pal-block" style="background:#2E80D0"
+            draggable="true" ondragstart="lv2DragStart(event,'play')" onclick="lv2TapAdd('play')">
+            <span>🎵 play(</span>
+            <span class="lv2-pal-badge">${lv2VarName}</span>
+            <span>)</span>
           </div>
-          <div class="lv2-pal-repeat-inner">← drop blocks here</div>
-          <div class="lv2-pal-repeat-end">end</div>
-        </div>
-        <div class="lv2-py-hint" style="margin-top:4px">
-          Python: <code>for i in range(<span id="lv2-rep-py">${lv2RepeatCount}</span>):<br>&nbsp;&nbsp;&nbsp;&nbsp;play(<span class="py-var">${lv2VarName}</span>)</code>
+
+          <div class="lv1-palette-label" style="margin-top:10px">Loop</div>
+          <div class="lv2-pal-repeat-wrap" onclick="lv2TapAdd('repeat')" draggable="true" ondragstart="lv2DragStart(event,'repeat')">
+            <div class="lv2-pal-repeat-header">
+              <span>🔁 repeat</span>
+              <button class="lv2-rep-btn" onclick="event.stopPropagation();lv2ChangeRepeat(-1)">−</button>
+              <span class="lv2-rep-val" id="lv2-rep-val">${lv2RepeatCount}</span>
+              <button class="lv2-rep-btn" onclick="event.stopPropagation();lv2ChangeRepeat(1)">+</button>
+              <span>times:</span>
+            </div>
+            <div class="lv2-pal-repeat-inner">← drop here</div>
+            <div class="lv2-pal-repeat-end">end</div>
+          </div>
+          <div class="lv2-py-hint">
+            Python:<br><code>for i in range(<span id="lv2-rep-py">${lv2RepeatCount}</span>):<br>&nbsp;&nbsp;play(<span class="py-var">${lv2VarName}</span>)</code>
+          </div>
+
+          <div class="lv1-palette-hint">drag or tap to add</div>
         </div>
 
-        <div class="lv1-palette-hint" style="text-align:left;margin-top:4px">click or drag to add →</div>
-      </div>
-
-      <!-- Canvas -->
-      <div class="lv1-activity-heading" style="margin-top:16px">Your Program</div>
-      <div class="lv1-dropzone lv2-p2-canvas" id="lv2-dropzone"
-           ondragover="event.preventDefault();this.classList.add('drag-over')"
-           ondragleave="this.classList.remove('drag-over')"
-           ondrop="lv2DropBlock(event)">
-        <div class="lv1-dz-placeholder" id="lv2-dz-ph">Click a block above or drag it here...</div>
+        <div class="lv1-dropzone" id="lv2-dropzone"
+             ondragover="event.preventDefault();this.classList.add('drag-over')"
+             ondragleave="this.classList.remove('drag-over')"
+             ondrop="lv2DropBlock(event)">
+          <div class="lv1-dz-placeholder" id="lv2-dz-ph">Drop blocks here...</div>
+        </div>
       </div>
 
       <div class="lv1-actions" style="margin-top:10px">
