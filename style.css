@@ -2417,17 +2417,19 @@ body {
 
 /* Python hint below repeat block */
 .lv2-py-hint {
-  font-size: 11px;
-  color: var(--text-muted);
-  margin: -2px 0 8px 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+  margin: 4px 0 8px 0;
   line-height: 1.6;
 }
 .lv2-py-hint code {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  background: rgba(0,0,0,0.06);
-  border-radius: 4px;
-  padding: 2px 6px;
+  font-size: 12px;
+  background: #1E1E2E;
+  color: #CDD6F4;
+  border-radius: 6px;
+  padding: 6px 12px;
   display: inline-block;
 }
 
