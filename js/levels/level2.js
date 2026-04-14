@@ -5,7 +5,7 @@
 let lv2Phase = 1;
 let lv2SelectedNotes = [];
 let lv2MaxNotes = 4;
-let lv2VarName = 'melody';
+let lv2VarName = 'notes';
 let lv2RepeatCount = 2;
 let lv2BlockSeq = [];
 let lv2DraggedBlock = null;
@@ -61,7 +61,7 @@ function lv2ShowPhase(p) {
 // ══════════════════════════════════════════════════════
 function lv2RenderPhase1(body) {
   lv2SelectedNotes = [];
-  lv2VarName = 'melody';
+  lv2VarName = 'notes';
   body.innerHTML = `
     <div class="lv1-scroll">
       <div class="lv1-activity-heading">Pack Your Melody Box</div>
@@ -72,10 +72,10 @@ function lv2RenderPhase1(body) {
 
       <div class="lv2-name-row">
         <span class="lv2-max-label">Variable name:</span>
-        <input class="lv2-name-input" id="lv2-name-input" value="melody" maxlength="16"
+        <input class="lv2-name-input" id="lv2-name-input" value="notes" maxlength="16"
           oninput="lv2UpdateVarName(this.value)" autocomplete="off" spellcheck="false">
         <div class="lv2-name-chips">
-          ${['melody','scale','tune','melody1','melody2'].map(n =>
+          ${['notes','scale','tune','phrase','song'].map(n =>
             `<button class="lv2-name-chip" onclick="lv2SetVarName('${n}')">${n}</button>`
           ).join('')}
         </div>
@@ -90,7 +90,7 @@ function lv2RenderPhase1(body) {
       </div>
 
       <div class="lv2-var-box" id="lv2-var-box">
-        <div class="lv2-var-name" id="lv2-var-name-display">melody</div>
+        <div class="lv2-var-name" id="lv2-var-name-display">notes</div>
         <div class="lv2-var-eq">=</div>
         <div class="lv2-var-contents" id="lv2-var-contents">
           <span class="lv2-var-empty">[ empty ]</span>
@@ -121,8 +121,8 @@ function lv2RenderPhase1(body) {
 
       <div class="lv1-success-concept" id="lv2-var-reveal">
         <div class="lv1-success-concept-label">That's a Variable!</div>
-        <p><strong>Variables</strong> are named containers for data. <span id="lv2-reveal-name" style="font-family:monospace;font-weight:700;color:#1565C0">melody</span> is just the <strong>label</strong> on the box — you chose it, and you could call it anything. The notes are the <strong>value</strong>.</p>
-        <p>Every time you write <span id="lv2-reveal-name2" style="font-family:monospace;font-weight:700;color:#1565C0">melody</span> in your code, Python fills in all those notes automatically.</p>
+        <p><strong>Variables</strong> are named containers for data. <span id="lv2-reveal-name" style="font-family:monospace;font-weight:700;color:#1565C0">notes</span> is just the <strong>label</strong> on the box — you chose it, and you could call it anything. The notes are the <strong>value</strong>.</p>
+        <p>Every time you write <span id="lv2-reveal-name2" style="font-family:monospace;font-weight:700;color:#1565C0">notes</span> in your code, Python fills in all those notes automatically.</p>
       </div>
     </div>
   `;
@@ -136,7 +136,7 @@ async function lv2PlayNote(note) {
 function lv2UpdateVarName(val) {
   // Allow only valid Python identifier characters
   val = val.replace(/[^a-zA-Z0-9_]/g, '');
-  lv2VarName = val || 'melody';
+  lv2VarName = val || 'notes';
   const display = document.getElementById('lv2-var-name-display');
   if (display) display.textContent = lv2VarName;
   const btn = document.getElementById('lv2-play-btn');
@@ -394,7 +394,7 @@ function lv2P2Check() {
     return;
   }
   fb.className = 'lv1-feedback success';
-  fb.innerHTML = 'Great! <code>play(melody)</code> uses the variable — one name, all the notes. Change the variable\'s notes and every play block updates automatically!';
+  fb.innerHTML = `Great! <code>play(${lv2VarName})</code> uses the variable — one name, all the notes. Change the variable's notes and every play block updates automatically!`;
   document.getElementById('lv2-p2-next').style.display = 'inline-flex';
 }
 
@@ -402,7 +402,7 @@ function lv2P2Check() {
 // PHASE 3 — Python stepper
 // ══════════════════════════════════════════════════════
 function lv2GetCodeLines(notes) {
-  const vn = lv2VarName || 'melody';
+  const vn = lv2VarName || 'notes';
   const noteList = notes.map(n => `<span class="py-str">"${n}"</span>`).join('<span class="py-op">, </span>');
   return [
     {
@@ -418,17 +418,17 @@ function lv2GetCodeLines(notes) {
 
 const LV2_QUIZZES = [
   {
-    q: 'What does <code>melody = ["C4", "E4", "G4"]</code> do?',
+    q: 'What does <code>notes = ["C4", "E4", "G4"]</code> do?',
     opts: [
-      { t: 'Creates a variable named melody and stores 3 notes in it', ok: true },
+      { t: 'Creates a variable named notes and stores 3 notes in it', ok: true },
       { t: 'Plays the notes C4, E4, and G4 immediately', ok: false },
-      { t: 'Defines a function called melody', ok: false },
+      { t: 'Defines a function called notes', ok: false },
       { t: 'Checks if the notes are in the right order', ok: false }
     ],
-    exp: '<strong>Correct!</strong> The <code>=</code> sign <em>assigns</em> a value. Left side is the name (<code>melody</code>), right side is the value (a list of notes).'
+    exp: '<strong>Correct!</strong> The <code>=</code> sign <em>assigns</em> a value. Left side is the name (<code>notes</code>), right side is the value (a list of notes).'
   },
   {
-    q: 'You change <code>melody = ["A4", "G4", "E4"]</code>. What does <code>play(melody)</code> now play?',
+    q: 'You change <code>notes = ["A4", "G4", "E4"]</code>. What does <code>play(notes)</code> now play?',
     opts: [
       { t: 'The original notes — variables don\'t change after creation', ok: false },
       { t: 'A4, then G4, then E4 — the updated value', ok: true },
@@ -440,9 +440,9 @@ const LV2_QUIZZES = [
   {
     q: 'Which of these is a valid Python variable name?',
     opts: [
-      { t: 'my melody (with a space)', ok: false },
-      { t: '1melody (starts with a number)', ok: false },
-      { t: 'melody! (special character)', ok: false },
+      { t: 'my notes (with a space)', ok: false },
+      { t: '1notes (starts with a number)', ok: false },
+      { t: 'notes! (special character)', ok: false },
       { t: 'myMelody', ok: true }
     ],
     exp: '<strong>Right!</strong> Variable names can use letters, numbers, and underscores, but must <em>start with a letter or underscore</em>. No spaces or special characters.'
@@ -452,7 +452,7 @@ const LV2_QUIZZES = [
 function lv2RenderPhase3(body) {
   lv2P3Step = 0;
   const notes = lv2SelectedNotes.length >= 2 ? lv2SelectedNotes : ['C4', 'E4', 'G4', 'A4'];
-  const vn = lv2VarName || 'melody';
+  const vn = lv2VarName || 'notes';
   const notePyList = notes.map(n => `<span class="py-str">"${n}"</span>`).join('<span class="py-op">, </span>');
 
   body.innerHTML = `
@@ -646,7 +646,7 @@ function lv2P3Answer(btn, correct, qIdx) {
 function lv2P3FillIn(main) {
   const notes = lv2SelectedNotes.length >= 2 ? lv2SelectedNotes : ['C4', 'E4', 'G4', 'A4'];
   const noteSpans = notes.map(n => `<span class="py-str">"${n}"</span>`).join('<span class="py-op">, </span>');
-  const vn = lv2VarName || 'melody';
+  const vn = lv2VarName || 'notes';
   const blankW = Math.max(70, vn.length * 9 + 20) + 'px';
   main.innerHTML = `
     <div style="display:flex;flex-direction:column;gap:12px;padding-top:4px">
@@ -674,7 +674,7 @@ function lv2P3FillIn(main) {
 }
 
 function lv2P3CheckFill() {
-  const vn = lv2VarName || 'melody';
+  const vn = lv2VarName || 'notes';
   const b1 = document.getElementById('lv2-blank1').value.trim();
   const b2 = document.getElementById('lv2-blank2').value.trim();
   const fb = document.getElementById('lv2-fill-fb');
