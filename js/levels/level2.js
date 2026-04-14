@@ -288,21 +288,23 @@ function lv2RenderPhase2(body) {
           <div class="lv1-palette-hint">drag or tap to add</div>
         </div>
 
-        <div class="lv1-dropzone" id="lv2-dropzone"
-             ondragover="event.preventDefault();this.classList.add('drag-over')"
-             ondragleave="this.classList.remove('drag-over')"
-             ondrop="lv2DropBlock(event)">
-          <div class="lv1-dz-placeholder" id="lv2-dz-ph">Drop blocks here...</div>
+        <!-- canvas + actions stacked in right column -->
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div class="lv1-dropzone" id="lv2-dropzone"
+               ondragover="event.preventDefault();this.classList.add('drag-over')"
+               ondragleave="this.classList.remove('drag-over')"
+               ondrop="lv2DropBlock(event)">
+            <div class="lv1-dz-placeholder" id="lv2-dz-ph">Drop blocks here...</div>
+          </div>
+          <div class="lv1-actions">
+            <button class="lv1-btn secondary" onclick="lv2P2Clear()">🗑 Clear</button>
+            <button class="lv1-btn secondary" onclick="lv2P2Play()">▶ Play</button>
+            <button class="lv1-btn secondary" onclick="lv2P2Check()">✓ Check</button>
+            <button class="lv1-btn primary" id="lv2-p2-next" onclick="lv2ShowPhase(3)" style="display:none">Next: Python →</button>
+          </div>
+          <div id="lv2-p2-feedback" class="lv1-feedback" style="display:none"></div>
         </div>
       </div>
-
-      <div class="lv1-actions" style="margin-top:10px">
-        <button class="lv1-btn secondary" onclick="lv2P2Clear()">🗑 Clear</button>
-        <button class="lv1-btn secondary" onclick="lv2P2Play()">▶ Play</button>
-        <button class="lv1-btn secondary" onclick="lv2P2Check()">✓ Check</button>
-        <button class="lv1-btn primary" id="lv2-p2-next" onclick="lv2ShowPhase(3)" style="display:none">Next: Python →</button>
-      </div>
-      <div id="lv2-p2-feedback" class="lv1-feedback" style="display:none"></div>
     </div>
   `;
 }
