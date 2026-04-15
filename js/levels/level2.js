@@ -102,7 +102,7 @@ function lv2RenderPhase1(body) {
           <div class="lv2-note-tile" id="lv2-tile-${note}" onclick="lv2AddNote('${note}')">
             <div class="lv1-card-top">
               <div class="lv1-note-name">${note}</div>
-              <button class="lv1-play-btn" onclick="event.stopPropagation();lv2PlayNote('${note}')">🔊</button>
+              <button class="lv1-play-btn" onclick="event.stopPropagation();lv2PlayNote('${note}')">${icon('volume',12)}</button>
             </div>
             <div class="lv1-pitch-track">
               <div class="lv1-pitch-fill" style="width:${LV2_PITCH_PCT[note]}%"></div>
@@ -112,7 +112,7 @@ function lv2RenderPhase1(body) {
       </div>
 
       <div class="lv1-actions" style="margin-top:4px">
-        <button class="lv1-btn secondary" id="lv2-play-btn" onclick="lv2PlayMelody()">▶ Play</button>
+        <button class="lv1-btn secondary" id="lv2-play-btn" onclick="lv2PlayMelody()">${icon('play',12)} Play</button>
         <button class="lv1-btn secondary" onclick="lv2ClearMelody()">Clear</button>
         <button class="lv1-btn primary" id="lv2-p1-next" onclick="lv2LockIn()" style="display:none">Lock it in! →</button>
       </div>
@@ -140,7 +140,7 @@ function lv2UpdateVarName(val) {
   const display = document.getElementById('lv2-var-name-display');
   if (display) display.textContent = lv2VarName;
   const btn = document.getElementById('lv2-play-btn');
-  if (btn) btn.textContent = '▶ Play ' + lv2VarName;
+  if (btn) btn.innerHTML = icon('play',12) + ' Play ' + lv2VarName;
 }
 
 function lv2SetVarName(name) {
@@ -150,7 +150,7 @@ function lv2SetVarName(name) {
   const display = document.getElementById('lv2-var-name-display');
   if (display) display.textContent = name;
   const btn = document.getElementById('lv2-play-btn');
-  if (btn) btn.textContent = '▶ Play ' + name;
+  if (btn) btn.innerHTML = icon('play',12) + ' Play ' + name;
   // highlight active chip
   document.querySelectorAll('.lv2-name-chip').forEach(c =>
     c.classList.toggle('active', c.textContent === name)
@@ -188,7 +188,7 @@ function lv2UpdateVarBox() {
   } else {
     contents.innerHTML =
       lv2SelectedNotes.map((n, i) =>
-        `<div class="lv2-note-pill">${n}<button onclick="lv2RemoveNote(${i})">✕</button></div>`
+        `<div class="lv2-note-pill">${n}<button onclick="lv2RemoveNote(${i})">${icon('close',10)}</button></div>`
       ).join('') +
       (!full ? '<span class="lv2-add-hint">+ add note</span>' : '');
   }
@@ -254,7 +254,7 @@ function lv2RenderPhase2(body) {
       <div class="lv2-defined-var">
         <span class="lv2-dv-label">Variable defined:</span>
         <code class="lv2-dv-code">${lv2VarName} = [${notes.map(n => '"' + n + '"').join(', ')}]</code>
-        <button class="lv1-play-btn" style="background:rgba(46,128,208,0.15);color:var(--text)" onclick="lv2PlayMelody()">🔊</button>
+        <button class="lv1-play-btn" style="background:rgba(46,128,208,0.15);color:var(--text)" onclick="lv2PlayMelody()">${icon('volume',12)}</button>
       </div>
 
       <!-- Left-right split: palette | canvas -->
@@ -264,7 +264,7 @@ function lv2RenderPhase2(body) {
 
           <div class="lv2-pal-block" style="background:#2E80D0"
             draggable="true" ondragstart="lv2DragStart(event,'play')" onclick="lv2TapAdd('play')">
-            <span>🎵 play(</span>
+            <span>${icon('music',12)} play(</span>
             <span class="lv2-pal-badge">${lv2VarName}</span>
             <span>)</span>
           </div>
@@ -272,7 +272,7 @@ function lv2RenderPhase2(body) {
           <div class="lv1-palette-label" style="margin-top:10px">Loop</div>
           <div class="lv2-pal-repeat-wrap" onclick="lv2TapAdd('repeat')" draggable="true" ondragstart="lv2DragStart(event,'repeat')">
             <div class="lv2-pal-repeat-header">
-              <span>🔁 repeat</span>
+              <span>${icon('repeat',12)} repeat</span>
               <button class="lv2-rep-btn" onclick="event.stopPropagation();lv2ChangeRepeat(-1)">−</button>
               <span class="lv2-rep-val" id="lv2-rep-val">${lv2RepeatCount}</span>
               <button class="lv2-rep-btn" onclick="event.stopPropagation();lv2ChangeRepeat(1)">+</button>
@@ -297,9 +297,9 @@ function lv2RenderPhase2(body) {
             <div class="lv1-dz-placeholder" id="lv2-dz-ph">Drop blocks here...</div>
           </div>
           <div class="lv1-actions">
-            <button class="lv1-btn secondary" onclick="lv2P2Clear()">🗑 Clear</button>
-            <button class="lv1-btn secondary" onclick="lv2P2Play()">▶ Play</button>
-            <button class="lv1-btn secondary" onclick="lv2P2Check()">✓ Check</button>
+            <button class="lv1-btn secondary" onclick="lv2P2Clear()">${icon('trash',12)} Clear</button>
+            <button class="lv1-btn secondary" onclick="lv2P2Play()">${icon('play',12)} Play</button>
+            <button class="lv1-btn secondary" onclick="lv2P2Check()">${icon('check',12)} Check</button>
             <button class="lv1-btn primary" id="lv2-p2-next" onclick="lv2ShowPhase(3)" style="display:none">Next: Python →</button>
           </div>
           <div id="lv2-p2-feedback" class="lv1-feedback" style="display:none"></div>
@@ -353,19 +353,19 @@ function lv2P2Render() {
   lv2BlockSeq.forEach((bt, idx) => {
     const el = document.createElement('div');
     const badge = `<span style="background:rgba(255,255,255,0.28);padding:1px 8px;border-radius:4px;font-weight:700;font-size:12px">${lv2VarName}</span>`;
-    const rmBtn = `<button class="lv1-rm-btn" onclick="lv2RemoveBlock(${idx})">✕</button>`;
+    const rmBtn = `<button class="lv1-rm-btn" onclick="lv2RemoveBlock(${idx})">${icon('close',11)}</button>`;
     if (bt === 'play') {
       el.className = 'lv1-seq-block';
-      el.innerHTML = `🎵 play( ${badge} ) ${rmBtn}`;
+      el.innerHTML = `${icon('music',12)} play( ${badge} ) ${rmBtn}`;
     } else {
       // Container-style repeat block matching main app
       el.className = 'lv2-seq-repeat';
       el.innerHTML = `
         <div class="lv2-seq-repeat-header">
-          🔁 repeat ${badge} <span style="margin-left:4px">${lv2RepeatCount}×</span> ${rmBtn}
+          ${icon('repeat',12)} repeat ${badge} <span style="margin-left:4px">${lv2RepeatCount}×</span> ${rmBtn}
         </div>
         <div class="lv2-seq-repeat-body">
-          <span style="opacity:0.5;font-size:12px">🎵 play( ${lv2VarName} )</span>
+          <span style="opacity:0.5;font-size:12px">${icon('music',12)} play( ${lv2VarName} )</span>
         </div>
         <div class="lv2-seq-repeat-footer">end</div>
       `;
@@ -534,7 +534,7 @@ function lv2P3UpdateNav(step) {
   labels.forEach((label, i) => {
     const dot = document.createElement('div');
     dot.className = 'lv1-p3-dot' + (i === step ? ' active' : (i < step ? ' done' : ''));
-    dot.textContent = i < step ? '✓' : (i + 1);
+    dot.innerHTML = i < step ? icon('check', 11) : (i + 1);
     nav.appendChild(dot);
     const lbl = document.createElement('div');
     lbl.className = 'lv1-p3-nav-label' + (i === step ? ' active' : '');
@@ -572,14 +572,14 @@ function lv2P3Read(main) {
       </div>
       <div class="lv1-read-block" id="lv2-read-0">
         <button class="lv1-read-line-btn" onclick="lv2ReadToggle(0)">
-          <span class="lv1-read-expand-icon">▶</span>
+          <span class="lv1-read-expand-icon">${icon('play',10)}</span>
           <span class="lv1-read-code">${lines[0].code}</span>
         </button>
         <div class="lv1-read-explanation" id="lv2-re-0">${lines[0].explain}</div>
       </div>
       <div class="lv1-read-block" id="lv2-read-1">
         <button class="lv1-read-line-btn" onclick="lv2ReadToggle(1)">
-          <span class="lv1-read-expand-icon">▶</span>
+          <span class="lv1-read-expand-icon">${icon('play',10)}</span>
           <span class="lv1-read-code">${lines[1].code}</span>
         </button>
         <div class="lv1-read-explanation" id="lv2-re-1">${lines[1].explain}</div>
@@ -726,7 +726,7 @@ function lv2P3WriteOwn(main) {
         Variable name must start with a letter and contain only letters, numbers, or underscores.
       </div>
       <div class="lv1-actions">
-        <button class="lv1-btn secondary" onclick="lv2OwnPlay()">▶ Play</button>
+        <button class="lv1-btn secondary" onclick="lv2OwnPlay()">${icon('play',12)} Play</button>
         <button class="lv1-btn primary" onclick="lv2Complete()">Complete Level 2!</button>
       </div>
     </div>

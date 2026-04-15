@@ -18,7 +18,7 @@ function addCustomVar(name, audioBuffer) {
   customVars.push({id,name:dedupedName,color,dark:darken(color),audioBuffer,duration:audioBuffer?audioBuffer.duration:0});
   renderPalette();
   updateCodePreview();
-  showToast(`🎵 Added "${dedupedName}"!`);
+  showToast(`Added "${dedupedName}"!`);
 }
 
 function dedupeVarName(name) {

@@ -2,6 +2,10 @@
 // INIT
 // ════════════════════════════════════════════════════════════
 function init() {
+  applyIcons(document);
+  // Set run button icon (can't use data-icon since it updates dynamically)
+  var runBtn = document.getElementById('run-btn');
+  if (runBtn) runBtn.innerHTML = icon('play', 16);
   buildViz();
   renderPalette();
   canvas = [makeBlock('play',{varId:'v1'}), makeBlock('play',{varId:'v2'})];

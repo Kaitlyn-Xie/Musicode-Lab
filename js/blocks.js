@@ -42,7 +42,7 @@ function renderBlockEl(b, isNested=false) {
 
 function delBtn(b, arr) {
   const btn = document.createElement('button');
-  btn.className='block-del';btn.textContent='✕';btn.title='Delete';
+  btn.className='block-del';btn.innerHTML=icon('close',11);btn.title='Delete';
   btn.onclick = e => { e.stopPropagation(); removeBlock(b.id, arr||canvas); syncAll(); };
   return btn;
 }
@@ -55,7 +55,7 @@ function renderPlayBlock(b, isNested) {
   el.draggable=true;
   el.ondragstart=e=>{dragPayload={moveId:b.id};e.dataTransfer.effectAllowed='move';};
 
-  const lbl=document.createElement('span');lbl.textContent='🎵 play( ';el.appendChild(lbl);
+  const lbl=document.createElement('span');lbl.innerHTML=icon('music',12)+' play( ';el.appendChild(lbl);
   const badge=document.createElement('span');badge.className='block-badge';badge.textContent=v.name;
   badge.style.background=v.dark||'#1860A0';el.appendChild(badge);
   const lbl2=document.createElement('span');lbl2.textContent=' )';el.appendChild(lbl2);
@@ -75,7 +75,7 @@ function renderSayBlock(b, isNested) {
   const el=document.createElement('div');el.className='block';el.style.background='#C02878';
   el.dataset.bid=b.id;el.draggable=true;
   el.ondragstart=e=>{dragPayload={moveId:b.id};e.dataTransfer.effectAllowed='move';};
-  const lbl=document.createElement('span');lbl.textContent='💬 say( ';el.appendChild(lbl);
+  const lbl=document.createElement('span');lbl.innerHTML=icon('say',12)+' say( ';el.appendChild(lbl);
   const inp=document.createElement('input');inp.type='text';inp.value=b.text;inp.size=14;
   inp.style.maxWidth='160px';
   inp.oninput=()=>{b.text=inp.value;syncAll();};
@@ -89,7 +89,7 @@ function renderPrintBlock(b, isNested) {
   const el=document.createElement('div');el.className='block';el.style.background='#C02878';
   el.dataset.bid=b.id;el.draggable=true;
   el.ondragstart=e=>{dragPayload={moveId:b.id};e.dataTransfer.effectAllowed='move';};
-  const lbl=document.createElement('span');lbl.textContent='🖨 print( ';el.appendChild(lbl);
+  const lbl=document.createElement('span');lbl.innerHTML=icon('print',12)+' print( ';el.appendChild(lbl);
   const sel=document.createElement('select');
   allVars().forEach(v=>{const o=document.createElement('option');o.value=v.id;o.textContent=v.name;if(v.id===b.varId)o.selected=true;sel.appendChild(o);});
   sel.onchange=()=>{b.varId=sel.value;syncAll();};
@@ -103,7 +103,7 @@ function renderSetTempoBlock(b, isNested) {
   const el=document.createElement('div');el.className='block';el.style.background='#7050D0';
   el.dataset.bid=b.id;el.draggable=true;
   el.ondragstart=e=>{dragPayload={moveId:b.id};e.dataTransfer.effectAllowed='move';};
-  const lbl=document.createElement('span');lbl.textContent='🔊 set tempo( ';el.appendChild(lbl);
+  const lbl=document.createElement('span');lbl.innerHTML=icon('volume',12)+' set tempo( ';el.appendChild(lbl);
   const inp=document.createElement('input');inp.type='number';inp.value=b.value;inp.min=40;inp.max=240;inp.style.width='60px';
   inp.oninput=()=>{b.value=+inp.value||120;syncAll();};
   el.appendChild(inp);
@@ -116,7 +116,7 @@ function renderSetInstBlock(b, isNested) {
   const el=document.createElement('div');el.className='block';el.style.background='#7050D0';
   el.dataset.bid=b.id;el.draggable=true;
   el.ondragstart=e=>{dragPayload={moveId:b.id};e.dataTransfer.effectAllowed='move';};
-  const lbl=document.createElement('span');lbl.textContent='🎸 set instrument( ';el.appendChild(lbl);
+  const lbl=document.createElement('span');lbl.innerHTML=icon('instrument',12)+' set instrument( ';el.appendChild(lbl);
   const sel=document.createElement('select');
   ['piano','marimba','synth'].forEach(i=>{const o=document.createElement('option');o.value=i;o.textContent=i;if(i===b.value)o.selected=true;sel.appendChild(o);});
   sel.onchange=()=>{b.value=sel.value;syncAll();};
@@ -130,7 +130,7 @@ function renderWaitBlock(b, isNested) {
   const el=document.createElement('div');el.className='block';el.style.background='#2EA870';
   el.dataset.bid=b.id;el.draggable=true;
   el.ondragstart=e=>{dragPayload={moveId:b.id};e.dataTransfer.effectAllowed='move';};
-  const lbl=document.createElement('span');lbl.textContent='⏳ wait( ';el.appendChild(lbl);
+  const lbl=document.createElement('span');lbl.innerHTML=icon('wait',12)+' wait( ';el.appendChild(lbl);
   const inp=document.createElement('input');inp.type='number';inp.value=b.beats;inp.min=0.5;inp.max=16;inp.step=0.5;inp.style.width='55px';
   inp.oninput=()=>{b.beats=+inp.value||1;syncAll();};
   el.appendChild(inp);
@@ -143,7 +143,7 @@ function renderPlayNoteBlock(b, isNested) {
   const el=document.createElement('div');el.className='block';el.style.background='#2E80D0';
   el.dataset.bid=b.id;el.draggable=true;
   el.ondragstart=e=>{dragPayload={moveId:b.id};e.dataTransfer.effectAllowed='move';};
-  const lbl=document.createElement('span');lbl.textContent='🎵 play note( ';el.appendChild(lbl);
+  const lbl=document.createElement('span');lbl.innerHTML=icon('music',12)+' play note( ';el.appendChild(lbl);
   const sel=document.createElement('select');
   NOTES_LIST.forEach(n=>{const o=document.createElement('option');o.value=n;o.textContent=n;if(n===b.note)o.selected=true;sel.appendChild(o);});
   sel.onchange=()=>{b.note=sel.value;syncAll();};
@@ -161,7 +161,7 @@ function renderPlayChordBlock(b, isNested) {
   const el=document.createElement('div');el.className='block';el.style.background='#2E80D0';
   el.dataset.bid=b.id;el.draggable=true;
   el.ondragstart=e=>{dragPayload={moveId:b.id};e.dataTransfer.effectAllowed='move';};
-  const lbl=document.createElement('span');lbl.textContent='🎶 play chord( ';el.appendChild(lbl);
+  const lbl=document.createElement('span');lbl.innerHTML=icon('chord',12)+' play chord( ';el.appendChild(lbl);
   const inp=document.createElement('input');inp.type='text';inp.value=b.notes;inp.size=12;
   inp.oninput=()=>{b.notes=inp.value;syncAll();};
   el.appendChild(inp);
@@ -174,7 +174,7 @@ function renderRepeatBlock(b, isNested) {
   const wrap=document.createElement('div');wrap.className='loop-block';wrap.dataset.bid=b.id;
 
   const header=document.createElement('div');header.className='loop-header';
-  const ic=document.createElement('span');ic.textContent='🔁 repeat ';header.appendChild(ic);
+  const ic=document.createElement('span');ic.innerHTML=icon('repeat',12)+' repeat ';header.appendChild(ic);
   const cbs=document.createElement('div');cbs.className='count-btns';
   const minus=document.createElement('button');minus.textContent='−';minus.onclick=e=>{e.stopPropagation();b.count=Math.max(1,b.count-1);syncAll();};
   const val=document.createElement('span');val.className='count-val';val.textContent=b.count;
@@ -182,7 +182,7 @@ function renderRepeatBlock(b, isNested) {
   cbs.appendChild(minus);cbs.appendChild(val);cbs.appendChild(plus);
   header.appendChild(cbs);
   const lbl2=document.createElement('span');lbl2.textContent=' times:';header.appendChild(lbl2);
-  const db=document.createElement('button');db.className='block-del';db.textContent='✕';db.style.opacity='0';
+  const db=document.createElement('button');db.className='block-del';db.innerHTML=icon('close',11);db.style.opacity='0';
   db.onclick=e=>{e.stopPropagation();removeBlock(b.id,canvas);syncAll();};
   header.addEventListener('mouseenter',()=>db.style.opacity='1');
   header.addEventListener('mouseleave',()=>db.style.opacity='0');
@@ -212,7 +212,7 @@ function renderIfBlock(b, isNested) {
   const wrap=document.createElement('div');wrap.className='if-block';wrap.dataset.bid=b.id;
 
   const header=document.createElement('div');header.className='if-header';
-  const ic=document.createElement('span');ic.textContent='❓ if ';header.appendChild(ic);
+  const ic=document.createElement('span');ic.innerHTML=icon('branch',12)+' if ';header.appendChild(ic);
   const sel=document.createElement('select');
   [{v:'always',l:'always'},{v:'tempo>120',l:'tempo > 120'},{v:'tempo<80',l:'tempo < 80'}].forEach(c=>{
     const o=document.createElement('option');o.value=c.v;o.textContent=c.l;if(c.v===b.cond)o.selected=true;sel.appendChild(o);
@@ -220,7 +220,7 @@ function renderIfBlock(b, isNested) {
   sel.onchange=()=>{b.cond=sel.value;syncAll();};
   header.appendChild(sel);
   const lbl=document.createElement('span');lbl.textContent=':';header.appendChild(lbl);
-  const db=document.createElement('button');db.className='block-del';db.textContent='✕';db.style.opacity='0';
+  const db=document.createElement('button');db.className='block-del';db.innerHTML=icon('close',11);db.style.opacity='0';
   db.onclick=e=>{e.stopPropagation();removeBlock(b.id,canvas);syncAll();};
   header.addEventListener('mouseenter',()=>db.style.opacity='1');
   header.addEventListener('mouseleave',()=>db.style.opacity='0');
@@ -270,7 +270,7 @@ function renderBlocksInto(container) {
   container.innerHTML = '';
   if (canvas.length===0) {
     const hint=document.createElement('div');hint.className='canvas-empty';
-    hint.innerHTML='<div class="empty-icon">👆</div><p>Build your answer here!</p><small>Click or drag blocks from the left panel</small>';
+    hint.innerHTML='<div class="empty-icon">'+icon('pointer',32)+'</div><p>Build your answer here!</p><small>Click or drag blocks from the left panel</small>';
     container.appendChild(hint);
   }
   canvas.forEach(b=>container.appendChild(renderBlockEl(b)));

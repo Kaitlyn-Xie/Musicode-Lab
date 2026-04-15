@@ -42,7 +42,7 @@ function renderReadChallenge() {
 
   const left=document.createElement('div');left.className='ch-left';
 
-  const badge=document.createElement('div');badge.className='ch-badge read';badge.textContent=`📖 Read Code — Challenge ${readIdx%READ_CHALLENGES.length+1}/${READ_CHALLENGES.length}`;
+  const badge=document.createElement('div');badge.className='ch-badge read';badge.innerHTML=icon('book',13)+` Read Code — Challenge ${readIdx%READ_CHALLENGES.length+1}/${READ_CHALLENGES.length}`;
   left.appendChild(badge);
 
   const prog=document.createElement('div');prog.className='ch-prog';
@@ -61,7 +61,7 @@ function renderReadChallenge() {
   codeBlock.innerHTML=c.code.replace(/\n/g,'<br>');
   left.appendChild(codeBlock);
 
-  const hearBtn=document.createElement('button');hearBtn.className='ch-btn secondary';hearBtn.textContent='▶ Hear it';
+  const hearBtn=document.createElement('button');hearBtn.className='ch-btn secondary';hearBtn.innerHTML=icon('play',12)+' Hear it';
   hearBtn.onclick=async()=>{ await initTone(); await execBlocks(c.playCode); };
   left.appendChild(hearBtn);
 
@@ -75,7 +75,7 @@ function renderReadChallenge() {
       btn.classList.add(correct?'correct':'wrong');
       if(correct){ score+=10; document.getElementById('score-display').textContent=score; }
       else { opts.children[c.correct].classList.add('correct'); }
-      fb.textContent=correct?'✅ Correct! Great job!':'❌ Not quite. The correct answer is highlighted.';
+      fb.innerHTML=correct?(icon('check',13)+' Correct! Great job!'):(icon('wrong',13)+' Not quite. The correct answer is highlighted.');
       fb.className='ch-feedback show '+(correct?'ok':'bad');
       nextBtn.style.display='inline-flex';
     };
@@ -132,7 +132,7 @@ function renderListenChallenge() {
 
   const left=document.createElement('div');left.className='ch-left';
 
-  const badge=document.createElement('div');badge.className='ch-badge listen';badge.textContent=`🎧 Listen & Code — Challenge ${listenIdx%LISTEN_CHALLENGES.length+1}/${LISTEN_CHALLENGES.length}`;
+  const badge=document.createElement('div');badge.className='ch-badge listen';badge.innerHTML=icon('headphones',13)+` Listen &amp; Code — Challenge ${listenIdx%LISTEN_CHALLENGES.length+1}/${LISTEN_CHALLENGES.length}`;
   left.appendChild(badge);
 
   const prog=document.createElement('div');prog.className='ch-prog';
@@ -146,19 +146,19 @@ function renderListenChallenge() {
 
   const title=document.createElement('div');title.className='ch-title';title.innerHTML=c.title;left.appendChild(title);
   const desc=document.createElement('div');desc.className='ch-desc';desc.innerHTML=c.desc;left.appendChild(desc);
-  const hint=document.createElement('div');hint.className='ch-hint';hint.textContent='💡 Hint: '+c.hint;left.appendChild(hint);
+  const hint=document.createElement('div');hint.className='ch-hint';hint.innerHTML=icon('hint',13)+' Hint: '+c.hint;left.appendChild(hint);
 
-  const hearBtn=document.createElement('button');hearBtn.className='ch-btn secondary';hearBtn.textContent='▶ Hear Target';
+  const hearBtn=document.createElement('button');hearBtn.className='ch-btn secondary';hearBtn.innerHTML=icon('play',12)+' Hear Target';
   hearBtn.onclick=async()=>{ await initTone(); await execBlocks(c.target); };
   left.appendChild(hearBtn);
 
   const fb=document.createElement('div');fb.className='ch-feedback';left.appendChild(fb);
 
   const nav=document.createElement('div');nav.className='ch-nav';
-  const checkBtn=document.createElement('button');checkBtn.className='ch-btn primary';checkBtn.textContent='✓ Check Answer';
+  const checkBtn=document.createElement('button');checkBtn.className='ch-btn primary';checkBtn.innerHTML=icon('check',12)+' Check Answer';
   checkBtn.onclick=async()=>{
     const ok=c.check(canvas);
-    fb.textContent=ok?'✅ Perfect! That matches the target!':'❌ Not quite right. Try again!';
+    fb.innerHTML=ok?(icon('check',13)+' Perfect! That matches the target!'):(icon('wrong',13)+' Not quite right. Try again!');
     fb.className='ch-feedback show '+(ok?'ok':'bad');
     if(ok){ score+=15;document.getElementById('score-display').textContent=score;nextBtn.style.display='inline-flex';}
   };
@@ -179,8 +179,8 @@ function renderListenChallenge() {
   // Right side: block canvas
   const right=document.createElement('div');right.className='ch-right';
   const rHeader=document.createElement('div');rHeader.className='col-header';
-  rHeader.innerHTML='<div class="col-title"><span class="col-icon">🏗</span> Your Answer</div>';
-  const clrBtn=document.createElement('button');clrBtn.className='clear-btn';clrBtn.textContent='🗑 Clear';
+  rHeader.innerHTML='<div class="col-title"><span class="col-icon">'+icon('blocks',14)+'</span> Your Answer</div>';
+  const clrBtn=document.createElement('button');clrBtn.className='clear-btn';clrBtn.innerHTML=icon('trash',12)+' Clear';
   clrBtn.onclick=()=>{canvas=[];syncAll();};
   rHeader.appendChild(clrBtn);
   right.appendChild(rHeader);

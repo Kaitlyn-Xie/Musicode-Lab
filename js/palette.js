@@ -43,12 +43,12 @@ function renderPalette() {
       btns.className='chip-btns';
 
       const previewBtn = document.createElement('button');
-      previewBtn.textContent='▶';previewBtn.title='Preview';
+      previewBtn.innerHTML=icon('play',11);previewBtn.title='Preview';
       previewBtn.onclick = async e => { e.stopPropagation(); await initTone(); await playVar(v.id); };
       btns.appendChild(previewBtn);
 
       const editBtn = document.createElement('button');
-      editBtn.textContent='✏';editBtn.title='Edit';
+      editBtn.innerHTML=icon('edit',11);editBtn.title='Edit';
       editBtn.onclick = e => {
         e.stopPropagation();
         const drawer = wrap.querySelector('.var-edit-drawer');
@@ -58,7 +58,7 @@ function renderPalette() {
 
       if (v.id.startsWith('cv')) {
         const delBtn = document.createElement('button');
-        delBtn.textContent='✕';delBtn.title='Delete';
+        delBtn.innerHTML=icon('close',11);delBtn.title='Delete';
         delBtn.onclick = e => { e.stopPropagation(); customVars = customVars.filter(x=>x.id!==v.id); renderPalette(); syncAll(); };
         btns.appendChild(delBtn);
       }
@@ -104,17 +104,17 @@ function renderPalette() {
     const title = document.createElement('div');title.className='palette-section-title';title.textContent='Add Audio Variable';
     scroll.appendChild(title);
 
-    const uploadChip = makeChip('📁 Upload Audio File','#448844',()=>document.getElementById('upload-input').click());
+    const uploadChip = makeChip(icon('upload',12)+' Upload Audio File','#448844',()=>document.getElementById('upload-input').click());
     uploadChip.draggable=false;scroll.appendChild(uploadChip);
-    const recordChip = makeChip('🎙 Record My Voice','#884444',()=>openRecordModal());
+    const recordChip = makeChip(icon('mic',12)+' Record My Voice','#884444',()=>openRecordModal());
     recordChip.draggable=false;scroll.appendChild(recordChip);
     return;
   }
 
   if (activeCat === 'control') {
     const defs = [
-      {label:'🔁 repeat … times', bg:'#D4A020', factory:()=>makeBlock('repeat')},
-      {label:'❓ if … else …', bg:'#E07830', factory:()=>makeBlock('if')},
+      {label:icon('repeat',12)+' repeat … times', bg:'#D4A020', factory:()=>makeBlock('repeat')},
+      {label:icon('branch',12)+' if … else …', bg:'#E07830', factory:()=>makeBlock('if')},
     ];
     defs.forEach(d => {
       const chip = makeChip(d.label, d.bg, ()=>addBlockToCanvas(d.factory()), true, ()=>({ type: d.factory().type }));
@@ -126,9 +126,9 @@ function renderPalette() {
 
   if (activeCat === 'sound') {
     const defs = [
-      {label:'🔊 set tempo', bg:'#7050D0', f:()=>makeBlock('setTempo')},
-      {label:'🎸 set instrument', bg:'#7050D0', f:()=>makeBlock('setInst')},
-      {label:'⏳ wait beats', bg:'#2EA870', f:()=>makeBlock('wait')},
+      {label:icon('volume',12)+' set tempo', bg:'#7050D0', f:()=>makeBlock('setTempo')},
+      {label:icon('instrument',12)+' set instrument', bg:'#7050D0', f:()=>makeBlock('setInst')},
+      {label:icon('wait',12)+' wait beats', bg:'#2EA870', f:()=>makeBlock('wait')},
     ];
     defs.forEach(d => {
       const chip = makeChip(d.label, d.bg, ()=>addBlockToCanvas(d.f()));
@@ -140,8 +140,8 @@ function renderPalette() {
 
   if (activeCat === 'music') {
     const defs = [
-      {label:'🎵 play note', bg:'#2E80D0', f:()=>makeBlock('playNote')},
-      {label:'🎶 play chord', bg:'#2E80D0', f:()=>makeBlock('playChord')},
+      {label:icon('music',12)+' play note', bg:'#2E80D0', f:()=>makeBlock('playNote')},
+      {label:icon('chord',12)+' play chord', bg:'#2E80D0', f:()=>makeBlock('playChord')},
     ];
     defs.forEach(d => {
       const chip = makeChip(d.label, d.bg, ()=>addBlockToCanvas(d.f()));
@@ -153,8 +153,8 @@ function renderPalette() {
 
   if (activeCat === 'output') {
     const defs = [
-      {label:'💬 say "..."', bg:'#C02878', f:()=>makeBlock('say')},
-      {label:'🖨 print variable', bg:'#C02878', f:()=>makeBlock('print')},
+      {label:icon('say',12)+' say "..."', bg:'#C02878', f:()=>makeBlock('say')},
+      {label:icon('print',12)+' print variable', bg:'#C02878', f:()=>makeBlock('print')},
     ];
     defs.forEach(d => {
       const chip = makeChip(d.label, d.bg, ()=>addBlockToCanvas(d.f()));
@@ -170,7 +170,7 @@ function makeChip(label, bg, clickFn, draggable=true, dragFn=null) {
   chip.className='pal-chip';
   chip.style.background=bg;
   chip.draggable=draggable;
-  chip.textContent=label;
+  chip.innerHTML=label;
   chip.onclick=clickFn;
   return chip;
 }

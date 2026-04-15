@@ -1,3 +1,13 @@
+/* ── Icon base ──────────────────────────────────────────── */
+.icon {
+  display: inline-block;
+  vertical-align: middle;
+  flex-shrink: 0;
+  line-height: 0;
+  position: relative;
+  top: -0.5px;
+}
+
 :root {
   --bg: #F0EDF8;
   --surface: #FFFFFF;

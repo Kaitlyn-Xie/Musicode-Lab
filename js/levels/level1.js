@@ -71,7 +71,7 @@ function lv1RenderPhase1(body) {
     <div class="lv1-scroll">
       <div class="lv1-activity-heading">Sort the Notes — Lowest to Highest</div>
       <p class="lv1-activity-sub">
-        Four notes are scrambled below. Click <strong>🔊</strong> on each card to hear how it sounds,
+        Four notes are scrambled below. Click the <strong>listen</strong> button on each card to hear how it sounds,
         then pick a card and place it in the right slot — <strong>lowest pitch first</strong>.
       </p>
 
@@ -147,7 +147,7 @@ function lv1BuildNoteCard(note, options) {
   card.innerHTML =
     '<div class="lv1-card-top">' +
       '<div class="lv1-note-name">' + note + '</div>' +
-      '<button class="lv1-play-btn" title="Hear this note">🔊</button>' +
+      '<button class="lv1-play-btn" title="Hear this note">'+icon('volume',12)+'</button>' +
     '</div>' +
     '<div class="lv1-pitch-track"><div class="lv1-pitch-fill" style="width:' + pct + '%"></div></div>' +
     '<div class="lv1-note-label">' + (options.placed ? 'drag to move' : 'drag to place') + '</div>';
@@ -297,7 +297,7 @@ async function lv1CheckPhase1() {
     if (reveal) reveal.classList.add('visible');
   } else {
     fb.className = 'lv1-feedback error';
-    fb.innerHTML = 'Not quite! Click <strong>🔊</strong> on each card to hear the notes — lower sounds come first. Try the hint button if you need help!';
+    fb.innerHTML = 'Not quite! Click the <strong>listen</strong> button on each card to hear the notes — lower sounds come first. Try the hint button if you need help!';
   }
 }
 
@@ -325,7 +325,7 @@ function lv1RenderPhase2(body) {
                  ondragstart="lv1DragStart(event,'${n}')"
                  onclick="lv1TapAdd('${n}')">play note ${n}</div>
                <button class="lv1-play-btn" style="background:rgba(46,128,208,0.18);color:var(--text)"
-                 onclick="lv1PlaySingleNote('${n}')">🔊</button>
+                 onclick="lv1PlaySingleNote('${n}')">${icon('volume',12)}</button>
              </div>`
           ).join('')}
           <div class="lv1-palette-hint">drag or tap to add</div>
@@ -389,7 +389,7 @@ function lv1RenderBlocks() {
     const el = document.createElement('div');
     el.className = 'lv1-seq-block';
     el.innerHTML = 'play note <strong style="margin-left:4px">' + note + '</strong>' +
-      '<button class="lv1-rm-btn" onclick="lv1RemoveBlock(' + idx + ')">✕</button>';
+      '<button class="lv1-rm-btn" onclick="lv1RemoveBlock(' + idx + ')">'+icon('close',11)+'</button>';
     dz.appendChild(el);
   });
 }
@@ -551,7 +551,7 @@ function lv1P3UpdateNav(step) {
   labels.forEach((label, i) => {
     const dot = document.createElement('div');
     dot.className = 'lv1-p3-dot' + (i === step ? ' active' : (i < step ? ' done' : ''));
-    dot.textContent = i < step ? '✓' : (i + 1);
+    dot.innerHTML = i < step ? icon('check', 11) : (i + 1);
     nav.appendChild(dot);
     const lbl = document.createElement('div');
     lbl.className = 'lv1-p3-nav-label' + (i === step ? ' active' : '');
@@ -605,21 +605,21 @@ function lv1P3Read(main) {
       </div>
       <div class="lv1-read-block" id="lv1-read-0">
         <button class="lv1-read-line-btn" onclick="lv1ReadToggle(0)">
-          <span class="lv1-read-expand-icon">▶</span>
+          <span class="lv1-read-expand-icon">${icon('play',10)}</span>
           <span class="lv1-read-code">${LV1_CODE_LINES[0].code}</span>
         </button>
         <div class="lv1-read-explanation" id="lv1-re-0">${LV1_CODE_LINES[0].explain}</div>
       </div>
       <div class="lv1-read-block" id="lv1-read-1">
         <button class="lv1-read-line-btn" onclick="lv1ReadToggle(1)">
-          <span class="lv1-read-expand-icon">▶</span>
+          <span class="lv1-read-expand-icon">${icon('play',10)}</span>
           <span class="lv1-read-code">${LV1_CODE_LINES[1].code}</span>
         </button>
         <div class="lv1-read-explanation" id="lv1-re-1">${LV1_CODE_LINES[1].explain}</div>
       </div>
       <div class="lv1-read-block" id="lv1-read-2">
         <button class="lv1-read-line-btn" onclick="lv1ReadToggle(2)">
-          <span class="lv1-read-expand-icon">▶</span>
+          <span class="lv1-read-expand-icon">${icon('play',10)}</span>
           <span class="lv1-read-code">${LV1_CODE_LINES[2].code}</span>
         </button>
         <div class="lv1-read-explanation" id="lv1-re-2">${LV1_CODE_LINES[2].explain}</div>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>MusiCode Lab 🎵</title>
+<title>MusiCode Lab</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
@@ -11,10 +11,10 @@
 
 <!-- HEADER -->
 <div id="header">
-  <div id="logo"><span class="logo-icon">🎵</span>Musi<span class="logo-accent">Code</span> Lab</div>
+  <div id="logo"><span class="logo-icon" data-icon="music" data-size="18"></span>Musi<span class="logo-accent">Code</span> Lab</div>
   <div class="mode-tabs">
-    <button class="mode-tab" data-mode="challenge" onclick="setMode('challenge')">🏆 Challenge</button>
-    <button class="mode-tab active" data-mode="free" onclick="setMode('free')">🆓 Free Create</button>
+    <button class="mode-tab" data-mode="challenge" onclick="setMode('challenge')"><span data-icon="trophy" data-size="13"></span> Challenge</button>
+    <button class="mode-tab active" data-mode="free" onclick="setMode('free')"><span data-icon="compose" data-size="13"></span> Free Create</button>
   </div>
   <div class="header-right">
     <div id="user-chip" style="display:none;align-items:center;gap:5px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);border-radius:20px;color:rgba(255,255,255,0.9);font-size:12px;font-weight:700;padding:3px 10px;cursor:pointer;" onclick="showHomeFromApp()">
@@ -35,7 +35,7 @@
   <!-- PALETTE -->
   <div id="palette">
     <div class="palette-header">
-      <span class="palette-title">🧩 Blocks</span>
+      <span class="palette-title"><span data-icon="blocks" data-size="14"></span> Blocks</span>
       <button class="help-btn" onclick="openTutorial()" title="Help">?</button>
     </div>
     <div class="cat-tabs" id="cat-tabs">
@@ -51,12 +51,12 @@
   <!-- CANVAS COLUMN -->
   <div id="canvas-col">
     <div class="col-header">
-      <div class="col-title"><span class="col-icon">🏗</span> My Program</div>
-      <button class="clear-btn" onclick="clearCanvas()">🗑 Clear</button>
+      <div class="col-title"><span class="col-icon" data-icon="blocks" data-size="14"></span> My Program</div>
+      <button class="clear-btn" onclick="clearCanvas()"><span data-icon="trash" data-size="13"></span> Clear</button>
     </div>
     <div id="canvas-scroll" class="drop-zone" ondragover="onCanvasDragOver(event)" ondrop="onCanvasDrop(event)">
       <div class="canvas-empty" id="canvas-empty">
-        <div class="empty-icon">👆</div>
+        <div class="empty-icon"><span data-icon="pointer" data-size="32"></span></div>
         <p>Click or drag blocks here!</p>
         <small>Start by picking a block from the left panel</small>
       </div>
@@ -66,7 +66,7 @@
   <!-- CODE PREVIEW -->
   <div id="code-col">
     <div class="col-header">
-      <div class="col-title"><span class="col-icon">💻</span> Live Code</div>
+      <div class="col-title"><span class="col-icon" data-icon="code" data-size="14"></span> Live Code</div>
     </div>
     <div id="code-preview"></div>
   </div>
@@ -74,7 +74,7 @@
   <!-- LEVEL SELECT SCREEN -->
   <div id="level-select">
     <div class="ls-header">
-      <div class="ls-title">🏆 Choose Your Challenge</div>
+      <div class="ls-title"><span data-icon="trophy" data-size="20"></span> Choose Your Challenge</div>
       <div class="ls-sub">7 levels · sequencing, variables, loops, binary, debugging, searching &amp; more</div>
     </div>
     <div class="ls-grid" id="ls-grid"></div>
@@ -89,18 +89,18 @@
 
 <!-- FOOTER -->
 <div id="footer">
-  <button id="run-btn" class="stopped" onclick="toggleRun()" title="Run (Ctrl+Enter)">▶</button>
+  <button id="run-btn" class="stopped" onclick="toggleRun()" title="Run (Ctrl+Enter)"></button>
   <span class="run-label" id="run-label">Run</span>
   <div id="visualizer"></div>
   <div class="tempo-wrap">
-    <label>🎵 BPM</label>
+    <label><span data-icon="tempo" data-size="13"></span> BPM</label>
     <input type="range" id="tempo-slider" min="60" max="200" value="116" oninput="setTempo(+this.value)">
     <span id="tempo-val">116</span>
   </div>
   <div class="footer-btns">
     <div class="rec-dot" id="rec-dot"></div>
-    <button class="footer-btn" onclick="downloadProgram()">💾 Save</button>
-    <button class="footer-btn" onclick="downloadAudio()">🎵 Export</button>
+    <button class="footer-btn" onclick="downloadProgram()"><span data-icon="save" data-size="13"></span> Save</button>
+    <button class="footer-btn" onclick="downloadAudio()"><span data-icon="download" data-size="13"></span> Export</button>
   </div>
 </div>
 
@@ -146,7 +146,7 @@
     </div>
   </div>
   <div class="home-tip">
-    💡 New here? We recommend starting with <strong>Challenge Mode</strong> — it'll teach you everything you need before exploring Free Create.
+    <span data-icon="hint" data-size="14"></span> New here? We recommend starting with <strong>Challenge Mode</strong> — it'll teach you everything you need before exploring Free Create.
   </div>
   <div class="home-footer">
     Logged in as <strong id="home-username"></strong> &nbsp;·&nbsp;
@@ -157,24 +157,24 @@
 <!-- TUTORIAL MODAL -->
 <div class="modal-bg" id="tutorial-modal">
   <div class="modal-box">
-    <button class="modal-close" onclick="closeTutorial()">✕</button>
-    <div class="modal-title">🎵 Welcome to MusiCode Lab!</div>
+    <button class="modal-close" onclick="closeTutorial()"><span data-icon="close" data-size="14"></span></button>
+    <div class="modal-title"><span data-icon="music" data-size="18"></span> Welcome to MusiCode Lab!</div>
     <div class="modal-sub">Learn coding through music — no experience needed!</div>
 
     <div class="tut-step active" data-step="0">
-      <h3>👋 What is MusiCode Lab?</h3>
+      <h3>What is MusiCode Lab?</h3>
       <p>MusiCode Lab is a <strong>music coding playground</strong> for young coders. You write programs using colorful blocks — and your program <strong>plays as real music!</strong></p>
       <p>Drag blocks from the left panel into the middle. Watch the <strong>code appear on the right</strong>. Hit ▶ Run to hear it play!</p>
       <div class="tut-demo">
-        <div class="tut-block" style="background:var(--block-play)">🎵 play( <span style="background:rgba(255,255,255,0.25);padding:1px 8px;border-radius:4px;">variable1</span> )</div>
-        <div class="tut-block" style="background:var(--block-play)">🎵 play( <span style="background:rgba(255,255,255,0.25);padding:1px 8px;border-radius:4px;">variable2</span> )</div>
+        <div class="tut-block" style="background:var(--block-play)"><span data-icon="music" data-size="12"></span> play( <span style="background:rgba(255,255,255,0.25);padding:1px 8px;border-radius:4px;">variable1</span> )</div>
+        <div class="tut-block" style="background:var(--block-play)"><span data-icon="music" data-size="12"></span> play( <span style="background:rgba(255,255,255,0.25);padding:1px 8px;border-radius:4px;">variable2</span> )</div>
       </div>
     </div>
 
     <div class="tut-step" data-step="1">
-      <h3>🎼 Music Phrases = Variables</h3>
+      <h3>Music Phrases = Variables</h3>
       <p>Each <strong>variable</strong> stores a music phrase — a list of notes. Like a variable in Python: <code>variable1 = [E4, G4, A4]</code></p>
-      <p>Click the <strong>✏ edit</strong> button on a variable chip to change its notes. Try adding: <code>C4 E4 G4 C5</code></p>
+      <p>Click the <strong>edit</strong> button on a variable chip to change its notes. Try adding: <code>C4 E4 G4 C5</code></p>
       <div class="tut-demo">
         <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#9CDCFE;padding:4px 8px;background:var(--code-bg);border-radius:8px;">
           <span style="color:#C586C0">def</span> variable1 = [<span style="color:#B5CEA8">E4 G4 A4 G4 E4</span>]
@@ -183,33 +183,33 @@
     </div>
 
     <div class="tut-step" data-step="2">
-      <h3>🔁 Loops = Repeat Blocks</h3>
+      <h3>Loops = Repeat Blocks</h3>
       <p>The <strong>repeat</strong> block is like a <code>for</code> loop in Python. Drag <code>play(variable1)</code> inside it to repeat it 3 times!</p>
       <div class="tut-demo">
-        <div class="tut-block" style="background:var(--block-repeat);border-radius:8px 8px 0 0">🔁 repeat <span style="background:rgba(255,255,255,0.25);padding:1px 8px;border-radius:4px;">3</span> times:</div>
+        <div class="tut-block" style="background:var(--block-repeat);border-radius:8px 8px 0 0"><span data-icon="repeat" data-size="12"></span> repeat <span style="background:rgba(255,255,255,0.25);padding:1px 8px;border-radius:4px;">3</span> times:</div>
         <div style="background:rgba(212,160,32,0.15);border-left:4px solid var(--block-repeat);padding:6px 8px 6px 16px;">
-          <div class="tut-block" style="background:var(--block-play)">🎵 play( variable1 )</div>
+          <div class="tut-block" style="background:var(--block-play)"><span data-icon="music" data-size="12"></span> play( variable1 )</div>
         </div>
         <div class="tut-block" style="background:var(--block-repeat);border-radius:0 0 8px 8px;justify-content:center;font-size:11px;opacity:0.8">end</div>
       </div>
     </div>
 
     <div class="tut-step" data-step="3">
-      <h3>🎛 More Blocks</h3>
+      <h3>More Blocks</h3>
       <p>Explore all the block categories:</p>
       <div class="tut-demo">
-        <div class="tut-block" style="background:var(--cat-sound)">🔊 set tempo( 140 )</div>
-        <div class="tut-block" style="background:var(--cat-music)">🎵 play note( C4, 1 beat )</div>
-        <div class="tut-block" style="background:var(--cat-output)">💬 say( "Hello!" )</div>
+        <div class="tut-block" style="background:var(--cat-sound)"><span data-icon="volume" data-size="12"></span> set tempo( 140 )</div>
+        <div class="tut-block" style="background:var(--cat-music)"><span data-icon="music" data-size="12"></span> play note( C4, 1 beat )</div>
+        <div class="tut-block" style="background:var(--cat-output)"><span data-icon="say" data-size="12"></span> say( "Hello!" )</div>
       </div>
       <p>You can also <strong>upload</strong> or <strong>record</strong> your own sound effects as audio variables!</p>
     </div>
 
     <div class="tut-step" data-step="4">
-      <h3>🏆 Challenges &amp; Downloads</h3>
-      <p>Try <strong>📖 Read Code</strong> mode to answer questions about code, or <strong>🎧 Listen &amp; Code</strong> to build programs that match a target sound.</p>
-      <p>When you're done, hit <strong>💾 Save</strong> to download your program as JSON, or <strong>🎵 Export</strong> to download the audio!</p>
-      <p>Press <strong>Ctrl+Enter</strong> to run/stop anytime. Happy coding! 🎉</p>
+      <h3>Challenges &amp; Downloads</h3>
+      <p>Try <strong>Read Code</strong> mode to answer questions about code, or <strong>Listen &amp; Code</strong> to build programs that match a target sound.</p>
+      <p>When you're done, hit <strong>Save</strong> to download your program as JSON, or <strong>Export</strong> to download the audio!</p>
+      <p>Press <strong>Ctrl+Enter</strong> to run/stop anytime. Happy coding!</p>
     </div>
 
     <div class="tut-nav">
@@ -226,17 +226,17 @@
 <!-- RECORD MODAL -->
 <div class="modal-bg" id="record-modal">
   <div class="modal-box" style="max-width:400px">
-    <button class="modal-close" onclick="closeRecordModal()">✕</button>
-    <div class="modal-title">🎙 Record Sound</div>
+    <button class="modal-close" onclick="closeRecordModal()"><span data-icon="close" data-size="14"></span></button>
+    <div class="modal-title"><span data-icon="mic" data-size="18"></span> Record Sound</div>
     <div class="modal-sub">Record up to 10 seconds of audio</div>
     <input type="text" class="rec-modal-name" id="rec-name" placeholder="Variable name (e.g. mySound)" maxlength="16">
     <div class="rec-timer" id="rec-timer">0:00</div>
     <div class="rec-volume-bar"><div class="rec-volume-fill" id="rec-vol-fill"></div></div>
     <div class="rec-waveform" id="rec-waveform"></div>
     <div class="rec-btns">
-      <button class="rec-btn start" id="rec-start-btn" onclick="startRecording()">⏺ Start</button>
-      <button class="rec-btn stop" id="rec-stop-btn" onclick="stopRecording()" style="display:none">⏹ Stop</button>
-      <button class="rec-btn cancel" onclick="closeRecordModal()">✕ Cancel</button>
+      <button class="rec-btn start" id="rec-start-btn" onclick="startRecording()"><span data-icon="record" data-size="13"></span> Start</button>
+      <button class="rec-btn stop" id="rec-stop-btn" onclick="stopRecording()" style="display:none"><span data-icon="stop" data-size="13"></span> Stop</button>
+      <button class="rec-btn cancel" onclick="closeRecordModal()"><span data-icon="close" data-size="13"></span> Cancel</button>
     </div>
   </div>
 </div>
@@ -245,6 +245,7 @@
 
 <!-- SCRIPTS (order matters — dependencies first) -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+<script src="js/icons.js"></script>
 <script src="js/state.js"></script>
 <script src="js/audio.js"></script>
 <script src="js/blocks.js"></script>

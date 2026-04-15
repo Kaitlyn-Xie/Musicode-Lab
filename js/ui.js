@@ -36,7 +36,7 @@ function renderTutStep() {
   });
   const total=document.querySelectorAll('.tut-step').length;
   document.getElementById('tut-back').style.display=tutStep>0?'inline-flex':'none';
-  document.getElementById('tut-next').textContent=tutStep>=total-1?'🎉 Start Coding!':'Next →';
+  document.getElementById('tut-next').textContent=tutStep>=total-1?'Start Coding!':'Next →';
 }
 
 function tutNav(dir) {

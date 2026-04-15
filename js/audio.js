@@ -131,11 +131,11 @@ async function toggleRun() {
   running=true; stopFlag=false;
   const btn=document.getElementById('run-btn');
   const lbl=document.getElementById('run-label');
-  btn.className='running';btn.textContent='⏹';
+  btn.className='running';btn.innerHTML=icon('stop',16);
   lbl.textContent='Stop';
   await execBlocks(canvas);
   running=false; stopFlag=false;
-  btn.className='stopped';btn.textContent='▶';
+  btn.className='stopped';btn.innerHTML=icon('play',16);
   lbl.textContent='Run';
   document.querySelectorAll('.code-line.hl').forEach(el=>el.classList.remove('hl'));
 }
@@ -156,7 +156,7 @@ function downloadProgram() {
   const data={version:'1.0',tempo,instrument,program:JSON.stringify(canvas)};
   const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='my-music-program.json';a.click();
-  showToast('💾 Program saved!');
+  showToast('Program saved!');
 }
 
 async function downloadAudio() {
@@ -170,7 +170,7 @@ async function downloadAudio() {
     const blob=new Blob(chunks,{type:'audio/webm'});
     const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='my-music.webm';a.click();
     document.getElementById('rec-dot').classList.remove('show');
-    showToast('🎵 Audio downloaded!');
+    showToast('Audio downloaded!');
   };
   mr.start();
   document.getElementById('rec-dot').classList.add('show');

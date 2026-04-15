@@ -35,7 +35,7 @@ const NOTES_LIST = ['C2','D2','E2','F2','G2','A2','B2','C3','D3','E3','F3','G3',
 const LEVELS = [
   {
     id: 1,
-    icon: '🎼',
+    icon: 'algorithm',
     title: 'Algorithms & Sequencing',
     desc: 'Sort musical notes into the right order, then code it with blocks and Python.',
     tag: 'CT: Sequencing',
@@ -45,7 +45,7 @@ const LEVELS = [
   },
   {
     id: 2,
-    icon: '📦',
+    icon: 'variable',
     title: 'Variables & Music Phrases',
     desc: 'Store a melody in a variable, give it a name, and play it back.',
     tag: 'Coding: Variables',
@@ -55,7 +55,7 @@ const LEVELS = [
   },
   {
     id: 3,
-    icon: '🔁',
+    icon: 'loop',
     title: 'Loops & Repetition',
     desc: 'Music loves repetition. Use a loop to play a phrase multiple times.',
     tag: 'Coding: Loops',
@@ -65,7 +65,7 @@ const LEVELS = [
   },
   {
     id: 4,
-    icon: '01',
+    icon: 'binary',
     title: 'Binary Music',
     desc: 'Clap = 1, Rest = 0. Decode a binary rhythm and encode your own!',
     tag: 'CT: Binary',
@@ -75,7 +75,7 @@ const LEVELS = [
   },
   {
     id: 5,
-    icon: '🐛',
+    icon: 'debug',
     title: 'Debug the Music',
     desc: 'Something sounds wrong. Read the code, find the bug, and fix it.',
     tag: 'CT: Debugging',
@@ -85,7 +85,7 @@ const LEVELS = [
   },
   {
     id: 6,
-    icon: '🔍',
+    icon: 'search',
     title: 'Search & Sort',
     desc: 'Find the highest note in a melody, then sort a scrambled sequence.',
     tag: 'CT: Algorithms',
@@ -95,7 +95,7 @@ const LEVELS = [
   },
   {
     id: 7,
-    icon: '🎹',
+    icon: 'compose',
     title: 'Create Your Song',
     desc: 'Use everything you\'ve learned — variables, loops, and more — to compose your own piece.',
     tag: 'Create',
