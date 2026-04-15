@@ -2477,8 +2477,8 @@ body {
 }
 .lv2-note-tile {
   width: 80px;
-  background: rgba(255,255,255,0.07);
-  border: 2px solid rgba(255,255,255,0.14);
+  background: #FFFFFF;
+  border: 2px solid #D8D4EC;
   border-radius: 10px;
   padding: 8px;
   cursor: pointer;
