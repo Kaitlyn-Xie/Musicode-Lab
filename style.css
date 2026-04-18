@@ -2825,3 +2825,150 @@ body {
   border-radius: 6px;
   padding: 5px 12px;
 }
+
+/* ════════════════════════════════════════════════════════════
+   LEVEL 5 — DEBUG THE MUSIC
+   ════════════════════════════════════════════════════════════ */
+
+/* Phase 1 — listen comparison */
+.lv5-listen-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+.lv5-listen-card {
+  flex: 1;
+  min-width: 180px;
+  background: #FFFFFF;
+  border: 2px solid #C8EDD8;
+  border-radius: 14px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.lv5-listen-card.buggy { border-color: #FFCDD2; background: #FFF8F8; }
+.lv5-listen-label {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+}
+.lv5-listen-notes { display: flex; gap: 6px; flex-wrap: wrap; }
+.lv5-listen-vs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  margin-top: 30px;
+}
+
+/* Note pills */
+.lv5-note-pill {
+  padding: 5px 10px;
+  border-radius: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 800;
+  transition: all 0.12s;
+}
+.lv5-note-pill.correct { background: #E8F5E9; color: #2E7D32; border: 1.5px solid #A5D6A7; }
+.lv5-note-pill.bug     { background: #FFEBEE; color: #C62828; border: 2px solid #EF9A9A; }
+.lv5-note-pill.playing { transform: scale(1.12); box-shadow: 0 3px 8px rgba(0,0,0,0.15); }
+
+/* Phase 1 — note options */
+.lv5-p1-question {
+  padding: 16px;
+  background: #FFF8F8;
+  border: 1.5px solid #FFCDD2;
+  border-radius: 12px;
+  display: flex; flex-direction: column; gap: 12px;
+}
+.lv5-note-opts { display: flex; gap: 8px; flex-wrap: wrap; }
+.lv5-note-opt {
+  padding: 9px 16px;
+  border-radius: 10px;
+  border: 2px solid #EEC0C0;
+  background: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  color: #882000;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+}
+.lv5-note-opt:hover:not([disabled]) { border-color: #D04040; background: #FFE8E3; }
+.lv5-note-opt.correct { background: #E8F5E9; border-color: #4CAF50; color: #2E7D32; }
+.lv5-note-opt.wrong   { background: #FFEBEE; border-color: #EF5350; color: #C62828; }
+
+/* Phase 2 — clickable code lines */
+.lv5-code-clickable { display: flex; flex-direction: column; gap: 4px; }
+.lv5-code-line-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 14px;
+  border-radius: 8px;
+  background: #1E1E2E;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.15s;
+  user-select: none;
+}
+.lv5-code-line-btn:hover { border-color: #D04040; }
+.lv5-code-line-btn.selected { border-color: #D04040; background: #2A1E2E; }
+.lv5-code-line-btn.bug-line { border-color: #EF5350; background: #2A1A1A; }
+.lv5-code-line-btn.ok-line  { border-color: #4CAF50; background: #1A2A1A; }
+.lv5-ln {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: #555;
+  width: 18px;
+  flex-shrink: 0;
+}
+.lv5-code-content {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  flex: 1;
+}
+.lv5-line-tag { flex-shrink: 0; }
+.lv5-bug-badge {
+  font-size: 10px; font-weight: 800; padding: 2px 8px;
+  background: #EF5350; color: #fff; border-radius: 6px;
+}
+.lv5-ok-badge {
+  font-size: 10px; font-weight: 800; padding: 2px 8px;
+  background: #4CAF50; color: #fff; border-radius: 6px;
+}
+
+/* Phase 3 — fix panel */
+.lv5-fix-line {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 3px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  line-height: 2;
+}
+.lv5-fix-input { width: 44px !important; text-align: center; }
+.lv5-fix-hint  { margin-left: 8px; font-size: 11px; }
+
+/* Phase 3 — test compare */
+.lv5-test-compare {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px;
+  background: #F8F8FE;
+  border: 1.5px solid #E0DBF5;
+  border-radius: 12px;
+  flex-wrap: wrap;
+}
+.lv5-tc-col { display: flex; flex-direction: column; gap: 6px; }
+.lv5-tc-label { font-size: 10px; font-weight: 800; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px; }
+.lv5-tc-notes { display: flex; gap: 6px; flex-wrap: wrap; }
+.lv5-tc-arrow { font-size: 22px; color: #2E7D32; font-weight: 900; flex-shrink: 0; }
