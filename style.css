@@ -3070,3 +3070,137 @@ body {
 .lv6-complete-icon  { color: #D4A020; }
 .lv6-complete-title { font-size: 20px; font-weight: 900; color: var(--text); }
 .lv6-complete-sub   { font-size: 13px; font-weight: 600; color: var(--text-muted); line-height: 1.8; text-align: left; }
+
+/* ════════════════════════════════════════════════════════════
+   LEVEL 7 — CREATE YOUR SONG (Capstone)
+   ════════════════════════════════════════════════════════════ */
+
+/* Phase 1 — plan form */
+.lv7-plan-form { display: flex; flex-direction: column; gap: 18px; }
+.lv7-plan-field { display: flex; flex-direction: column; gap: 8px; }
+.lv7-plan-label { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); }
+.lv7-plan-input {
+  padding: 10px 14px; border-radius: 10px;
+  border: 1.5px solid var(--border); background: var(--surface);
+  font-size: 14px; font-weight: 700; font-family: inherit; color: var(--text);
+  outline: none; transition: border-color 0.15s;
+}
+.lv7-plan-input:focus { border-color: #9030D0; }
+
+.lv7-mood-grid { display: flex; gap: 8px; flex-wrap: wrap; }
+.lv7-mood-btn {
+  padding: 7px 16px; border-radius: 20px; border: 2px solid #E0DBF5;
+  background: #fff; font-size: 12px; font-weight: 700; color: #4A3F7A;
+  cursor: pointer; font-family: inherit; transition: all 0.15s;
+}
+.lv7-mood-btn:hover { border-color: #9030D0; background: #F5E8FF; }
+.lv7-mood-btn.active { background: #9030D0; border-color: #9030D0; color: #fff; }
+
+.lv7-toggle-row { display: flex; gap: 8px; }
+.lv7-toggle-btn {
+  flex: 1; padding: 9px 14px; border-radius: 10px;
+  border: 2px solid var(--border); background: var(--surface);
+  font-size: 12px; font-weight: 700; font-family: inherit; color: var(--text);
+  cursor: pointer; transition: all 0.15s;
+}
+.lv7-toggle-btn:hover { border-color: #9030D0; }
+.lv7-toggle-btn.active { background: #9030D0; border-color: #9030D0; color: #fff; }
+
+.lv7-plan-preview {
+  padding: 14px; background: #F8F5FF;
+  border: 1.5px solid #D8C8F0; border-radius: 12px;
+}
+.lv7-pp-label { font-size: 10px; font-weight: 800; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; letter-spacing: 0.5px; }
+.lv7-pp-row { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+.lv7-pp-chip { background: #9030D0; color: #fff; border-radius: 6px; padding: 2px 8px; font-size: 10px; font-weight: 800; }
+
+/* Phase 2 — variable editors */
+.lv7-section-label { font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.6px; color: var(--text-muted); }
+.lv7-vars-section { display: flex; flex-direction: column; gap: 8px; }
+.lv7-vars-list { display: flex; flex-direction: column; gap: 8px; }
+.lv7-var-card {
+  background: #FFFFFF; border: 1.5px solid var(--border);
+  border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 8px;
+}
+.lv7-vc-header { display: flex; align-items: center; gap: 8px; }
+.lv7-vc-name {
+  font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700;
+  padding: 4px 10px; border-radius: 7px; border: 1.5px solid var(--border);
+  background: var(--surface); color: var(--text); outline: none; flex: 1;
+}
+.lv7-vc-name:focus { border-color: #9030D0; }
+.lv7-vc-play {
+  width: 28px; height: 28px; border-radius: 8px;
+  background: rgba(144,48,208,0.12); border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; color: #9030D0;
+  transition: background 0.15s; flex-shrink: 0;
+}
+.lv7-vc-play:hover { background: rgba(144,48,208,0.22); }
+
+.lv7-note-grid { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.lv7-note-pill-edit {
+  display: flex; align-items: center; gap: 3px;
+  background: #F0EDF8; border-radius: 8px; padding: 2px 4px 2px 6px;
+  border: 1.5px solid #D8C8F0;
+}
+.lv7-note-sel {
+  font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700;
+  background: transparent; border: none; outline: none; color: var(--text);
+  cursor: pointer;
+}
+.lv7-note-del {
+  width: 18px; height: 18px; border-radius: 4px; border: none;
+  background: rgba(144,48,208,0.12); color: #9030D0;
+  cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 9px;
+}
+.lv7-add-note-btn {
+  padding: 4px 10px; border-radius: 8px; border: 1.5px dashed #C0B0E0;
+  background: transparent; font-size: 11px; font-weight: 700;
+  color: #9030D0; cursor: pointer; font-family: inherit;
+  transition: all 0.15s;
+}
+.lv7-add-note-btn:hover { background: #F5E8FF; border-color: #9030D0; }
+
+/* Phase 3 — share */
+.lv7-share-hero {
+  text-align: center; padding: 28px 20px 20px;
+  background: linear-gradient(135deg, #F5E8FF 0%, #E8F0FF 100%);
+  border-radius: 16px; border: 2px solid #D8C8F0;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+}
+.lv7-share-hero-icon { color: #9030D0; }
+.lv7-share-hero-title { font-size: 24px; font-weight: 900; color: var(--text); }
+.lv7-share-hero-sub   { font-size: 13px; font-weight: 600; color: var(--text-muted); }
+
+.lv7-stats-row {
+  display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px;
+}
+.lv7-stat {
+  flex: 1; min-width: 80px;
+  background: #FFFFFF; border: 1.5px solid var(--border); border-radius: 12px;
+  padding: 12px 10px; text-align: center;
+}
+.lv7-stat-val { font-size: 22px; font-weight: 900; color: #9030D0; }
+.lv7-stat-lbl { font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.4px; margin-top: 3px; }
+
+.lv7-concepts-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
+.lv7-concepts-label { font-size: 12px; font-weight: 700; color: var(--text-muted); }
+.lv7-concepts-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.lv7-concept-chip {
+  padding: 4px 12px; border-radius: 12px;
+  background: #9030D0; color: #fff; font-size: 11px; font-weight: 800;
+}
+
+.lv7-final-code { margin-top: 8px; display: flex; flex-direction: column; gap: 6px; }
+.lv7-share-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+
+.lv7-complete-wrap { display: flex; justify-content: center; margin-top: 12px; }
+.lv7-complete-btn {
+  padding: 14px 28px; border-radius: 14px;
+  background: linear-gradient(135deg, #9030D0, #2EA870);
+  color: #fff; font-size: 15px; font-weight: 900;
+  border: none; cursor: pointer; font-family: inherit;
+  display: flex; align-items: center; gap: 8px;
+  transition: opacity 0.15s; box-shadow: 0 4px 16px rgba(144,48,208,0.35);
+}
+.lv7-complete-btn:hover { opacity: 0.88; }
