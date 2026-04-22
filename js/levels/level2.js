@@ -11,7 +11,7 @@ let lv2BlockSeq = [];
 let lv2DraggedBlock = null;
 let lv2OwnNotes = ['C4', 'E4', 'G4'];
 let lv2P3Step = 0;
-let lv2ReadOpened = [false, false];
+let lv2ReadOpened = [false, false, false];
 
 const LV2_NOTE_OPTIONS = ['C4', 'D4', 'E4', 'F4', 'G4', 'A4'];
 const LV2_PITCH_PCT = { 'C4': 12, 'D4': 25, 'E4': 38, 'F4': 50, 'G4': 63, 'A4': 75 };
@@ -32,7 +32,7 @@ function renderLevel2() {
           <div class="lv1-phase-sep">›</div>
           <div class="lv1-phase" id="lv2-ph-1">2 — Blocks</div>
           <div class="lv1-phase-sep">›</div>
-          <div class="lv1-phase" id="lv2-ph-2">3 — Python</div>
+          <div class="lv1-phase" id="lv2-ph-2">3 — How Computers Think</div>
         </div>
       </div>
       <div class="lv1-body" id="lv2-body"></div>
@@ -300,7 +300,7 @@ function lv2RenderPhase2(body) {
             <button class="lv1-btn secondary" onclick="lv2P2Clear()">${icon('trash',12)} Clear</button>
             <button class="lv1-btn secondary" onclick="lv2P2Play()">${icon('play',12)} Play</button>
             <button class="lv1-btn secondary" onclick="lv2P2Check()">${icon('check',12)} Check</button>
-            <button class="lv1-btn primary" id="lv2-p2-next" onclick="lv2ShowPhase(3)" style="display:none">Next: Python →</button>
+            <button class="lv1-btn primary" id="lv2-p2-next" onclick="lv2ShowPhase(3)" style="display:none">Next: How Computers Think →</button>
           </div>
           <div id="lv2-p2-feedback" class="lv1-feedback" style="display:none"></div>
         </div>
@@ -401,53 +401,59 @@ function lv2P2Check() {
 }
 
 // ══════════════════════════════════════════════════════
-// PHASE 3 — Python stepper
+// PHASE 3 — How Computers Think (CT-focused)
 // ══════════════════════════════════════════════════════
-function lv2GetCodeLines(notes) {
-  const vn = lv2VarName || 'notes';
-  const noteList = notes.map(n => `<span class="py-str">"${n}"</span>`).join('<span class="py-op">, </span>');
+
+function lv2GetCTConcepts(vn) {
   return [
     {
-      code: `<span class="py-var">${vn}</span> <span class="py-op">=</span> [${noteList}]`,
-      explain: `<strong>${vn}</strong> is a <em>variable</em> — a named container. The <code>=</code> sign assigns the value on the right to the name on the left. The square brackets <code>[ ]</code> create a <em>list</em> of note strings.<br><br><strong>Naming tip:</strong> you could call it <code>mySong</code>, <code>phrase_1</code>, or <code>notes</code> — as long as you use the same name consistently throughout your code.`
+      title: 'Variable',
+      icon: 'variable',
+      body: `<strong>${vn}</strong> is a <em>variable</em> — a named container that stores data. The name is a label you chose. You could call it <code>mySong</code>, <code>phrase</code>, or anything — the notes inside stay the same.`
     },
     {
-      code: `<span class="py-fn">play</span><span class="py-op">(</span><span class="py-var">${vn}</span><span class="py-op">)</span>`,
-      explain: `This calls the <strong>play()</strong> function and passes <code>${vn}</code> as the argument. Python looks up what <code>${vn}</code> contains and plays each note in order.<br><br>You only write the variable name — not the notes themselves. The variable does the remembering.`
+      title: 'Abstraction',
+      icon: 'blocks',
+      body: `Instead of writing out every note every time, you give the list a name and use that name. This is <strong>abstraction</strong>: hiding detail behind a simple label. <code>play(${vn})</code> is simpler than <code>play("C4", "E4", "G4"...)</code>.`
+    },
+    {
+      title: 'Reuse',
+      icon: 'repeat',
+      body: `Change <code>${vn}</code> once and it updates <em>everywhere</em> it's used. You don't have to find and change every note individually. That's the real power of variables — <strong>change once, update everywhere</strong>.`
     }
   ];
 }
 
 const LV2_QUIZZES = [
   {
-    q: 'What does <code>notes = ["C4", "E4", "G4"]</code> do?',
+    q: 'What is a <strong>variable</strong> in programming?',
     opts: [
-      { t: 'Creates a variable named notes and stores 3 notes in it', ok: true },
-      { t: 'Plays the notes C4, E4, and G4 immediately', ok: false },
-      { t: 'Defines a function called notes', ok: false },
-      { t: 'Checks if the notes are in the right order', ok: false }
+      { t: 'A named container that stores a value', ok: true },
+      { t: 'A function that plays notes automatically', ok: false },
+      { t: 'A loop that repeats instructions', ok: false },
+      { t: 'A rule about what order to play notes in', ok: false }
     ],
-    exp: '<strong>Correct!</strong> The <code>=</code> sign <em>assigns</em> a value. Left side is the name (<code>notes</code>), right side is the value (a list of notes).'
+    exp: '<strong>Correct!</strong> A variable is a named container. The name is just a label — what matters is what\'s stored inside it.'
   },
   {
-    q: 'You change <code>notes = ["A4", "G4", "E4"]</code>. What does <code>play(notes)</code> now play?',
+    q: 'You update your variable to store different notes. What happens when you call <code>play(notes)</code>?',
     opts: [
-      { t: 'The original notes — variables don\'t change after creation', ok: false },
-      { t: 'A4, then G4, then E4 — the updated value', ok: true },
-      { t: 'An error — you can\'t reassign a variable', ok: false },
-      { t: 'Nothing — play() needs specific note names, not a variable', ok: false }
+      { t: 'It plays the original notes — variables freeze after creation', ok: false },
+      { t: 'It plays the new notes — the variable holds the updated value', ok: true },
+      { t: 'It causes an error — you can\'t change a variable', ok: false },
+      { t: 'Nothing — play() needs exact note names, not a variable', ok: false }
     ],
     exp: '<strong>Exactly!</strong> When you update the variable, every use of it updates too. Change once, affect everywhere — that\'s the power of variables.'
   },
   {
-    q: 'Which of these is a valid Python variable name?',
+    q: 'Why is using a variable more powerful than writing out every note each time?',
     opts: [
-      { t: 'my notes (with a space)', ok: false },
-      { t: '1notes (starts with a number)', ok: false },
-      { t: 'notes! (special character)', ok: false },
-      { t: 'myMelody', ok: true }
+      { t: 'Variables make the program run faster', ok: false },
+      { t: 'Change the variable once and it updates everywhere it\'s used', ok: true },
+      { t: 'Variables use less memory than lists', ok: false },
+      { t: 'You need variables to make the program start', ok: false }
     ],
-    exp: '<strong>Right!</strong> Variable names can use letters, numbers, and underscores, but must <em>start with a letter or underscore</em>. No spaces or special characters.'
+    exp: '<strong>Right!</strong> This is called <em>abstraction</em> — one name stands in for all the details. Update the variable once and every <code>play()</code> call gets the new version automatically.'
   }
 ];
 
@@ -473,15 +479,26 @@ function lv2RenderPhase3(body) {
           </div>
         </div>
         <div>
-          <div class="lv1-compare-title" style="margin-bottom:7px">Python equivalent</div>
-          <div class="lv1-code-panel" style="font-size:11.5px;padding:11px 13px;line-height:1.85">
-            <span class="lv1-code-line"><span class="py-var">${vn}</span><span class="py-op"> = </span>[${notePyList}]</span>
+          <div class="lv1-compare-title" style="margin-bottom:7px">Pseudocode</div>
+          <div class="lv1-code-panel" style="font-size:11.5px;padding:11px 13px;line-height:1.95;background:#1e1a3a">
+            <span class="lv1-code-line"><span class="pseudo-kw">DEFINE</span> <span class="py-var">${vn}</span> ← [${notePyList}]</span>
             <span class="lv1-code-line">&nbsp;</span>
-            <span class="lv1-code-line"><span class="py-fn">play</span><span class="py-op">(</span><span class="py-var">${vn}</span><span class="py-op">)</span></span>
+            <span class="lv1-code-line"><span class="pseudo-fn">PLAY</span>(<span class="py-var">${vn}</span>)</span>
           </div>
         </div>
-        <div style="font-size:11px;color:var(--text-muted);font-weight:600;line-height:1.5;padding-top:4px">
-          <code style="font-size:11px">${vn}</code> is just one option — variable names are up to you!
+        <div>
+          <button class="lv1-py-reveal-btn" onclick="lv2TogglePySidebar()">
+            ${icon('code', 11)} See in Python
+            <span id="lv2-py-arrow">↓</span>
+          </button>
+          <div id="lv2-py-sidebar" style="display:none;margin-top:6px">
+            <div class="lv1-code-panel" style="font-size:11px;padding:10px 12px;line-height:1.85">
+              <span class="lv1-code-line"><span class="py-var">${vn}</span><span class="py-op"> = </span>[${notePyList}]</span>
+              <span class="lv1-code-line">&nbsp;</span>
+              <span class="lv1-code-line"><span class="py-fn">play</span><span class="py-op">(</span><span class="py-var">${vn}</span><span class="py-op">)</span></span>
+            </div>
+            <div style="font-size:10.5px;color:var(--text-muted);margin-top:5px">Python is one way to write this. The idea is the same in any language.</div>
+          </div>
         </div>
       </div>
 
@@ -526,8 +543,17 @@ function lv2RenderPhase3(body) {
   }
 }
 
+function lv2TogglePySidebar() {
+  const panel = document.getElementById('lv2-py-sidebar');
+  const arrow = document.getElementById('lv2-py-arrow');
+  if (!panel) return;
+  const open = panel.style.display !== 'none';
+  panel.style.display = open ? 'none' : 'block';
+  if (arrow) arrow.textContent = open ? '↓' : '↑';
+}
+
 function lv2P3UpdateNav(step) {
-  const labels = ['Read', 'Quiz 1', 'Quiz 2', 'Quiz 3', 'Fill in', 'Write!'];
+  const labels = ['Concepts', 'Quiz 1', 'Quiz 2', 'Quiz 3', 'Fill in', 'Create!'];
   const nav = document.getElementById('lv2-p3-nav');
   if (!nav) return;
   nav.innerHTML = '';
@@ -560,30 +586,27 @@ function lv2P3Goto(step) {
   else if (step === 5) lv2P3WriteOwn(main);
 }
 
+/* Step 0 — CT Concept Cards */
 function lv2P3Read(main) {
-  lv2ReadOpened = [false, false];
-  const notes = lv2SelectedNotes.length >= 2 ? lv2SelectedNotes : ['C4', 'E4', 'G4', 'A4'];
-  const lines = lv2GetCodeLines(notes);
+  lv2ReadOpened = [false, false, false];
+  const vn = lv2VarName || 'notes';
+  const concepts = lv2GetCTConcepts(vn);
   main.innerHTML = `
     <div style="display:flex;flex-direction:column;gap:12px;padding-top:4px">
       <div class="lv1-concept">
-        <div class="lv1-concept-label">From Blocks to Python</div>
-        <p>Your block code and Python express the same idea. Click each line to understand what it means.</p>
+        <div class="lv1-concept-label">Three Big Ideas</div>
+        <p>You just stored your melody in a variable. Click each card to explore what that means in Computational Thinking.</p>
       </div>
-      <div class="lv1-read-block" id="lv2-read-0">
-        <button class="lv1-read-line-btn" onclick="lv2ReadToggle(0)">
-          <span class="lv1-read-expand-icon">${icon('play',10)}</span>
-          <span class="lv1-read-code">${lines[0].code}</span>
-        </button>
-        <div class="lv1-read-explanation" id="lv2-re-0">${lines[0].explain}</div>
-      </div>
-      <div class="lv1-read-block" id="lv2-read-1">
-        <button class="lv1-read-line-btn" onclick="lv2ReadToggle(1)">
-          <span class="lv1-read-expand-icon">${icon('play',10)}</span>
-          <span class="lv1-read-code">${lines[1].code}</span>
-        </button>
-        <div class="lv1-read-explanation" id="lv2-re-1">${lines[1].explain}</div>
-      </div>
+      ${concepts.map((c, i) => `
+        <div class="lv1-read-block" id="lv2-read-${i}">
+          <button class="lv1-read-line-btn" onclick="lv2ReadToggle(${i})">
+            <span class="lv1-read-expand-icon">${icon(c.icon, 14)}</span>
+            <span class="lv1-read-code" style="font-family:inherit;font-size:13px;font-weight:700;color:var(--text)">${c.title}</span>
+            <span class="ct-concept-tag">CT Concept</span>
+          </button>
+          <div class="lv1-read-explanation" id="lv2-re-${i}">${c.body}</div>
+        </div>
+      `).join('')}
       <div class="lv1-actions">
         <button class="lv1-btn primary" id="lv2-read-next" onclick="lv2P3Goto(1)" style="display:none">Next: Quiz →</button>
       </div>
@@ -603,6 +626,7 @@ function lv2ReadToggle(idx) {
   }
 }
 
+/* Steps 1-3 — Quizzes */
 function lv2P3Quiz(main, qIdx) {
   const q = LV2_QUIZZES[qIdx];
   main.innerHTML = `
@@ -645,6 +669,7 @@ function lv2P3Answer(btn, correct, qIdx) {
   document.getElementById('lv2-qz-next').style.display = 'inline-flex';
 }
 
+/* Step 4 — Fill in the blanks (pseudocode) */
 function lv2P3FillIn(main) {
   const notes = lv2SelectedNotes.length >= 2 ? lv2SelectedNotes : ['C4', 'E4', 'G4', 'A4'];
   const noteSpans = notes.map(n => `<span class="py-str">"${n}"</span>`).join('<span class="py-op">, </span>');
@@ -654,21 +679,22 @@ function lv2P3FillIn(main) {
     <div style="display:flex;flex-direction:column;gap:12px;padding-top:4px">
       <div class="lv1-activity-heading">Fill in the Blanks</div>
       <p class="lv1-activity-sub">
-        Look at the Python code in the <strong>left panel</strong> — what variable name was used?
+        Look at the pseudocode in the <strong>left panel</strong> — what variable name was used?
         Type it into both blanks below.
       </p>
-      <div class="lv1-code-panel" style="line-height:2.2">
+      <div class="lv1-code-panel" style="line-height:2.2;background:#1e1a3a">
         <span class="lv1-code-line">
-          <input class="lv1-code-blank" id="lv2-blank1" placeholder="?????" autocomplete="off" spellcheck="false" style="width:${blankW}">
-          <span class="py-op"> = </span>[${noteSpans}]
+          <span class="pseudo-kw">DEFINE</span>
+          <input class="lv1-code-blank" id="lv2-blank1" placeholder="?????" autocomplete="off" spellcheck="false" style="width:${blankW};margin:0 6px">
+          ← [${noteSpans}]
         </span>
         <span class="lv1-code-line">
-          <span class="py-fn">play</span><span class="py-op">(</span><input class="lv1-code-blank" id="lv2-blank2" placeholder="?????" autocomplete="off" spellcheck="false" style="width:${blankW}"><span class="py-op">)</span>
+          <span class="pseudo-fn">PLAY</span>(<input class="lv1-code-blank" id="lv2-blank2" placeholder="?????" autocomplete="off" spellcheck="false" style="width:${blankW};margin:0 2px">)
         </span>
       </div>
       <div class="lv1-actions">
         <button class="lv1-btn secondary" onclick="lv2P3CheckFill()">Check</button>
-        <button class="lv1-btn primary" id="lv2-fill-next" onclick="lv2P3Goto(5)" style="display:none">Next: Write your own →</button>
+        <button class="lv1-btn primary" id="lv2-fill-next" onclick="lv2P3Goto(5)" style="display:none">Next: Make it your own →</button>
       </div>
       <div id="lv2-fill-fb" class="lv1-feedback" style="display:none"></div>
     </div>
@@ -686,11 +712,11 @@ function lv2P3CheckFill() {
   document.getElementById('lv2-blank2').className = 'lv1-code-blank ' + (ok2 ? 'ok' : 'bad');
   if (ok1 && ok2) {
     fb.className = 'lv1-feedback success';
-    fb.innerHTML = `Correct! Both blanks use <code>${vn}</code> — the same name in the definition and the call. That's how Python knows they refer to the same thing.`;
+    fb.innerHTML = `Correct! Both blanks use <code>${vn}</code> — the same name in the definition and the call. That's how the computer knows they refer to the same container.`;
     document.getElementById('lv2-fill-next').style.display = 'inline-flex';
   } else {
     fb.className = 'lv1-feedback error';
-    fb.textContent = 'Check the Python code in the left panel — what is the variable called?';
+    fb.textContent = 'Check the pseudocode in the left panel — what is the variable called?';
   }
 }
 
@@ -698,18 +724,19 @@ function lv2P3WriteOwn(main) {
   lv2OwnNotes = ['C4', 'E4', 'G4'];
   main.innerHTML = `
     <div style="display:flex;flex-direction:column;gap:14px;padding-top:4px">
-      <div class="lv1-activity-heading">Write Your Own Variable</div>
+      <div class="lv1-activity-heading">Make It Your Own</div>
       <p class="lv1-activity-sub">
         Choose your own variable name and pick up to 4 notes. Hit <strong>Play</strong> to hear your melody, then complete the level!
       </p>
-      <div class="lv1-code-panel" style="line-height:2.2">
+      <div class="lv1-code-panel" style="line-height:2.2;background:#1e1a3a">
         <span class="lv1-code-line">
+          <span class="pseudo-kw">DEFINE</span>
           <input class="lv1-code-blank" id="lv2-own-name" value="myMelody" maxlength="20"
-            autocomplete="off" spellcheck="false" style="width:110px" oninput="lv2OwnPreview()">
-          <span class="py-op"> = </span>[<span id="lv2-own-preview-notes" style="color:#CE9178">"C4", "E4", "G4"</span>]
+            autocomplete="off" spellcheck="false" style="width:110px;margin:0 6px" oninput="lv2OwnPreview()">
+          ← [<span id="lv2-own-preview-notes" class="py-str">"C4", "E4", "G4"</span>]
         </span>
         <span class="lv1-code-line">
-          <span class="py-fn">play</span><span class="py-op">(</span><span id="lv2-own-name-display" class="py-var">myMelody</span><span class="py-op">)</span>
+          <span class="pseudo-fn">PLAY</span>(<span id="lv2-own-name-display" class="py-var">myMelody</span>)
         </span>
       </div>
       <div class="lv2-note-picker" id="lv2-own-picker">
