@@ -12,6 +12,32 @@ let lv3P3Step = 0;
 let lv3ReadOpened = [false, false, false];
 let lv3OwnCount = 3;
 
+// Song Workshop state
+const LV3_JINGLE = ['E4','E4','E4','D4','C4','D4','E4'];
+const LV3_JINGLE_PALETTE = ['C4','D4','E4'];
+let lv3JingleSeq = [];
+const LV3_OWN_NOTE_OPTIONS = ['C4','D4','E4','F4','G4','A4','B4'];
+const LV3_OWN_PITCH_PCT = { 'C4':12,'D4':25,'E4':38,'F4':50,'G4':63,'A4':75,'B4':88 };
+let lv3OwnPickedNotes = ['C4','E4','G4'];
+
+const LV3_CT_CONCEPTS = [
+  {
+    title: 'Loop',
+    icon: 'repeat',
+    body: 'A <strong>loop</strong> runs the same code multiple times. Instead of writing <code>play(E4)</code> three separate times, a loop handles it automatically — saving effort and avoiding mistakes.'
+  },
+  {
+    title: 'Pattern',
+    icon: 'algorithm',
+    body: 'Music is built on <strong>patterns</strong> — a short motif that repeats, varies, and combines. Computers recognize patterns too: your loop IS the pattern, encoded once and repeated.'
+  },
+  {
+    title: 'DRY Principle',
+    icon: 'blocks',
+    body: '<strong>DRY</strong> stands for "Don\'t Repeat Yourself." Writing the same thing twice is a bug waiting to happen. Define it once, loop it. Change one place — everything updates.'
+  }
+];
+
 const LV3_PHRASE = ['C4', 'E4', 'G4'];
 const LV3_VAR = 'phrase';
 
@@ -31,7 +57,7 @@ function renderLevel3() {
           <div class="lv1-phase-sep">›</div>
           <div class="lv1-phase" id="lv3-ph-1">2 — Blocks</div>
           <div class="lv1-phase-sep">›</div>
-          <div class="lv1-phase" id="lv3-ph-2">3 — Python</div>
+          <div class="lv1-phase" id="lv3-ph-2">3 — How Computers Think</div>
         </div>
       </div>
       <div class="lv1-body" id="lv3-body"></div>
@@ -245,7 +271,7 @@ function lv3RenderPhase2(body) {
             <button class="lv1-btn secondary" onclick="lv3ClearCanvas()">Clear</button>
             <button class="lv1-btn secondary" onclick="lv3P2Play()">Play</button>
             <button class="lv1-btn secondary" onclick="lv3P2Check()">Check</button>
-            <button class="lv1-btn primary" id="lv3-p2-next" onclick="lv3ShowPhase(3)" style="display:none">Next: Python →</button>
+            <button class="lv1-btn primary" id="lv3-p2-next" onclick="lv3ShowPhase(3)" style="display:none">Next: How Computers Think →</button>
           </div>
           <div id="lv3-p2-fb" class="lv1-feedback" style="display:none"></div>
         </div>
@@ -411,141 +437,26 @@ function lv3P2Check() {
 }
 
 // ══════════════════════════════════════════════════════
-// PHASE 3 — Loop in Python
+// PHASE 3 — How Computers Think (Song Workshop)
 // ══════════════════════════════════════════════════════
-const LV3_CODE_LINES = [
-  {
-    code: '<span class="py-var">phrase</span><span class="py-op"> = </span>[<span class="py-str">"C4"</span><span class="py-op">, </span><span class="py-str">"E4"</span><span class="py-op">, </span><span class="py-str">"G4"</span>]',
-    explain: '<strong>phrase</strong> is a <em>variable</em> storing a list of 3 notes — just like you learned in Level 2. The square brackets <code>[ ]</code> make it a <em>list</em>. Each note is a string in quotes.'
-  },
-  {
-    code: '<span class="py-kw">for</span> <span class="py-var">i</span> <span class="py-kw">in</span> <span class="py-fn">range</span><span class="py-op">(</span><span class="py-num">3</span><span class="py-op">):</span>',
-    explain: 'This is a <strong>for loop</strong>. <code>range(3)</code> generates three numbers: <code>0, 1, 2</code>. The loop runs once per number, so the indented code below runs <strong>3 times total</strong>. The variable <code>i</code> holds the current number each round.'
-  },
-  {
-    code: '&nbsp;&nbsp;&nbsp;&nbsp;<span class="py-fn">play</span><span class="py-op">(</span><span class="py-var">phrase</span><span class="py-op">)</span>',
-    explain: 'This line is <em>indented</em> — 4 spaces in. Indentation tells Python this line is <em>inside</em> the loop. It plays all 3 notes in <code>phrase</code> every time the loop runs. With <code>range(3)</code>, that\'s 3 × 3 = 9 total notes.'
-  }
-];
-
-const LV3_QUIZZES = [
-  {
-    q: 'What does <code>for i in range(3):</code> do?',
-    opts: [
-      { t: 'Runs the indented code 3 times', ok: true },
-      { t: 'Plays 3 notes at the same time', ok: false },
-      { t: 'Pauses the music for 3 beats', ok: false },
-      { t: 'Loops forever until stopped', ok: false }
-    ],
-    exp: '<strong>Correct!</strong> <code>range(3)</code> produces three numbers (0, 1, 2), so the loop body runs 3 times — once per number.'
-  },
-  {
-    q: '<code>phrase</code> has 3 notes and the loop runs <code>range(3)</code>. How many total notes play?',
-    opts: [
-      { t: '3 — the phrase plays once', ok: false },
-      { t: '6 — range doubles it', ok: false },
-      { t: '9 — 3 notes × 3 repetitions', ok: true },
-      { t: '12 — loops add an extra round', ok: false }
-    ],
-    exp: '<strong>Right!</strong> Each loop run plays all 3 notes in <code>phrase</code>. 3 runs × 3 notes = 9 total.'
-  },
-  {
-    q: 'We change <code>range(3)</code> to <code>range(10)</code>. What happens?',
-    opts: [
-      { t: 'Nothing — loops always run 3 times', ok: false },
-      { t: 'The phrase plays 10 times instead of 3', ok: true },
-      { t: 'The loop crashes — 10 is too large', ok: false },
-      { t: 'The notes play faster', ok: false }
-    ],
-    exp: '<strong>Exactly!</strong> Change one number → completely different output. That\'s the power of loops: easy to scale without rewriting code.'
-  }
-];
 
 function lv3RenderPhase3(body) {
   lv3P3Step = 0;
-  lv3ReadOpened = [false, false, false];
-
   body.innerHTML = `
-    <div class="lv1-p3-split">
-
-      <div class="lv1-p3-sidebar">
-        <div class="lv1-p3-sidebar-label">Reference</div>
-
-        <div>
-          <div class="lv1-compare-title">Block code</div>
-          <div style="margin-top:7px">
-            <div class="lv2-seq-repeat" style="font-size:11.5px">
-              <div class="lv2-seq-repeat-header" style="font-size:11px;padding:6px 10px">
-                ${icon('repeat',11)} repeat <strong>3</strong> times:
-              </div>
-              <div class="lv2-seq-repeat-body" style="padding:6px 10px">
-                <div class="lv1-prev-block" style="font-size:11px;padding:4px 8px">
-                  ${icon('music',11)} play( ${LV3_VAR} )
-                </div>
-              </div>
-              <div class="lv2-seq-repeat-footer" style="font-size:10px;padding:4px 10px">end</div>
-            </div>
-          </div>
-        </div>
-
-        <div>
-          <div class="lv1-compare-title" style="margin-bottom:7px">Python equivalent</div>
-          <div class="lv1-code-panel" style="font-size:11.5px;padding:11px 13px;line-height:1.85">
-            <span class="lv1-code-line"><span class="py-var">phrase</span><span class="py-op"> = </span>[<span class="py-str">"C4"</span><span class="py-op">, </span><span class="py-str">"E4"</span><span class="py-op">, </span><span class="py-str">"G4"</span>]</span>
-            <span class="lv1-code-line">&nbsp;</span>
-            <span class="lv1-code-line"><span class="py-kw">for</span> <span class="py-var">i</span> <span class="py-kw">in</span> <span class="py-fn">range</span><span class="py-op">(</span><span class="py-num">3</span><span class="py-op">):</span></span>
-            <span class="lv1-code-line">&nbsp;&nbsp;&nbsp;&nbsp;<span class="py-fn">play</span><span class="py-op">(</span><span class="py-var">phrase</span><span class="py-op">)</span></span>
-          </div>
-        </div>
-
-        <div style="font-size:11px;color:var(--text-muted);font-weight:600;line-height:1.5;padding-top:4px">
-          <code style="font-size:10px">range(n)</code> gives numbers 0 to n−1.
-          The loop body is <em>indented</em> with 4 spaces.
-        </div>
+    <div style="max-width:700px;margin:0 auto;padding:0 4px">
+      <div class="lv1-p3-nav-bar">
+        <div class="lv1-p3-nav" id="lv3-p3-nav"></div>
       </div>
-
-      <div class="lv1-p3-resizer" id="lv3-p3-resizer"></div>
-
-      <div class="lv1-p3-right">
-        <div class="lv1-p3-nav-bar">
-          <div class="lv1-p3-nav" id="lv3-p3-nav"></div>
-        </div>
-        <div class="lv1-p3-right-scroll">
-          <div id="lv3-p3-main"></div>
-        </div>
+      <div style="padding:16px 0 24px">
+        <div id="lv3-p3-main"></div>
       </div>
     </div>
   `;
-
   lv3P3Goto(0);
-
-  const resizer = document.getElementById('lv3-p3-resizer');
-  const sidebar = resizer && resizer.previousElementSibling;
-  if (resizer && sidebar) {
-    let startX, startW;
-    resizer.addEventListener('mousedown', e => {
-      startX = e.clientX; startW = sidebar.getBoundingClientRect().width;
-      resizer.classList.add('dragging');
-      document.body.style.cursor = 'col-resize';
-      document.body.style.userSelect = 'none';
-      const onMove = ev => {
-        sidebar.style.width = Math.min(420, Math.max(140, startW + (ev.clientX - startX))) + 'px';
-      };
-      const onUp = () => {
-        resizer.classList.remove('dragging');
-        document.body.style.cursor = '';
-        document.body.style.userSelect = '';
-        document.removeEventListener('mousemove', onMove);
-        document.removeEventListener('mouseup', onUp);
-      };
-      document.addEventListener('mousemove', onMove);
-      document.addEventListener('mouseup', onUp);
-    });
-  }
 }
 
 function lv3P3UpdateNav(step) {
-  const labels = ['Read', 'Quiz 1', 'Quiz 2', 'Quiz 3', 'Fill in', 'Write!'];
+  const labels = ['Concepts','Listen','Build','Discover','Create!'];
   const nav = document.getElementById('lv3-p3-nav');
   if (!nav) return;
   nav.innerHTML = '';
@@ -573,30 +484,33 @@ function lv3P3Goto(step) {
   const main = document.getElementById('lv3-p3-main');
   if (!main) return;
   if (step === 0) lv3P3Read(main);
-  else if (step >= 1 && step <= 3) lv3P3Quiz(main, step - 1);
-  else if (step === 4) lv3P3FillIn(main);
-  else if (step === 5) lv3P3WriteOwn(main);
+  else if (step === 1) lv3JingleListen(main);
+  else if (step === 2) lv3JingleBuild(main);
+  else if (step === 3) lv3JingleDiscover(main);
+  else if (step === 4) lv3P3WriteOwn(main);
 }
 
+/* Step 0 — CT Concept Cards */
 function lv3P3Read(main) {
   lv3ReadOpened = [false, false, false];
   main.innerHTML = `
     <div style="display:flex;flex-direction:column;gap:12px;padding-top:4px">
       <div class="lv1-concept">
-        <div class="lv1-concept-label">From Blocks to Python</div>
-        <p>The repeat block and Python's <code>for</code> loop express the same idea. Click each line to understand it.</p>
+        <div class="lv1-concept-label">Three Big Ideas</div>
+        <p>You just used loops to build repetition. Click each card to explore what that means in Computational Thinking.</p>
       </div>
-      ${LV3_CODE_LINES.map((cl, i) => `
+      ${LV3_CT_CONCEPTS.map((c, i) => `
         <div class="lv1-read-block" id="lv3-read-${i}">
           <button class="lv1-read-line-btn" onclick="lv3ReadToggle(${i})">
-            <span class="lv1-read-expand-icon">${icon('play', 10)}</span>
-            <span class="lv1-read-code">${cl.code}</span>
+            <span class="lv1-read-expand-icon">${icon(c.icon, 14)}</span>
+            <span class="lv1-read-code" style="font-family:inherit;font-size:13px;font-weight:700;color:var(--text)">${c.title}</span>
+            <span class="ct-concept-tag">CT Concept</span>
           </button>
-          <div class="lv1-read-explanation" id="lv3-re-${i}">${cl.explain}</div>
+          <div class="lv1-read-explanation" id="lv3-re-${i}">${c.body}</div>
         </div>
       `).join('')}
       <div class="lv1-actions">
-        <button class="lv1-btn primary" id="lv3-read-next" onclick="lv3P3Goto(1)" style="display:none">Next: Quiz →</button>
+        <button class="lv1-btn primary" id="lv3-read-next" onclick="lv3P3Goto(1)" style="display:none">Next: Build the Song →</button>
       </div>
     </div>
   `;
@@ -614,156 +528,249 @@ function lv3ReadToggle(idx) {
   }
 }
 
-function lv3P3Quiz(main, qIdx) {
-  const q = LV3_QUIZZES[qIdx];
+/* Step 1 — Listen */
+function lv3JingleListen(main) {
   main.innerHTML = `
-    <div style="display:flex;flex-direction:column;gap:12px;padding-top:4px">
-      <p class="lv1-activity-sub" style="font-size:13px;color:var(--text)">Question ${qIdx + 1} of 3</p>
-      <div class="lv1-activity-heading" style="font-size:14px">${q.q}</div>
-      <div class="lv1-quiz-options" id="lv3-qz-opts">
-        ${q.opts.map(o =>
-          `<button class="lv1-quiz-opt" onclick="lv3P3Answer(this,${o.ok},${qIdx})">${o.t}</button>`
-        ).join('')}
+    <div style="display:flex;flex-direction:column;gap:14px;padding-top:4px">
+      <div class="lv1-concept">
+        <div class="lv1-concept-label">铃儿响叮当 — Jingle Bells</div>
+        <p>Listen to the opening phrase of Jingle Bells! Notice how the E4 note repeats — that's a loop in music form.</p>
       </div>
-      <div id="lv3-qz-fb" class="lv1-feedback" style="display:none"></div>
-      <div class="lv1-actions">
-        <button class="lv1-btn primary" id="lv3-qz-next" onclick="lv3P3Goto(${lv3P3Step + 1})" style="display:none">
-          ${qIdx < 2 ? 'Next question →' : 'Next: Fill in the blanks →'}
+
+      <div class="lv1-song-card">
+        <div class="lv1-song-card-title">♪ Jingle Bells 铃儿响叮当</div>
+        <div class="lv1-song-card-lyrics">"铃儿响，叮当叮当，叮当叮当响..."</div>
+        <div class="lv1-song-card-notes">
+          ${LV3_JINGLE.map(n => `<span class="lv1-song-note-pill">${n}</span>`).join('')}
+        </div>
+        <button class="lv1-btn primary" style="margin-top:14px;gap:8px" onclick="lv3JinglePlayTarget()">
+          ${icon('play',13)} Listen to the phrase
         </button>
+        <div id="lv3-jingle-playing" style="display:none;font-size:12px;color:var(--text-muted);margin-top:8px;text-align:center">♩ playing...</div>
+      </div>
+
+      <div class="lv1-actions">
+        <button class="lv1-btn primary" onclick="lv3P3Goto(2)">Next: Build it →</button>
       </div>
     </div>
   `;
 }
 
-function lv3P3Answer(btn, correct, qIdx) {
-  document.querySelectorAll('#lv3-qz-opts .lv1-quiz-opt').forEach(b => {
-    b.disabled = true; b.style.opacity = '0.55';
-  });
-  btn.style.opacity = '1';
-  btn.classList.add(correct ? 'correct' : 'wrong');
-  if (!correct) {
-    const correctText = LV3_QUIZZES[qIdx].opts.find(o => o.ok).t;
-    document.querySelectorAll('#lv3-qz-opts .lv1-quiz-opt').forEach(b => {
-      if (b.textContent.trim() === correctText) { b.classList.add('correct'); b.style.opacity = '1'; }
-    });
-  }
-  const fb = document.getElementById('lv3-qz-fb');
-  if (fb) {
-    fb.style.display = 'block';
-    fb.className = 'lv1-feedback ' + (correct ? 'success' : 'error');
-    fb.innerHTML = correct ? LV3_QUIZZES[qIdx].exp : 'Not quite! ' + LV3_QUIZZES[qIdx].exp;
-  }
-  const nb = document.getElementById('lv3-qz-next');
-  if (nb) nb.style.display = 'inline-flex';
+async function lv3JinglePlayTarget() {
+  const ind = document.getElementById('lv3-jingle-playing');
+  if (ind) ind.style.display = 'block';
+  await initTone();
+  for (const n of LV3_JINGLE) { await playNote(n, 0.75); }
+  if (ind) ind.style.display = 'none';
 }
 
-function lv3P3FillIn(main) {
+/* Step 2 — Build */
+function lv3JingleBuild(main) {
+  lv3JingleSeq = [];
   main.innerHTML = `
     <div style="display:flex;flex-direction:column;gap:12px;padding-top:4px">
-      <div class="lv1-activity-heading">Fill in the Blanks</div>
+      <div class="lv1-activity-heading">Build the Sequence</div>
       <p class="lv1-activity-sub">
-        Look at the Python code in the left panel. Fill in the two missing words.
+        Tap the note tiles below to place them in order. The song needs <strong>7 notes</strong>.
+        Use the hint if you get stuck!
       </p>
-      <div class="lv1-code-panel" style="line-height:2">
-        <span class="lv1-code-line">
-          <span class="py-var">phrase</span><span class="py-op"> = </span>[<span class="py-str">"C4"</span><span class="py-op">, </span><span class="py-str">"E4"</span><span class="py-op">, </span><span class="py-str">"G4"</span>]
-        </span>
-        <span class="lv1-code-line">&nbsp;</span>
-        <span class="lv1-code-line">
-          <span class="py-kw">for</span> <span class="py-var">i</span> <span class="py-kw">in</span>
-          <input class="lv1-code-blank" id="lv3-blank1" placeholder="____"
-            autocomplete="off" spellcheck="false" style="width:62px">(<span class="py-num">3</span>)<span class="py-op">:</span>
-        </span>
-        <span class="lv1-code-line">
-          &nbsp;&nbsp;&nbsp;&nbsp;<span class="py-fn">play</span><span class="py-op">(</span><input
-            class="lv1-code-blank" id="lv3-blank2" placeholder="____"
-            autocomplete="off" spellcheck="false" style="width:70px"><span class="py-op">)</span>
-        </span>
+
+      <div class="lv1-tw-slots" id="lv3-jingle-slots"></div>
+
+      <div class="lv1-tw-palette">
+        ${LV3_JINGLE_PALETTE.map(n => `
+          <div class="lv1-tw-tile" onclick="lv3JingleTap('${n}')">
+            <div class="lv1-tw-tile-name">${n}</div>
+            <button class="lv1-play-btn" style="margin-top:4px" onclick="event.stopPropagation();lv1PlaySingleNote('${n}')">${icon('volume',11)}</button>
+          </div>
+        `).join('')}
       </div>
+
       <div class="lv1-actions">
-        <button class="lv1-btn secondary" onclick="lv3P3CheckFill()">Check</button>
-        <button class="lv1-btn primary" id="lv3-fill-next" onclick="lv3P3Goto(5)" style="display:none">Next: Write your own →</button>
+        <button class="lv1-btn secondary" onclick="lv3JingleClear()">Clear</button>
+        <button class="lv1-btn secondary" onclick="lv3JinglePlaySeq()">Play</button>
+        <button class="lv1-btn secondary" onclick="lv3JingleHint()">Hint</button>
+        <button class="lv1-btn secondary" onclick="lv3JingleCheck()">Check</button>
       </div>
-      <div id="lv3-fill-fb" class="lv1-feedback" style="display:none"></div>
+      <div id="lv3-jingle-fb" class="lv1-feedback" style="display:none"></div>
+      <div id="lv3-jingle-hint" class="lv1-hint-box" style="display:none">
+        <strong>Hint:</strong> Jingle Bells starts E E E, then drops to D C, then D, then back to E.<br>
+        <span style="font-family:monospace;font-size:12px;color:var(--text)">E4 E4 E4 D4 C4 D4 E4</span>
+      </div>
     </div>
   `;
+  lv3JingleRenderSlots();
 }
 
-function lv3P3CheckFill() {
-  const b1 = document.getElementById('lv3-blank1').value.trim();
-  const b2 = document.getElementById('lv3-blank2').value.trim();
-  const el1 = document.getElementById('lv3-blank1');
-  const el2 = document.getElementById('lv3-blank2');
-  const fb = document.getElementById('lv3-fill-fb');
-  const ok1 = b1 === 'range';
-  const ok2 = b2 === 'phrase';
-  el1.className = 'lv1-code-blank ' + (ok1 ? 'ok' : 'bad');
-  el2.className = 'lv1-code-blank ' + (ok2 ? 'ok' : 'bad');
+function lv3JingleRenderSlots() {
+  const container = document.getElementById('lv3-jingle-slots');
+  if (!container) return;
+  container.innerHTML = '';
+  for (let i = 0; i < 7; i++) {
+    const slot = document.createElement('div');
+    slot.className = 'lv1-tw-slot' + (i < lv3JingleSeq.length ? ' filled' : '');
+    if (i < lv3JingleSeq.length) {
+      slot.textContent = lv3JingleSeq[i];
+      slot.onclick = () => { lv3JingleSeq.splice(i, 1); lv3JingleRenderSlots(); };
+      slot.title = 'Click to remove';
+    } else {
+      slot.textContent = (i + 1);
+      slot.style.opacity = '0.35';
+    }
+    container.appendChild(slot);
+  }
+}
+
+function lv3JingleTap(note) {
+  if (lv3JingleSeq.length >= 7) return;
+  lv3JingleSeq.push(note);
+  lv3JingleRenderSlots();
+}
+
+function lv3JingleClear() {
+  lv3JingleSeq = [];
+  lv3JingleRenderSlots();
+  const fb = document.getElementById('lv3-jingle-fb');
+  if (fb) fb.style.display = 'none';
+}
+
+async function lv3JinglePlaySeq() {
+  if (!lv3JingleSeq.length) return;
+  await initTone();
+  for (const n of lv3JingleSeq) { await playNote(n, 0.75); }
+}
+
+function lv3JingleHint() {
+  const h = document.getElementById('lv3-jingle-hint');
+  if (h) h.classList.toggle('visible');
+}
+
+async function lv3JingleCheck() {
+  const fb = document.getElementById('lv3-jingle-fb');
+  if (!fb) return;
   fb.style.display = 'block';
-  if (ok1 && ok2) {
+  if (lv3JingleSeq.length < 7) {
+    fb.className = 'lv1-feedback error';
+    fb.textContent = `You need 7 notes — you have ${lv3JingleSeq.length} so far. Keep going!`;
+    return;
+  }
+  const correct = lv3JingleSeq.every((n, i) => n === LV3_JINGLE[i]);
+  if (correct) {
     fb.className = 'lv1-feedback success';
-    fb.innerHTML = 'Correct! <code>range</code> generates the repeat count, and <code>phrase</code> is the variable holding your notes.';
-    document.getElementById('lv3-fill-next').style.display = 'inline-flex';
+    fb.textContent = 'Perfect! Listen to your sequence...';
+    await initTone();
+    for (const n of LV3_JINGLE) { await playNote(n, 0.75); }
+    fb.textContent = '🎵 That\'s Jingle Bells! Now let\'s see what you discovered...';
+    setTimeout(() => lv3P3Goto(3), 1400);
   } else {
     fb.className = 'lv1-feedback error';
-    const hints = [];
-    if (!ok1) hints.push('Blank 1: what Python function generates a sequence of numbers? (check the left panel)');
-    if (!ok2) hints.push('Blank 2: what is the list variable called?');
-    fb.textContent = hints.join(' ');
+    fb.textContent = 'Not quite — the order isn\'t right yet. Try playing your sequence and compare it to the Listen step!';
   }
 }
 
+/* Step 3 — Discover */
+async function lv3JingleDiscover(main) {
+  main.innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:14px;padding-top:4px">
+      <div class="lv1-concept">
+        <div class="lv1-concept-label">You spotted the Loop!</div>
+        <p>E4 appears <strong>three times in a row</strong> — that's a loop pattern. Instead of writing it three times, a loop handles it automatically.</p>
+      </div>
+
+      <div class="lv1-song-card" style="background:linear-gradient(135deg,rgba(112,80,208,0.08),rgba(46,128,208,0.08))">
+        <div class="lv1-song-card-title">Your sequence = loop + pattern</div>
+        <div class="lv1-song-card-notes" id="lv3-disc-notes">
+          ${LV3_JINGLE.map((n,i) => `<span class="lv1-song-note-pill" id="lv3-disc-${i}">${n}</span>`).join('')}
+        </div>
+        <button class="lv1-btn primary" style="margin-top:12px" onclick="lv3JinglePlayAndHighlight()">
+          ${icon('play',13)} Play & highlight
+        </button>
+      </div>
+
+      <div class="lv1-song-card" style="padding:14px 16px;align-items:flex-start;text-align:left;background:linear-gradient(135deg,rgba(112,80,208,0.07),rgba(46,128,208,0.05))">
+        <div class="lv1-song-card-title" style="margin-bottom:10px">Computational Thinking in Action</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%">
+          <div style="background:rgba(112,80,208,0.12);border-radius:10px;padding:10px;text-align:center">
+            <div style="font-size:11px;font-weight:800;color:#7050D0;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Loop</div>
+            <div style="font-size:11.5px;color:var(--text);line-height:1.5">Same code runs multiple times automatically</div>
+          </div>
+          <div style="background:rgba(46,128,208,0.12);border-radius:10px;padding:10px;text-align:center">
+            <div style="font-size:11px;font-weight:800;color:#1860A0;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Pattern</div>
+            <div style="font-size:11.5px;color:var(--text);line-height:1.5">A short motif encoded once, repeated</div>
+          </div>
+          <div style="background:rgba(24,160,80,0.12);border-radius:10px;padding:10px;text-align:center">
+            <div style="font-size:11px;font-weight:800;color:#1A7040;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">DRY Principle</div>
+            <div style="font-size:11.5px;color:var(--text);line-height:1.5">Define once, change one place</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="lv1-actions">
+        <button class="lv1-btn primary" onclick="lv3P3Goto(4)">Next: Make it your own →</button>
+      </div>
+    </div>
+  `;
+  await initTone();
+  for (const n of LV3_JINGLE) { await playNote(n, 0.75); }
+}
+
+async function lv3JinglePlayAndHighlight() {
+  await initTone();
+  for (let i = 0; i < LV3_JINGLE.length; i++) {
+    document.querySelectorAll('#lv3-disc-notes .lv1-song-note-pill').forEach(p => p.classList.remove('playing'));
+    const pill = document.getElementById('lv3-disc-' + i);
+    if (pill) pill.classList.add('playing');
+    await playNote(LV3_JINGLE[i], 0.75);
+  }
+  document.querySelectorAll('#lv3-disc-notes .lv1-song-note-pill').forEach(p => p.classList.remove('playing'));
+}
+
+/* Step 4 — Create! */
 function lv3P3WriteOwn(main) {
-  lv3OwnCount = 3;
+  lv3OwnPickedNotes = ['C4','E4','G4'];
   main.innerHTML = `
     <div style="display:flex;flex-direction:column;gap:12px;padding-top:4px">
-      <div class="lv1-activity-heading">Write Your Own</div>
-      <p class="lv1-activity-sub">
-        Change the repeat count (2–8) and hit <strong>Play</strong> to hear the difference!
-      </p>
-      <div class="lv1-code-panel" style="line-height:2">
-        <span class="lv1-code-line">
-          <span class="py-var">phrase</span><span class="py-op"> = </span>[<span class="py-str">"C4"</span><span class="py-op">, </span><span class="py-str">"E4"</span><span class="py-op">, </span><span class="py-str">"G4"</span>]
-        </span>
-        <span class="lv1-code-line">&nbsp;</span>
-        <span class="lv1-code-line">
-          <span class="py-kw">for</span> <span class="py-var">i</span> <span class="py-kw">in</span>
-          <span class="py-fn">range</span><span class="py-op">(</span><input
-            class="lv1-note-input" id="lv3-own-count" type="number"
-            min="1" max="8" value="3" style="width:36px" oninput="lv3OwnPreview()"><span class="py-op">):</span>
-        </span>
-        <span class="lv1-code-line">
-          &nbsp;&nbsp;&nbsp;&nbsp;<span class="py-fn">play</span><span class="py-op">(</span><span class="py-var">phrase</span><span class="py-op">)</span>
-        </span>
+      <div class="lv1-activity-heading">Make It Your Own</div>
+      <p class="lv1-activity-sub">Pick up to 7 notes to create your own melody, then play it!</p>
+
+      <div class="lv2-note-picker" id="lv3-own-picker">
+        ${LV3_OWN_NOTE_OPTIONS.map(note => `
+          <div class="lv2-note-tile" id="lv3-own-tile-${note}" onclick="lv3OwnToggleNote('${note}')">
+            <div class="lv1-note-name" style="font-size:13px;font-weight:900;font-family:'JetBrains Mono',monospace">${note}</div>
+            <div class="lv1-pitch-track" style="margin:5px 0 2px">
+              <div class="lv1-pitch-fill" style="width:${LV3_OWN_PITCH_PCT[note]}%"></div>
+            </div>
+          </div>
+        `).join('')}
       </div>
-      <div id="lv3-own-preview" style="font-size:12px;color:var(--text-muted);font-weight:600">
-        That's 3 × 3 = <strong>9 notes</strong>
-      </div>
+
       <div class="lv1-actions">
-        <button class="lv1-btn secondary" onclick="lv3OwnPlay()">Play my loop</button>
+        <button class="lv1-btn secondary" onclick="lv3OwnPlay()">${icon('play',12)} Play my melody</button>
         <button class="lv1-btn success" onclick="lv3Complete()">Complete Level 3!</button>
       </div>
     </div>
   `;
+  lv3UpdateOwnPicker();
 }
 
-function lv3OwnPreview() {
-  const inp = document.getElementById('lv3-own-count');
-  const preview = document.getElementById('lv3-own-preview');
-  if (!inp || !preview) return;
-  const n = Math.max(1, Math.min(8, +inp.value || 1));
-  inp.value = n;
-  lv3OwnCount = n;
-  preview.innerHTML = `That's ${n} × ${LV3_PHRASE.length} = <strong>${n * LV3_PHRASE.length} notes</strong>`;
+function lv3OwnToggleNote(note) {
+  const idx = lv3OwnPickedNotes.indexOf(note);
+  if (idx >= 0) lv3OwnPickedNotes.splice(idx, 1);
+  else { if (lv3OwnPickedNotes.length >= 7) return; lv3OwnPickedNotes.push(note); }
+  lv3UpdateOwnPicker();
+}
+
+function lv3UpdateOwnPicker() {
+  LV3_OWN_NOTE_OPTIONS.forEach(note => {
+    const tile = document.getElementById('lv3-own-tile-' + note);
+    if (tile) tile.classList.toggle('selected', lv3OwnPickedNotes.includes(note));
+  });
 }
 
 async function lv3OwnPlay() {
-  const inp = document.getElementById('lv3-own-count');
-  const count = inp ? Math.max(1, Math.min(8, +inp.value || 3)) : 3;
+  if (!lv3OwnPickedNotes.length) return;
   await initTone();
-  for (let i = 0; i < count; i++) {
-    for (const n of LV3_PHRASE) await playNote(n, 1);
-  }
+  for (const n of lv3OwnPickedNotes) { await playNote(n, 1); }
 }
 
 function lv3Complete() {

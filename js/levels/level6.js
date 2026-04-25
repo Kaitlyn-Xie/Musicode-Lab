@@ -3,6 +3,34 @@
 // ════════════════════════════════════════════════════════════
 
 let lv6Phase = 1;
+let lv6P3Step = 0;
+let lv6ReadOpened = [false, false, false];
+
+// Song Workshop state
+const LV6_ODE = ['E4','E4','F4','G4','G4','F4','E4','D4'];
+const LV6_ODE_PALETTE = ['D4','E4','F4','G4'];
+let lv6OdeSeq = [];
+const LV6_OWN_NOTE_OPTIONS = ['C4','D4','E4','F4','G4','A4','B4'];
+const LV6_OWN_PITCH_PCT = { 'C4':12,'D4':25,'E4':38,'F4':50,'G4':63,'A4':75,'B4':88 };
+let lv6OwnPickedNotes = ['C4','E4','G4'];
+
+const LV6_CT_CONCEPTS = [
+  {
+    title: 'Sorting',
+    icon: 'algorithm',
+    body: '<strong>Sorting</strong> arranges data in order — low to high, A to Z, quiet to loud. Sorting makes everything else faster: once notes are sorted by pitch, you can search, compare, and analyse them instantly.'
+  },
+  {
+    title: 'Searching',
+    icon: 'blocks',
+    body: '<strong>Searching</strong> finds a specific item in a collection. Linear search checks one by one (slow); binary search halves the list each step (fast). The right algorithm on sorted data is dramatically faster.'
+  },
+  {
+    title: 'Efficiency',
+    icon: 'variable',
+    body: '<strong>Efficiency</strong> measures how much work an algorithm needs. A slow algorithm on 1 million notes could take hours; an efficient one finishes in milliseconds. This is why algorithm choice matters at scale.'
+  }
+];
 
 // ── Phase 1 state ──────────────────────────────────────
 const LV6_SEARCH_LIST = ['E4', 'C4', 'A4', 'G4', 'F4']; // A4 is max
@@ -72,7 +100,7 @@ function renderLevel6() {
           <div class="lv1-phase-sep">›</div>
           <div class="lv1-phase" id="lv6-ph-1">2 — Sort</div>
           <div class="lv1-phase-sep">›</div>
-          <div class="lv1-phase" id="lv6-ph-2">3 — Efficiency</div>
+          <div class="lv1-phase" id="lv6-ph-2">3 — How Computers Think</div>
         </div>
       </div>
       <div class="lv1-body" id="lv6-body"></div>
@@ -324,7 +352,7 @@ function lv6RenderPhase2(body) {
           Watch bubble sort
         </button>
         <button class="lv1-btn primary" id="lv6-p2-next" onclick="lv6ShowPhase(3)" style="display:none">
-          Next: Efficiency →
+          Next: How Computers Think →
         </button>
       </div>
       <div id="lv6-p2-fb" class="lv1-feedback" style="display:none"></div>
@@ -445,85 +473,340 @@ async function lv6BubbleSortAnimate() {
 }
 
 // ══════════════════════════════════════════════════════
-// PHASE 3 — Efficiency (3 quizzes + completion)
+// PHASE 3 — How Computers Think (Song Workshop)
 // ══════════════════════════════════════════════════════
+
 function lv6RenderPhase3(body) {
-  lv6QuizStep = 0;
+  lv6P3Step = 0;
   body.innerHTML = `
-    <div class="lv1-scroll">
-      <div class="lv1-concept">
-        <div class="lv1-concept-label">Why Does Efficiency Matter?</div>
-        <p>Linear search and bubble sort work — but how <em>well</em> do they scale? Answer 3 questions to find out.</p>
+    <div style="max-width:700px;margin:0 auto;padding:0 4px">
+      <div class="lv1-p3-nav-bar">
+        <div class="lv1-p3-nav" id="lv6-p3-nav"></div>
       </div>
-      <div id="lv6-quiz-area"></div>
+      <div style="padding:16px 0 24px">
+        <div id="lv6-p3-main"></div>
+      </div>
     </div>
   `;
-  lv6RenderQuiz(0);
+  lv6P3Goto(0);
 }
 
-function lv6RenderQuiz(idx) {
-  const area = document.getElementById('lv6-quiz-area');
-  if (!area) return;
-  if (idx >= LV6_QUIZZES.length) {
-    // All done — show completion
-    area.innerHTML = `
-      <div class="lv6-complete-card">
-        <div class="lv6-complete-icon">${icon('trophy', 36)}</div>
-        <div class="lv6-complete-title">All Questions Answered!</div>
-        <div class="lv6-complete-sub">
-          You've learned:<br>
-          • <strong>Linear search</strong> — O(n), checks each item once<br>
-          • <strong>Bubble sort</strong> — compares adjacent pairs, repeats until sorted<br>
-          • <strong>Efficiency</strong> — why algorithm choice matters at scale
+function lv6P3UpdateNav(step) {
+  const labels = ['Concepts','Listen','Build','Discover','Create!'];
+  const nav = document.getElementById('lv6-p3-nav');
+  if (!nav) return;
+  nav.innerHTML = '';
+  labels.forEach((label, i) => {
+    const dot = document.createElement('div');
+    dot.className = 'lv1-p3-dot' + (i === step ? ' active' : (i < step ? ' done' : ''));
+    dot.innerHTML = i < step ? icon('check', 11) : (i + 1);
+    nav.appendChild(dot);
+    const lbl = document.createElement('div');
+    lbl.className = 'lv1-p3-nav-label' + (i === step ? ' active' : '');
+    lbl.textContent = label;
+    nav.appendChild(lbl);
+    if (i < labels.length - 1) {
+      const sep = document.createElement('div');
+      sep.className = 'lv1-p3-nav-sep';
+      sep.textContent = '›';
+      nav.appendChild(sep);
+    }
+  });
+}
+
+function lv6P3Goto(step) {
+  lv6P3Step = step;
+  lv6P3UpdateNav(step);
+  const main = document.getElementById('lv6-p3-main');
+  if (!main) return;
+  if (step === 0) lv6P3Read(main);
+  else if (step === 1) lv6OdeListen(main);
+  else if (step === 2) lv6OdeBuild(main);
+  else if (step === 3) lv6OdeDiscover(main);
+  else if (step === 4) lv6P3WriteOwn(main);
+}
+
+/* Step 0 — CT Concept Cards */
+function lv6P3Read(main) {
+  lv6ReadOpened = [false, false, false];
+  main.innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:12px;padding-top:4px">
+      <div class="lv1-concept">
+        <div class="lv1-concept-label">Three Big Ideas</div>
+        <p>You just searched and sorted musical data. Click each card to explore what that means in Computational Thinking.</p>
+      </div>
+      ${LV6_CT_CONCEPTS.map((c, i) => `
+        <div class="lv1-read-block" id="lv6-read-${i}">
+          <button class="lv1-read-line-btn" onclick="lv6ReadToggle(${i})">
+            <span class="lv1-read-expand-icon">${icon(c.icon, 14)}</span>
+            <span class="lv1-read-code" style="font-family:inherit;font-size:13px;font-weight:700;color:var(--text)">${c.title}</span>
+            <span class="ct-concept-tag">CT Concept</span>
+          </button>
+          <div class="lv1-read-explanation" id="lv6-re-${i}">${c.body}</div>
         </div>
+      `).join('')}
+      <div class="lv1-actions">
+        <button class="lv1-btn primary" id="lv6-read-next" onclick="lv6P3Goto(1)" style="display:none">Next: Build the Song →</button>
       </div>
-      <div class="lv1-actions" style="margin-top:16px">
-        <button class="lv1-btn success" onclick="lv6Complete()">Complete Level 6!</button>
+    </div>
+  `;
+}
+
+function lv6ReadToggle(idx) {
+  lv6ReadOpened[idx] = !lv6ReadOpened[idx];
+  const btn = document.querySelector('#lv6-read-' + idx + ' .lv1-read-line-btn');
+  const exp = document.getElementById('lv6-re-' + idx);
+  if (btn) btn.classList.toggle('opened', lv6ReadOpened[idx]);
+  if (exp) exp.classList.toggle('open', lv6ReadOpened[idx]);
+  if (lv6ReadOpened.every(x => x)) {
+    const nb = document.getElementById('lv6-read-next');
+    if (nb) nb.style.display = 'inline-flex';
+  }
+}
+
+/* Step 1 — Listen */
+function lv6OdeListen(main) {
+  main.innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:14px;padding-top:4px">
+      <div class="lv1-concept">
+        <div class="lv1-concept-label">欢乐颂 — Ode to Joy</div>
+        <p>Listen to the opening phrase of Ode to Joy! The notes step up and then back down — just like how sorted data makes searching and comparing easier.</p>
       </div>
-    `;
+
+      <div class="lv1-song-card">
+        <div class="lv1-song-card-title">♪ Ode to Joy 欢乐颂</div>
+        <div class="lv1-song-card-lyrics">"欢乐颂，欢乐颂，欢乐女神圣洁美..."</div>
+        <div class="lv1-song-card-notes">
+          ${LV6_ODE.map(n => `<span class="lv1-song-note-pill">${n}</span>`).join('')}
+        </div>
+        <button class="lv1-btn primary" style="margin-top:14px;gap:8px" onclick="lv6OdePlayTarget()">
+          ${icon('play',13)} Listen to the phrase
+        </button>
+        <div id="lv6-ode-playing" style="display:none;font-size:12px;color:var(--text-muted);margin-top:8px;text-align:center">♩ playing...</div>
+      </div>
+
+      <div class="lv1-actions">
+        <button class="lv1-btn primary" onclick="lv6P3Goto(2)">Next: Build it →</button>
+      </div>
+    </div>
+  `;
+}
+
+async function lv6OdePlayTarget() {
+  const ind = document.getElementById('lv6-ode-playing');
+  if (ind) ind.style.display = 'block';
+  await initTone();
+  for (const n of LV6_ODE) { await playNote(n, 0.75); }
+  if (ind) ind.style.display = 'none';
+}
+
+/* Step 2 — Build */
+function lv6OdeBuild(main) {
+  lv6OdeSeq = [];
+  main.innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:12px;padding-top:4px">
+      <div class="lv1-activity-heading">Build the Sequence</div>
+      <p class="lv1-activity-sub">
+        Tap the note tiles below to place them in order. The song needs <strong>8 notes</strong>.
+        Use the hint if you get stuck!
+      </p>
+
+      <div class="lv1-tw-slots" id="lv6-ode-slots"></div>
+
+      <div class="lv1-tw-palette">
+        ${LV6_ODE_PALETTE.map(n => `
+          <div class="lv1-tw-tile" onclick="lv6OdeTap('${n}')">
+            <div class="lv1-tw-tile-name">${n}</div>
+            <button class="lv1-play-btn" style="margin-top:4px" onclick="event.stopPropagation();lv1PlaySingleNote('${n}')">${icon('volume',11)}</button>
+          </div>
+        `).join('')}
+      </div>
+
+      <div class="lv1-actions">
+        <button class="lv1-btn secondary" onclick="lv6OdeClear()">Clear</button>
+        <button class="lv1-btn secondary" onclick="lv6OdePlaySeq()">Play</button>
+        <button class="lv1-btn secondary" onclick="lv6OdeHint()">Hint</button>
+        <button class="lv1-btn secondary" onclick="lv6OdeCheck()">Check</button>
+      </div>
+      <div id="lv6-ode-fb" class="lv1-feedback" style="display:none"></div>
+      <div id="lv6-ode-hint" class="lv1-hint-box" style="display:none">
+        <strong>Hint:</strong> Ode to Joy goes E E F G G F E D — steps up then back down.<br>
+        <span style="font-family:monospace;font-size:12px;color:var(--text)">E4 E4 F4 G4 G4 F4 E4 D4</span>
+      </div>
+    </div>
+  `;
+  lv6OdeRenderSlots();
+}
+
+function lv6OdeRenderSlots() {
+  const container = document.getElementById('lv6-ode-slots');
+  if (!container) return;
+  container.innerHTML = '';
+  for (let i = 0; i < 8; i++) {
+    const slot = document.createElement('div');
+    slot.className = 'lv1-tw-slot' + (i < lv6OdeSeq.length ? ' filled' : '');
+    if (i < lv6OdeSeq.length) {
+      slot.textContent = lv6OdeSeq[i];
+      slot.onclick = () => { lv6OdeSeq.splice(i, 1); lv6OdeRenderSlots(); };
+      slot.title = 'Click to remove';
+    } else {
+      slot.textContent = (i + 1);
+      slot.style.opacity = '0.35';
+    }
+    container.appendChild(slot);
+  }
+}
+
+function lv6OdeTap(note) {
+  if (lv6OdeSeq.length >= 8) return;
+  lv6OdeSeq.push(note);
+  lv6OdeRenderSlots();
+}
+
+function lv6OdeClear() {
+  lv6OdeSeq = [];
+  lv6OdeRenderSlots();
+  const fb = document.getElementById('lv6-ode-fb');
+  if (fb) fb.style.display = 'none';
+}
+
+async function lv6OdePlaySeq() {
+  if (!lv6OdeSeq.length) return;
+  await initTone();
+  for (const n of lv6OdeSeq) { await playNote(n, 0.75); }
+}
+
+function lv6OdeHint() {
+  const h = document.getElementById('lv6-ode-hint');
+  if (h) h.classList.toggle('visible');
+}
+
+async function lv6OdeCheck() {
+  const fb = document.getElementById('lv6-ode-fb');
+  if (!fb) return;
+  fb.style.display = 'block';
+  if (lv6OdeSeq.length < 8) {
+    fb.className = 'lv1-feedback error';
+    fb.textContent = `You need 8 notes — you have ${lv6OdeSeq.length} so far. Keep going!`;
     return;
   }
+  const correct = lv6OdeSeq.every((n, i) => n === LV6_ODE[i]);
+  if (correct) {
+    fb.className = 'lv1-feedback success';
+    fb.textContent = 'Perfect! Listen to your sequence...';
+    await initTone();
+    for (const n of LV6_ODE) { await playNote(n, 0.75); }
+    fb.textContent = '🎵 That\'s Ode to Joy! Now let\'s see what you discovered...';
+    setTimeout(() => lv6P3Goto(3), 1400);
+  } else {
+    fb.className = 'lv1-feedback error';
+    fb.textContent = 'Not quite — the order isn\'t right yet. Try playing your sequence and compare it to the Listen step!';
+  }
+}
 
-  const q = LV6_QUIZZES[idx];
-  area.innerHTML = `
-    <div style="display:flex;flex-direction:column;gap:12px;padding-top:4px">
-      <p class="lv1-activity-sub" style="font-size:13px;color:var(--text)">Question ${idx + 1} of ${LV6_QUIZZES.length}</p>
-      <div class="lv1-activity-heading" style="font-size:14px">${q.q}</div>
-      <div class="lv1-quiz-options" id="lv6-qz-opts">
-        ${q.opts.map(o =>
-          `<button class="lv1-quiz-opt" onclick="lv6Answer(this,${o.ok},${idx})">${o.t}</button>`
-        ).join('')}
+/* Step 3 — Discover */
+async function lv6OdeDiscover(main) {
+  main.innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:14px;padding-top:4px">
+      <div class="lv1-concept">
+        <div class="lv1-concept-label">You sorted the melody!</div>
+        <p>The notes rise then fall — a sorted pattern. When data is ordered, searching is instant. That's why efficient algorithms matter.</p>
       </div>
-      <div id="lv6-qz-fb" class="lv1-feedback" style="display:none"></div>
-      <div class="lv1-actions">
-        <button class="lv1-btn primary" id="lv6-qz-next" onclick="lv6RenderQuiz(${idx + 1})" style="display:none">
-          ${idx < LV6_QUIZZES.length - 1 ? 'Next question →' : 'See results →'}
+
+      <div class="lv1-song-card" style="background:linear-gradient(135deg,rgba(255,160,30,0.08),rgba(200,80,30,0.08))">
+        <div class="lv1-song-card-title">Your sequence = ordered algorithm</div>
+        <div class="lv1-song-card-notes" id="lv6-disc-notes">
+          ${LV6_ODE.map((n,i) => `<span class="lv1-song-note-pill" id="lv6-disc-${i}">${n}</span>`).join('')}
+        </div>
+        <button class="lv1-btn primary" style="margin-top:12px" onclick="lv6OdePlayAndHighlight()">
+          ${icon('play',13)} Play & highlight
         </button>
+      </div>
+
+      <div class="lv1-song-card" style="padding:14px 16px;align-items:flex-start;text-align:left;background:linear-gradient(135deg,rgba(255,160,30,0.07),rgba(200,80,30,0.05))">
+        <div class="lv1-song-card-title" style="margin-bottom:10px">Computational Thinking in Action</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%">
+          <div style="background:rgba(255,160,30,0.12);border-radius:10px;padding:10px;text-align:center">
+            <div style="font-size:11px;font-weight:800;color:#885020;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Sorting</div>
+            <div style="font-size:11.5px;color:var(--text);line-height:1.5">Ordered data enables faster search</div>
+          </div>
+          <div style="background:rgba(46,128,208,0.12);border-radius:10px;padding:10px;text-align:center">
+            <div style="font-size:11px;font-weight:800;color:#1860A0;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Searching</div>
+            <div style="font-size:11.5px;color:var(--text);line-height:1.5">Binary search halves the list each step</div>
+          </div>
+          <div style="background:rgba(24,160,80,0.12);border-radius:10px;padding:10px;text-align:center">
+            <div style="font-size:11px;font-weight:800;color:#1A7040;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Efficiency</div>
+            <div style="font-size:11.5px;color:var(--text);line-height:1.5">Right algorithm finishes in milliseconds</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="lv1-actions">
+        <button class="lv1-btn primary" onclick="lv6P3Goto(4)">Next: Make it your own →</button>
       </div>
     </div>
   `;
+  await initTone();
+  for (const n of LV6_ODE) { await playNote(n, 0.75); }
 }
 
-function lv6Answer(btn, correct, idx) {
-  document.querySelectorAll('#lv6-qz-opts .lv1-quiz-opt').forEach(b => {
-    b.disabled = true; b.style.opacity = '0.55';
+async function lv6OdePlayAndHighlight() {
+  await initTone();
+  for (let i = 0; i < LV6_ODE.length; i++) {
+    document.querySelectorAll('#lv6-disc-notes .lv1-song-note-pill').forEach(p => p.classList.remove('playing'));
+    const pill = document.getElementById('lv6-disc-' + i);
+    if (pill) pill.classList.add('playing');
+    await playNote(LV6_ODE[i], 0.75);
+  }
+  document.querySelectorAll('#lv6-disc-notes .lv1-song-note-pill').forEach(p => p.classList.remove('playing'));
+}
+
+/* Step 4 — Create! */
+function lv6P3WriteOwn(main) {
+  lv6OwnPickedNotes = ['C4','E4','G4'];
+  main.innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:12px;padding-top:4px">
+      <div class="lv1-activity-heading">Make It Your Own</div>
+      <p class="lv1-activity-sub">Pick up to 7 notes to create your own melody, then play it!</p>
+
+      <div class="lv2-note-picker" id="lv6-own-picker">
+        ${LV6_OWN_NOTE_OPTIONS.map(note => `
+          <div class="lv2-note-tile" id="lv6-own-tile-${note}" onclick="lv6OwnToggleNote('${note}')">
+            <div class="lv1-note-name" style="font-size:13px;font-weight:900;font-family:'JetBrains Mono',monospace">${note}</div>
+            <div class="lv1-pitch-track" style="margin:5px 0 2px">
+              <div class="lv1-pitch-fill" style="width:${LV6_OWN_PITCH_PCT[note]}%"></div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+
+      <div class="lv1-actions">
+        <button class="lv1-btn secondary" onclick="lv6OwnPlay()">${icon('play',12)} Play my melody</button>
+        <button class="lv1-btn success" onclick="lv6Complete()">Complete Level 6!</button>
+      </div>
+    </div>
+  `;
+  lv6UpdateOwnPicker();
+}
+
+function lv6OwnToggleNote(note) {
+  const idx = lv6OwnPickedNotes.indexOf(note);
+  if (idx >= 0) lv6OwnPickedNotes.splice(idx, 1);
+  else { if (lv6OwnPickedNotes.length >= 7) return; lv6OwnPickedNotes.push(note); }
+  lv6UpdateOwnPicker();
+}
+
+function lv6UpdateOwnPicker() {
+  LV6_OWN_NOTE_OPTIONS.forEach(note => {
+    const tile = document.getElementById('lv6-own-tile-' + note);
+    if (tile) tile.classList.toggle('selected', lv6OwnPickedNotes.includes(note));
   });
-  btn.style.opacity = '1';
-  btn.classList.add(correct ? 'correct' : 'wrong');
-  if (!correct) {
-    const correctText = LV6_QUIZZES[idx].opts.find(o => o.ok).t;
-    document.querySelectorAll('#lv6-qz-opts .lv1-quiz-opt').forEach(b => {
-      if (b.textContent.trim() === correctText) { b.classList.add('correct'); b.style.opacity = '1'; }
-    });
-  }
-  const fb = document.getElementById('lv6-qz-fb');
-  if (fb) {
-    fb.style.display = 'block';
-    fb.className = 'lv1-feedback ' + (correct ? 'success' : 'error');
-    fb.innerHTML = correct ? LV6_QUIZZES[idx].exp : 'Not quite! ' + LV6_QUIZZES[idx].exp;
-  }
-  const nb = document.getElementById('lv6-qz-next');
-  if (nb) nb.style.display = 'inline-flex';
+}
+
+async function lv6OwnPlay() {
+  if (!lv6OwnPickedNotes.length) return;
+  await initTone();
+  for (const n of lv6OwnPickedNotes) { await playNote(n, 1); }
 }
 
 function lv6Complete() {

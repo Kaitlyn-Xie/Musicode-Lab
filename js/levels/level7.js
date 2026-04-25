@@ -259,16 +259,12 @@ function lv7RenderPhase2(body) {
         </div>
       </div>
 
-      <!-- Live Python preview -->
-      <div class="lv7-section-label" style="margin-top:12px">Live Code Preview</div>
-      <div class="lv1-code-panel" id="lv7-code-preview" style="font-size:12px;line-height:1.9;min-height:60px"></div>
     </div>
   `;
 
   lv7RenderVarList();
   lv7RenderPalette();
   lv7RenderCanvas();
-  lv7RenderCodePreview();
 }
 
 function lv7RenderVarList() {
@@ -537,28 +533,7 @@ function lv7RemoveInner(bi, ii) {
 }
 
 function lv7RenderCodePreview() {
-  const el = document.getElementById('lv7-code-preview');
-  if (!el) return;
-  let lines = [];
-  // Variable defs
-  lv7Vars.forEach(v => {
-    lines.push(`<span class="lv1-code-line"><span class="py-var">${v.name}</span><span class="py-op"> = </span>[${v.notes.map(n=>'<span class="py-str">"'+n+'"</span>').join('<span class="py-op">, </span>')}]</span>`);
-  });
-  lines.push('<span class="lv1-code-line">&nbsp;</span>');
-  // Program
-  lv7Program.forEach(block => {
-    if (block.type === 'play') {
-      const v = lv7Vars[block.varIdx] || {name:'?'};
-      lines.push(`<span class="lv1-code-line"><span class="py-fn">play</span><span class="py-op">(</span><span class="py-var">${v.name}</span><span class="py-op">)</span></span>`);
-    } else if (block.type === 'repeat') {
-      lines.push(`<span class="lv1-code-line"><span class="py-kw">for</span> <span class="py-var">i</span> <span class="py-kw">in</span> <span class="py-fn">range</span><span class="py-op">(</span><span class="py-num">${block.count}</span><span class="py-op">):</span></span>`);
-      block.body.forEach(inner => {
-        const v = lv7Vars[inner.varIdx] || {name:'?'};
-        lines.push(`<span class="lv1-code-line">&nbsp;&nbsp;&nbsp;&nbsp;<span class="py-fn">play</span><span class="py-op">(</span><span class="py-var">${v.name}</span><span class="py-op">)</span></span>`);
-      });
-    }
-  });
-  el.innerHTML = lines.join('');
+  // Python preview removed — no-op
 }
 
 function lv7P2CheckReady() {
@@ -627,6 +602,37 @@ function lv7RenderPhase3(body) {
 
   body.innerHTML = `
     <div class="lv1-scroll">
+
+      <div class="lv1-song-card" style="margin-bottom:16px;padding:14px 16px;align-items:flex-start;text-align:left;background:linear-gradient(135deg,rgba(112,80,208,0.08),rgba(46,128,208,0.06))">
+        <div class="lv1-song-card-title" style="margin-bottom:10px">All the CT Concepts You've Learned</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%">
+          <div style="background:rgba(112,80,208,0.12);border-radius:10px;padding:10px;text-align:center">
+            <div style="font-size:11px;font-weight:800;color:#7050D0;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Variables</div>
+            <div style="font-size:11px;color:var(--text);line-height:1.5">Named containers that store data</div>
+          </div>
+          <div style="background:rgba(46,128,208,0.12);border-radius:10px;padding:10px;text-align:center">
+            <div style="font-size:11px;font-weight:800;color:#1860A0;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Sequencing</div>
+            <div style="font-size:11px;color:var(--text);line-height:1.5">Steps in precise order</div>
+          </div>
+          <div style="background:rgba(24,160,80,0.12);border-radius:10px;padding:10px;text-align:center">
+            <div style="font-size:11px;font-weight:800;color:#1A7040;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Loops</div>
+            <div style="font-size:11px;color:var(--text);line-height:1.5">Repeat code automatically</div>
+          </div>
+          <div style="background:rgba(200,120,30,0.12);border-radius:10px;padding:10px;text-align:center">
+            <div style="font-size:11px;font-weight:800;color:#885020;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Algorithm</div>
+            <div style="font-size:11px;color:var(--text);line-height:1.5">Complete step-by-step process</div>
+          </div>
+          <div style="background:rgba(200,50,50,0.12);border-radius:10px;padding:10px;text-align:center">
+            <div style="font-size:11px;font-weight:800;color:#882000;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Debugging</div>
+            <div style="font-size:11px;color:var(--text);line-height:1.5">Find and fix unexpected behaviour</div>
+          </div>
+          <div style="background:rgba(255,160,30,0.12);border-radius:10px;padding:10px;text-align:center">
+            <div style="font-size:11px;font-weight:800;color:#885020;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Sorting</div>
+            <div style="font-size:11px;color:var(--text);line-height:1.5">Arrange data for faster algorithms</div>
+          </div>
+        </div>
+      </div>
+
       <div class="lv7-share-hero">
         <div class="lv7-share-hero-icon">${icon('trophy', 40)}</div>
         <div class="lv7-share-hero-title">"${lv7PlanTitle}"</div>
