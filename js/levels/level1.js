@@ -452,38 +452,10 @@ const LV1_CT_CONCEPTS = [
   }
 ];
 
-const LV1_QUIZZES = [
-  {
-    q: 'You arranged notes in the order C4 → E4 → G4 → A4. Which CT concept did you use?',
-    opts: [
-      { t: 'Sequencing — putting steps in a precise, exact order', ok: true },
-      { t: 'Looping — repeating the same step multiple times', ok: false },
-      { t: 'Debugging — finding and fixing errors in code', ok: false },
-      { t: 'Sorting — rearranging data from smallest to largest', ok: false }
-    ],
-    exp: '<strong>Correct!</strong> <em>Sequencing</em> means arranging instructions in an exact order. Computers do what you say, in the order you say it — so order matters!'
-  },
-  {
-    q: 'If you renamed <code>scale</code> to <code>myMelody</code>, what would change about how the music sounds?',
-    opts: [
-      { t: 'The pitch of all the notes would change', ok: false },
-      { t: 'Nothing — the name is just a label; the notes stay the same', ok: true },
-      { t: 'The notes would play in reverse order', ok: false },
-      { t: 'The notes would play twice as fast', ok: false }
-    ],
-    exp: '<strong>Right!</strong> A variable name is just a label you chose. <code>scale</code> and <code>myMelody</code> are both containers — what matters is what\'s <em>inside</em> them.'
-  },
-  {
-    q: 'You add a 5th note F4 to the list. How many notes does the algorithm play?',
-    opts: [
-      { t: '4 — it always plays exactly 4 notes', ok: false },
-      { t: '0 — lists can only hold 4 items', ok: false },
-      { t: '5 — it adapts to whatever is in the list', ok: true },
-      { t: 'It plays F4 first, before the others', ok: false }
-    ],
-    exp: '<strong>Exactly!</strong> The algorithm works with <em>whatever is in the list</em>. Add more items, it plays more. That flexibility is what makes algorithms powerful!'
-  }
-];
+// Twinkle Twinkle state
+const LV1_TWINKLE = ['C4','C4','G4','G4','A4','A4','G4'];
+const LV1_TWINKLE_PALETTE = ['C4','G4','A4'];
+let lv1TwinkleSeq = [];
 
 function lv1RenderPhase3(body) {
   lv1P3Step = 0;
@@ -504,27 +476,15 @@ function lv1RenderPhase3(body) {
         </div>
 
         <div>
-          <div class="lv1-compare-title" style="margin-bottom:7px">Pseudocode</div>
-          <div class="lv1-code-panel" style="font-size:11.5px;padding:11px 13px;line-height:1.95;background:#1e1a3a">
-            <span class="lv1-code-line"><span class="pseudo-kw">DEFINE</span> <span class="py-var">scale</span> ← [<span class="py-str">"C4"</span>, <span class="py-str">"E4"</span>, <span class="py-str">"G4"</span>, <span class="py-str">"A4"</span>]</span>
+          <div class="lv1-compare-title" style="margin-bottom:7px">Python</div>
+          <div class="lv1-code-panel" style="font-size:11.5px;padding:11px 13px;line-height:1.85">
+            <span class="lv1-code-line"><span class="py-var">scale</span><span class="py-op"> = </span>[<span class="py-str">"C4"</span><span class="py-op">, </span><span class="py-str">"E4"</span><span class="py-op">, </span><span class="py-str">"G4"</span><span class="py-op">, </span><span class="py-str">"A4"</span>]</span>
             <span class="lv1-code-line">&nbsp;</span>
-            <span class="lv1-code-line"><span class="pseudo-kw">FOR EACH</span> <span class="py-var">note</span> <span class="pseudo-kw">IN</span> <span class="py-var">scale</span>:</span>
-            <span class="lv1-code-line">&nbsp;&nbsp;&nbsp;&nbsp;<span class="pseudo-fn">PLAY</span>(<span class="py-var">note</span>)</span>
+            <span class="lv1-code-line"><span class="py-kw">for</span> <span class="py-var">note</span> <span class="py-kw">in</span> <span class="py-var">scale</span><span class="py-op">:</span></span>
+            <span class="lv1-code-line">&nbsp;&nbsp;&nbsp;&nbsp;<span class="py-fn">play</span><span class="py-op">(</span><span class="py-var">note</span><span class="py-op">)</span></span>
           </div>
-        </div>
-
-        <div>
-          <button class="lv1-py-reveal-btn" onclick="lv1TogglePySidebar()">
-            ${icon('code', 11)} See in Python
-            <span id="lv1-py-arrow">↓</span>
-          </button>
-          <div id="lv1-py-sidebar" style="display:none;margin-top:6px">
-            <div class="lv1-code-panel" style="font-size:11px;padding:10px 12px;line-height:1.85">
-              <span class="lv1-code-line"><span class="py-var">scale</span><span class="py-op"> = </span>[<span class="py-str">"C4"</span><span class="py-op">, </span><span class="py-str">"E4"</span><span class="py-op">, </span><span class="py-str">"G4"</span><span class="py-op">, </span><span class="py-str">"A4"</span>]</span>
-              <span class="lv1-code-line"><span class="py-kw">for</span> <span class="py-var">note</span> <span class="py-kw">in</span> <span class="py-var">scale</span><span class="py-op">:</span></span>
-              <span class="lv1-code-line">&nbsp;&nbsp;&nbsp;&nbsp;<span class="py-fn">play</span><span class="py-op">(</span><span class="py-var">note</span><span class="py-op">)</span></span>
-            </div>
-            <div style="font-size:10.5px;color:var(--text-muted);margin-top:5px">Python is one way to write this. The idea is the same in any language.</div>
+          <div style="font-size:10.5px;color:var(--text-muted);margin-top:6px;line-height:1.5">
+            The name <code style="font-size:10.5px">scale</code> is your choice — call it anything!
           </div>
         </div>
       </div>
@@ -583,7 +543,7 @@ function lv1TogglePySidebar() {
 }
 
 function lv1P3UpdateNav(step) {
-  const labels = ['Concepts','Quiz 1','Quiz 2','Quiz 3','Fill in','Create!'];
+  const labels = ['Concepts','Listen','Build','Discover','Create!'];
   const nav = document.getElementById('lv1-p3-nav');
   if (!nav) return;
   nav.innerHTML = '';
@@ -611,9 +571,10 @@ function lv1P3Goto(step) {
   const main = document.getElementById('lv1-p3-main');
   if (!main) return;
   if (step === 0) lv1P3Read(main);
-  else if (step >= 1 && step <= 3) lv1P3Quiz(main, step - 1);
-  else if (step === 4) lv1P3FillIn(main);
-  else if (step === 5) lv1P3WriteOwn(main);
+  else if (step === 1) lv1TwinkleListen(main);
+  else if (step === 2) lv1TwinkleBuild(main);
+  else if (step === 3) lv1TwinkleDiscover(main);
+  else if (step === 4) lv1P3WriteOwn(main);
 }
 
 /* Step 0 — CT Concept Cards */
@@ -638,7 +599,7 @@ function lv1P3Read(main) {
         </div>
       `).join('')}
       <div class="lv1-actions">
-        <button class="lv1-btn primary" id="lv1-read-next" onclick="lv1P3Goto(1)" style="display:none">Next: Quiz →</button>
+        <button class="lv1-btn primary" id="lv1-read-next" onclick="lv1P3Goto(1)" style="display:none">Next: Build the Song →</button>
       </div>
     </div>
   `;
@@ -656,104 +617,198 @@ function lv1ReadToggle(idx) {
   }
 }
 
-/* Steps 1-3 — Quizzes */
-function lv1P3Quiz(main, qIdx) {
-  const q = LV1_QUIZZES[qIdx];
+/* ── Song Workshop: Step 1 — Listen ─────────────────────── */
+function lv1TwinkleListen(main) {
   main.innerHTML = `
-    <div style="display:flex;flex-direction:column;gap:12px;padding-top:4px">
-      <p class="lv1-activity-sub" style="font-size:13px;color:var(--text)">Question ${qIdx+1} of 3</p>
-      <div class="lv1-activity-heading" style="font-size:14px">${q.q}</div>
-      <div class="lv1-quiz-options" id="lv1-qz-opts">
-        ${q.opts.map((o, i) =>
-          `<button class="lv1-quiz-opt" onclick="lv1P3Answer(this,${o.ok},${qIdx})">${o.t}</button>`
-        ).join('')}
+    <div style="display:flex;flex-direction:column;gap:14px;padding-top:4px">
+      <div class="lv1-concept">
+        <div class="lv1-concept-label">Twinkle Twinkle Little Star</div>
+        <p>Let's build a real song together! Listen to the first phrase, then you'll recreate it note by note.</p>
       </div>
-      <div id="lv1-qz-fb" class="lv1-feedback" style="display:none"></div>
-      <div class="lv1-actions">
-        <button class="lv1-btn primary" id="lv1-qz-next" onclick="lv1P3Goto(${lv1P3Step + 1})" style="display:none">
-          ${qIdx < 2 ? 'Next question →' : 'Next: Fill in the blanks →'}
+
+      <div class="lv1-song-card">
+        <div class="lv1-song-card-title">♪ Twinkle Twinkle Little Star</div>
+        <div class="lv1-song-card-lyrics">"Twin-kle, twin-kle, lit-tle star..."</div>
+        <div class="lv1-song-card-notes">
+          ${LV1_TWINKLE.map(n => `<span class="lv1-song-note-pill">${n}</span>`).join('')}
+        </div>
+        <button class="lv1-btn primary" style="margin-top:14px;gap:8px" onclick="lv1TwinklePlayTarget()">
+          ${icon('play',13)} Listen to the phrase
         </button>
+        <div id="lv1-tw-playing" style="display:none;font-size:12px;color:var(--text-muted);margin-top:8px;text-align:center">♩ playing...</div>
+      </div>
+
+      <div class="lv1-actions">
+        <button class="lv1-btn primary" onclick="lv1P3Goto(2)">Next: Build it →</button>
       </div>
     </div>
   `;
 }
 
-function lv1P3Answer(btn, correct, qIdx) {
-  document.querySelectorAll('#lv1-qz-opts .lv1-quiz-opt').forEach(b => {
-    b.disabled = true; b.style.opacity = '0.55';
-  });
-  btn.style.opacity = '1';
-  btn.classList.add(correct ? 'correct' : 'wrong');
-  if (!correct) {
-    document.querySelectorAll('#lv1-qz-opts .lv1-quiz-opt').forEach(b => {
-      if (b.textContent === LV1_QUIZZES[qIdx].opts.find(o => o.ok).t) {
-        b.classList.add('correct'); b.style.opacity = '1';
-      }
-    });
-  }
-  const fb = document.getElementById('lv1-qz-fb');
-  if (fb) {
-    fb.style.display = 'block';
-    fb.className = 'lv1-feedback ' + (correct ? 'success' : 'error');
-    fb.innerHTML = correct ? LV1_QUIZZES[qIdx].exp : 'Not quite! ' + LV1_QUIZZES[qIdx].exp;
-  }
-  const nb = document.getElementById('lv1-qz-next');
-  if (nb) nb.style.display = 'inline-flex';
+async function lv1TwinklePlayTarget() {
+  const ind = document.getElementById('lv1-tw-playing');
+  if (ind) ind.style.display = 'block';
+  await initTone();
+  for (const n of LV1_TWINKLE) { await playNote(n, 0.75); }
+  if (ind) ind.style.display = 'none';
 }
 
-/* Step 4 — Fill in the blanks (pseudocode) */
-function lv1P3FillIn(main) {
+/* ── Song Workshop: Step 2 — Build ──────────────────────── */
+function lv1TwinkleBuild(main) {
+  lv1TwinkleSeq = [];
   main.innerHTML = `
     <div style="display:flex;flex-direction:column;gap:12px;padding-top:4px">
-      <div class="lv1-activity-heading">Fill in the Blanks</div>
+      <div class="lv1-activity-heading">Build the Sequence</div>
       <p class="lv1-activity-sub">
-        Look at the pseudocode in the <strong>left panel</strong> — what is the variable name?
-        Type it into both blanks below.
+        Tap the note tiles below to place them in order. The song needs <strong>7 notes</strong>.
+        Use the hint if you get stuck!
       </p>
-      <div class="lv1-code-panel" style="line-height:2;background:#1e1a3a">
-        <span class="lv1-code-line">
-          <span class="pseudo-kw">DEFINE</span>
-          <input class="lv1-code-blank" id="lv1-blank1" placeholder="???" autocomplete="off" spellcheck="false" style="width:80px;margin:0 6px">
-          ← [<span class="py-str">"C4"</span>, <span class="py-str">"E4"</span>, <span class="py-str">"G4"</span>, <span class="py-str">"A4"</span>]
-        </span>
-        <span class="lv1-code-line">
-          <span class="pseudo-kw">FOR EACH</span> <span class="py-var">note</span> <span class="pseudo-kw">IN</span>
-          <input class="lv1-code-blank" id="lv1-blank2" placeholder="???" autocomplete="off" spellcheck="false" style="width:80px;margin:0 6px">:
-        </span>
-        <span class="lv1-code-line">
-          &nbsp;&nbsp;&nbsp;&nbsp;<span class="pseudo-fn">PLAY</span>(<span class="py-var">note</span>)
-        </span>
+
+      <div class="lv1-tw-slots" id="lv1-tw-slots"></div>
+
+      <div class="lv1-tw-palette">
+        ${LV1_TWINKLE_PALETTE.map(n => `
+          <div class="lv1-tw-tile" onclick="lv1TwinkleTap('${n}')">
+            <div class="lv1-tw-tile-name">${n}</div>
+            <button class="lv1-play-btn" style="margin-top:4px" onclick="event.stopPropagation();lv1PlaySingleNote('${n}')">${icon('volume',11)}</button>
+          </div>
+        `).join('')}
       </div>
+
       <div class="lv1-actions">
-        <button class="lv1-btn secondary" onclick="lv1P3CheckFill()">Check</button>
-        <button class="lv1-btn primary" id="lv1-fill-next" onclick="lv1P3Goto(5)" style="display:none">Next: Make it your own →</button>
+        <button class="lv1-btn secondary" onclick="lv1TwinkleClear()">Clear</button>
+        <button class="lv1-btn secondary" onclick="lv1TwinklePlaySeq()">Play</button>
+        <button class="lv1-btn secondary" onclick="lv1TwinkleHint()">Hint</button>
+        <button class="lv1-btn secondary" onclick="lv1TwinkleCheck()">Check</button>
       </div>
-      <div id="lv1-fill-fb" class="lv1-feedback" style="display:none"></div>
+      <div id="lv1-tw-fb" class="lv1-feedback" style="display:none"></div>
+      <div id="lv1-tw-hint" class="lv1-hint-box" style="display:none">
+        <strong>Hint:</strong> "Twinkle Twinkle" starts with the same note twice, jumps up, repeats that twice, goes even higher, repeats twice, then comes back down.<br>
+        <span style="font-family:monospace;font-size:12px;color:var(--text)">C C G G A A G</span>
+      </div>
     </div>
   `;
+  lv1TwinkleRenderSlots();
 }
 
-function lv1P3CheckFill() {
-  const b1 = document.getElementById('lv1-blank1').value.trim();
-  const b2 = document.getElementById('lv1-blank2').value.trim();
-  const fb = document.getElementById('lv1-fill-fb');
-  const el1 = document.getElementById('lv1-blank1');
-  const el2 = document.getElementById('lv1-blank2');
+function lv1TwinkleRenderSlots() {
+  const container = document.getElementById('lv1-tw-slots');
+  if (!container) return;
+  container.innerHTML = '';
+  for (let i = 0; i < 7; i++) {
+    const slot = document.createElement('div');
+    slot.className = 'lv1-tw-slot' + (i < lv1TwinkleSeq.length ? ' filled' : '');
+    if (i < lv1TwinkleSeq.length) {
+      slot.textContent = lv1TwinkleSeq[i];
+      slot.onclick = () => { lv1TwinkleSeq.splice(i, 1); lv1TwinkleRenderSlots(); };
+      slot.title = 'Click to remove';
+    } else {
+      slot.textContent = (i + 1);
+      slot.style.opacity = '0.35';
+    }
+    container.appendChild(slot);
+  }
+}
+
+function lv1TwinkleTap(note) {
+  if (lv1TwinkleSeq.length >= 7) return;
+  lv1TwinkleSeq.push(note);
+  lv1TwinkleRenderSlots();
+}
+
+function lv1TwinkleClear() {
+  lv1TwinkleSeq = [];
+  lv1TwinkleRenderSlots();
+  const fb = document.getElementById('lv1-tw-fb');
+  if (fb) fb.style.display = 'none';
+}
+
+async function lv1TwinklePlaySeq() {
+  if (!lv1TwinkleSeq.length) return;
+  await initTone();
+  for (const n of lv1TwinkleSeq) { await playNote(n, 0.75); }
+}
+
+function lv1TwinkleHint() {
+  const h = document.getElementById('lv1-tw-hint');
+  if (h) h.classList.toggle('visible');
+}
+
+async function lv1TwinkleCheck() {
+  const fb = document.getElementById('lv1-tw-fb');
+  if (!fb) return;
   fb.style.display = 'block';
-  const ok1 = b1 === 'scale', ok2 = b2 === 'scale';
-  el1.className = 'lv1-code-blank ' + (ok1 ? 'ok' : 'bad');
-  el2.className = 'lv1-code-blank ' + (ok2 ? 'ok' : 'bad');
-  if (ok1 && ok2) {
+  if (lv1TwinkleSeq.length < 7) {
+    fb.className = 'lv1-feedback error';
+    fb.textContent = `You need 7 notes — you have ${lv1TwinkleSeq.length} so far. Keep going!`;
+    return;
+  }
+  const correct = lv1TwinkleSeq.every((n, i) => n === LV1_TWINKLE[i]);
+  if (correct) {
     fb.className = 'lv1-feedback success';
-    fb.innerHTML = 'Correct! The variable is called <code>scale</code>. That name was the programmer\'s choice — in your own programs you could call it anything.';
-    document.getElementById('lv1-fill-next').style.display = 'inline-flex';
+    fb.textContent = 'Perfect! Listen to your sequence...';
+    await initTone();
+    for (const n of LV1_TWINKLE) { await playNote(n, 0.75); }
+    fb.textContent = '🎵 That\'s Twinkle Twinkle! Now let\'s see what you discovered...';
+    setTimeout(() => lv1P3Goto(3), 1400);
   } else {
     fb.className = 'lv1-feedback error';
-    fb.textContent = 'Check the pseudocode in the left panel — what is the variable called?';
+    fb.textContent = 'Not quite — the order isn\'t right yet. Try playing your sequence and compare it to the Listen step!';
   }
 }
 
-/* Step 5 — Make it your own */
+/* ── Song Workshop: Step 3 — Discover ───────────────────── */
+async function lv1TwinkleDiscover(main) {
+  main.innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:14px;padding-top:4px">
+      <div class="lv1-concept">
+        <div class="lv1-concept-label">You built an Algorithm!</div>
+        <p>Each note in exactly the right place, in exactly the right order. That's <strong>sequencing</strong> — and a sequence of instructions that solves a problem is an <strong>algorithm</strong>.</p>
+      </div>
+
+      <div class="lv1-song-card" style="background:linear-gradient(135deg,rgba(112,80,208,0.08),rgba(46,128,208,0.08))">
+        <div class="lv1-song-card-title">Your sequence = your algorithm</div>
+        <div class="lv1-song-card-notes" id="lv1-disc-notes">
+          ${LV1_TWINKLE.map((n,i) => `<span class="lv1-song-note-pill" id="lv1-disc-${i}">${n}</span>`).join('')}
+        </div>
+        <button class="lv1-btn primary" style="margin-top:12px" onclick="lv1TwinklePlayAndHighlight()">
+          ${icon('play',13)} Play & highlight
+        </button>
+      </div>
+
+      <div class="lv1-song-card" style="padding:14px 16px">
+        <div style="font-size:11px;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">In Python this looks like:</div>
+        <div class="lv1-code-panel" style="font-size:12px;padding:10px 13px;line-height:1.85">
+          <span class="lv1-code-line"><span class="py-var">twinkle</span><span class="py-op"> = </span>[<span class="py-str">"C4"</span><span class="py-op">, </span><span class="py-str">"C4"</span><span class="py-op">, </span><span class="py-str">"G4"</span><span class="py-op">, </span><span class="py-str">"G4"</span><span class="py-op">, </span><span class="py-str">"A4"</span><span class="py-op">, </span><span class="py-str">"A4"</span><span class="py-op">, </span><span class="py-str">"G4"</span>]</span>
+          <span class="lv1-code-line"><span class="py-kw">for</span> <span class="py-var">note</span> <span class="py-kw">in</span> <span class="py-var">twinkle</span><span class="py-op">:</span></span>
+          <span class="lv1-code-line">&nbsp;&nbsp;&nbsp;&nbsp;<span class="py-fn">play</span><span class="py-op">(</span><span class="py-var">note</span><span class="py-op">)</span></span>
+        </div>
+        <p style="font-size:11.5px;color:var(--text-muted);margin-top:8px">
+          <code>twinkle</code> is a <strong>variable</strong> — the named container holding all 7 notes. The <code>for</code> loop plays each one in order.
+        </p>
+      </div>
+
+      <div class="lv1-actions">
+        <button class="lv1-btn primary" onclick="lv1P3Goto(4)">Next: Make it your own →</button>
+      </div>
+    </div>
+  `;
+  await initTone();
+  for (const n of LV1_TWINKLE) { await playNote(n, 0.75); }
+}
+
+async function lv1TwinklePlayAndHighlight() {
+  await initTone();
+  for (let i = 0; i < LV1_TWINKLE.length; i++) {
+    document.querySelectorAll('.lv1-song-note-pill').forEach(p => p.classList.remove('playing'));
+    const pill = document.getElementById('lv1-disc-' + i);
+    if (pill) pill.classList.add('playing');
+    await playNote(LV1_TWINKLE[i], 0.75);
+  }
+  document.querySelectorAll('.lv1-song-note-pill').forEach(p => p.classList.remove('playing'));
+}
+
+/* Step 4 — Make it your own */
 const LV1_VALID_NOTES = ['C3','D3','E3','F3','G3','A3','B3',
   'C4','D4','E4','F4','G4','A4','B4',
   'C5','D5','E5','F5','G5','A5','B5'];
@@ -762,17 +817,17 @@ function lv1P3WriteOwn(main) {
   main.innerHTML = `
     <div style="display:flex;flex-direction:column;gap:12px;padding-top:4px">
       <div class="lv1-activity-heading">Make It Your Own</div>
-      <p class="lv1-activity-sub">Change the last note in the sequence to anything you like! Type a note (e.g. <code>B4</code>, <code>D5</code>, <code>F4</code>) into the blank, then hit Play to hear it.</p>
+      <p class="lv1-activity-sub">Change the last note in your scale to anything you like! Type a note (e.g. <code>B4</code>, <code>D5</code>, <code>F4</code>) into the blank, then hit Play.</p>
 
-      <div class="lv1-code-panel" style="line-height:2;background:#1e1a3a">
+      <div class="lv1-code-panel" style="line-height:2">
         <span class="lv1-code-line">
-          <span class="pseudo-kw">DEFINE</span> <span class="py-var">scale</span> ← [<span class="py-str">"C4"</span>, <span class="py-str">"E4"</span>, <span class="py-str">"G4"</span>, <span class="py-str">"</span><input class="lv1-note-input" id="lv1-own-note" value="A4" maxlength="3" autocomplete="off" spellcheck="false" oninput="lv1OwnPreview()"><span class="py-str">"</span>]
+          <span class="py-var">scale</span><span class="py-op"> = </span>[<span class="py-str">"C4"</span><span class="py-op">, </span><span class="py-str">"E4"</span><span class="py-op">, </span><span class="py-str">"G4"</span><span class="py-op">, </span><span class="py-str">"</span><input class="lv1-note-input" id="lv1-own-note" value="A4" maxlength="3" autocomplete="off" spellcheck="false" oninput="lv1OwnPreview()"><span class="py-str">"</span>]
         </span>
         <span class="lv1-code-line">
-          <span class="pseudo-kw">FOR EACH</span> <span class="py-var">note</span> <span class="pseudo-kw">IN</span> <span class="py-var">scale</span>:
+          <span class="py-kw">for</span> <span class="py-var">note</span> <span class="py-kw">in</span> <span class="py-var">scale</span><span class="py-op">:</span>
         </span>
         <span class="lv1-code-line">
-          &nbsp;&nbsp;&nbsp;&nbsp;<span class="pseudo-fn">PLAY</span>(<span class="py-var">note</span>)
+          &nbsp;&nbsp;&nbsp;&nbsp;<span class="py-fn">play</span><span class="py-op">(</span><span class="py-var">note</span><span class="py-op">)</span>
         </span>
       </div>
 

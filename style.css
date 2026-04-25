@@ -1894,6 +1894,123 @@ body {
   color: #7050D0;
 }
 
+/* ── Song Workshop ───────────────────────────────────────── */
+.lv1-song-card {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 6px;
+}
+.lv1-song-card-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text);
+}
+.lv1-song-card-lyrics {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-style: italic;
+}
+.lv1-song-card-notes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  justify-content: center;
+  margin-top: 4px;
+}
+.lv1-song-note-pill {
+  background: rgba(112,80,208,0.12);
+  border: 1.5px solid rgba(112,80,208,0.25);
+  color: #5030A0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 20px;
+  padding: 3px 10px;
+  transition: background 0.15s, transform 0.1s;
+}
+.lv1-song-note-pill.playing {
+  background: #7050D0;
+  color: #fff;
+  border-color: #7050D0;
+  transform: scale(1.15);
+}
+
+/* Build step slots + palette */
+.lv1-tw-slots {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 12px;
+  background: var(--surface);
+  border: 1.5px dashed var(--border);
+  border-radius: 12px;
+  min-height: 52px;
+}
+.lv1-tw-slot {
+  width: 42px;
+  height: 42px;
+  border-radius: 9px;
+  border: 2px solid var(--border);
+  background: rgba(112,80,208,0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  cursor: default;
+  transition: background 0.1s;
+}
+.lv1-tw-slot.filled {
+  background: rgba(112,80,208,0.15);
+  border-color: #7050D0;
+  color: #5030A0;
+  cursor: pointer;
+}
+.lv1-tw-slot.filled:hover {
+  background: rgba(200,80,80,0.12);
+  border-color: #c04040;
+  color: #c04040;
+}
+.lv1-tw-palette {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.lv1-tw-tile {
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  padding: 10px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: border-color 0.12s, background 0.12s, transform 0.1s;
+  user-select: none;
+}
+.lv1-tw-tile:hover {
+  border-color: #7050D0;
+  background: rgba(112,80,208,0.07);
+  transform: translateY(-2px);
+}
+.lv1-tw-tile:active { transform: scale(0.96); }
+.lv1-tw-tile-name {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text);
+}
+
 .lv1-compare-grid { display: flex; gap: 12px; align-items: flex-start; }
 .lv1-compare-card {
   flex: 1;

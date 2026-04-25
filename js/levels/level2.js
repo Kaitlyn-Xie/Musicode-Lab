@@ -401,8 +401,13 @@ function lv2P2Check() {
 }
 
 // ══════════════════════════════════════════════════════
-// PHASE 3 — How Computers Think (CT-focused)
+// PHASE 3 — How Computers Think (Song Workshop)
 // ══════════════════════════════════════════════════════
+
+// Hot Cross Buns: phrase = [E4, D4, C4], repeated 3×
+const LV2_HCB_PHRASE = ['E4', 'D4', 'C4'];
+let lv2HCBBlocks = []; // array of 'play' entries
+let lv2HCBVarName = 'phrase';
 
 function lv2GetCTConcepts(vn) {
   return [
@@ -414,7 +419,7 @@ function lv2GetCTConcepts(vn) {
     {
       title: 'Abstraction',
       icon: 'blocks',
-      body: `Instead of writing out every note every time, you give the list a name and use that name. This is <strong>abstraction</strong>: hiding detail behind a simple label. <code>play(${vn})</code> is simpler than <code>play("C4", "E4", "G4"...)</code>.`
+      body: `Instead of writing out every note every time, you give the list a name and use that name. This is <strong>abstraction</strong>: hiding detail behind a simple label. <code>play(${vn})</code> is simpler than writing every note separately.`
     },
     {
       title: 'Reuse',
@@ -423,39 +428,6 @@ function lv2GetCTConcepts(vn) {
     }
   ];
 }
-
-const LV2_QUIZZES = [
-  {
-    q: 'What is a <strong>variable</strong> in programming?',
-    opts: [
-      { t: 'A named container that stores a value', ok: true },
-      { t: 'A function that plays notes automatically', ok: false },
-      { t: 'A loop that repeats instructions', ok: false },
-      { t: 'A rule about what order to play notes in', ok: false }
-    ],
-    exp: '<strong>Correct!</strong> A variable is a named container. The name is just a label — what matters is what\'s stored inside it.'
-  },
-  {
-    q: 'You update your variable to store different notes. What happens when you call <code>play(notes)</code>?',
-    opts: [
-      { t: 'It plays the original notes — variables freeze after creation', ok: false },
-      { t: 'It plays the new notes — the variable holds the updated value', ok: true },
-      { t: 'It causes an error — you can\'t change a variable', ok: false },
-      { t: 'Nothing — play() needs exact note names, not a variable', ok: false }
-    ],
-    exp: '<strong>Exactly!</strong> When you update the variable, every use of it updates too. Change once, affect everywhere — that\'s the power of variables.'
-  },
-  {
-    q: 'Why is using a variable more powerful than writing out every note each time?',
-    opts: [
-      { t: 'Variables make the program run faster', ok: false },
-      { t: 'Change the variable once and it updates everywhere it\'s used', ok: true },
-      { t: 'Variables use less memory than lists', ok: false },
-      { t: 'You need variables to make the program start', ok: false }
-    ],
-    exp: '<strong>Right!</strong> This is called <em>abstraction</em> — one name stands in for all the details. Update the variable once and every <code>play()</code> call gets the new version automatically.'
-  }
-];
 
 function lv2RenderPhase3(body) {
   lv2P3Step = 0;
@@ -479,25 +451,14 @@ function lv2RenderPhase3(body) {
           </div>
         </div>
         <div>
-          <div class="lv1-compare-title" style="margin-bottom:7px">Pseudocode</div>
-          <div class="lv1-code-panel" style="font-size:11.5px;padding:11px 13px;line-height:1.95;background:#1e1a3a">
-            <span class="lv1-code-line"><span class="pseudo-kw">DEFINE</span> <span class="py-var">${vn}</span> ← [${notePyList}]</span>
+          <div class="lv1-compare-title" style="margin-bottom:7px">Python</div>
+          <div class="lv1-code-panel" style="font-size:11.5px;padding:11px 13px;line-height:1.85">
+            <span class="lv1-code-line"><span class="py-var">${vn}</span><span class="py-op"> = </span>[${notePyList}]</span>
             <span class="lv1-code-line">&nbsp;</span>
-            <span class="lv1-code-line"><span class="pseudo-fn">PLAY</span>(<span class="py-var">${vn}</span>)</span>
+            <span class="lv1-code-line"><span class="py-fn">play</span><span class="py-op">(</span><span class="py-var">${vn}</span><span class="py-op">)</span></span>
           </div>
-        </div>
-        <div>
-          <button class="lv1-py-reveal-btn" onclick="lv2TogglePySidebar()">
-            ${icon('code', 11)} See in Python
-            <span id="lv2-py-arrow">↓</span>
-          </button>
-          <div id="lv2-py-sidebar" style="display:none;margin-top:6px">
-            <div class="lv1-code-panel" style="font-size:11px;padding:10px 12px;line-height:1.85">
-              <span class="lv1-code-line"><span class="py-var">${vn}</span><span class="py-op"> = </span>[${notePyList}]</span>
-              <span class="lv1-code-line">&nbsp;</span>
-              <span class="lv1-code-line"><span class="py-fn">play</span><span class="py-op">(</span><span class="py-var">${vn}</span><span class="py-op">)</span></span>
-            </div>
-            <div style="font-size:10.5px;color:var(--text-muted);margin-top:5px">Python is one way to write this. The idea is the same in any language.</div>
+          <div style="font-size:10.5px;color:var(--text-muted);margin-top:6px;line-height:1.5">
+            <code style="font-size:10.5px">${vn}</code> is your choice — call it anything!
           </div>
         </div>
       </div>
@@ -543,17 +504,8 @@ function lv2RenderPhase3(body) {
   }
 }
 
-function lv2TogglePySidebar() {
-  const panel = document.getElementById('lv2-py-sidebar');
-  const arrow = document.getElementById('lv2-py-arrow');
-  if (!panel) return;
-  const open = panel.style.display !== 'none';
-  panel.style.display = open ? 'none' : 'block';
-  if (arrow) arrow.textContent = open ? '↓' : '↑';
-}
-
 function lv2P3UpdateNav(step) {
-  const labels = ['Concepts', 'Quiz 1', 'Quiz 2', 'Quiz 3', 'Fill in', 'Create!'];
+  const labels = ['Concepts', 'Listen', 'Build', 'Discover', 'Create!'];
   const nav = document.getElementById('lv2-p3-nav');
   if (!nav) return;
   nav.innerHTML = '';
@@ -581,9 +533,10 @@ function lv2P3Goto(step) {
   const main = document.getElementById('lv2-p3-main');
   if (!main) return;
   if (step === 0) lv2P3Read(main);
-  else if (step >= 1 && step <= 3) lv2P3Quiz(main, step - 1);
-  else if (step === 4) lv2P3FillIn(main);
-  else if (step === 5) lv2P3WriteOwn(main);
+  else if (step === 1) lv2HCBListen(main);
+  else if (step === 2) lv2HCBBuild(main);
+  else if (step === 3) lv2HCBDiscover(main);
+  else if (step === 4) lv2P3WriteOwn(main);
 }
 
 /* Step 0 — CT Concept Cards */
@@ -595,7 +548,7 @@ function lv2P3Read(main) {
     <div style="display:flex;flex-direction:column;gap:12px;padding-top:4px">
       <div class="lv1-concept">
         <div class="lv1-concept-label">Three Big Ideas</div>
-        <p>You just stored your melody in a variable. Click each card to explore what that means in Computational Thinking.</p>
+        <p>You just stored your melody in a variable. Click each card to explore what that means.</p>
       </div>
       ${concepts.map((c, i) => `
         <div class="lv1-read-block" id="lv2-read-${i}">
@@ -608,7 +561,7 @@ function lv2P3Read(main) {
         </div>
       `).join('')}
       <div class="lv1-actions">
-        <button class="lv1-btn primary" id="lv2-read-next" onclick="lv2P3Goto(1)" style="display:none">Next: Quiz →</button>
+        <button class="lv1-btn primary" id="lv2-read-next" onclick="lv2P3Goto(1)" style="display:none">Next: Build the Song →</button>
       </div>
     </div>
   `;
@@ -626,98 +579,214 @@ function lv2ReadToggle(idx) {
   }
 }
 
-/* Steps 1-3 — Quizzes */
-function lv2P3Quiz(main, qIdx) {
-  const q = LV2_QUIZZES[qIdx];
+/* ── Song Workshop: Step 1 — Listen ─────────────────────── */
+function lv2HCBListen(main) {
+  main.innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:14px;padding-top:4px">
+      <div class="lv1-concept">
+        <div class="lv1-concept-label">Hot Cross Buns</div>
+        <p>Listen to this classic tune. Can you spot a phrase that keeps repeating?</p>
+      </div>
+
+      <div class="lv1-song-card">
+        <div class="lv1-song-card-title">♪ Hot Cross Buns</div>
+        <div class="lv1-song-card-lyrics">"Hot cross buns, hot cross buns, one a penny, two a penny..."</div>
+        <div style="margin-top:10px;font-size:12px;font-weight:700;color:var(--text-muted)">The repeating phrase:</div>
+        <div class="lv1-song-card-notes" style="margin-top:4px">
+          ${LV2_HCB_PHRASE.map(n => `<span class="lv1-song-note-pill">${n}</span>`).join('')}
+          <span style="font-size:12px;color:var(--text-muted);align-self:center">× 3 times</span>
+        </div>
+        <button class="lv1-btn primary" style="margin-top:14px" onclick="lv2HCBPlayFull()">
+          ${icon('play',13)} Listen to the song
+        </button>
+        <div id="lv2-hcb-playing" style="display:none;font-size:12px;color:var(--text-muted);margin-top:8px;text-align:center">♩ playing...</div>
+      </div>
+
+      <div class="lv1-actions">
+        <button class="lv1-btn primary" onclick="lv2P3Goto(2)">Next: Build it →</button>
+      </div>
+    </div>
+  `;
+}
+
+async function lv2HCBPlayFull() {
+  const ind = document.getElementById('lv2-hcb-playing');
+  if (ind) ind.style.display = 'block';
+  await initTone();
+  // Play phrase 3 times
+  for (let t = 0; t < 3; t++) {
+    for (const n of LV2_HCB_PHRASE) { await playNote(n, 0.75); }
+  }
+  if (ind) ind.style.display = 'none';
+}
+
+/* ── Song Workshop: Step 2 — Build ──────────────────────── */
+function lv2HCBBuild(main) {
+  lv2HCBBlocks = [];
   main.innerHTML = `
     <div style="display:flex;flex-direction:column;gap:12px;padding-top:4px">
-      <p class="lv1-activity-sub" style="font-size:13px;color:var(--text)">Question ${qIdx + 1} of 3</p>
-      <div class="lv1-activity-heading" style="font-size:14px">${q.q}</div>
-      <div class="lv1-quiz-options" id="lv2-qz-opts">
-        ${q.opts.map(o =>
-          `<button class="lv1-quiz-opt" onclick="lv2P3Answer(this,${o.ok},${qIdx})">${o.t}</button>`
-        ).join('')}
+      <div class="lv1-activity-heading">Use the Variable!</div>
+      <p class="lv1-activity-sub">
+        The phrase <strong>E4, D4, C4</strong> is already stored in a variable called <code>phrase</code>.
+        Tap the block below to add <code>play(phrase)</code> to your song — you need it <strong>3 times</strong>.
+      </p>
+
+      <div class="lv2-defined-var" style="font-size:12px">
+        <span class="lv2-dv-label">Variable defined:</span>
+        <code class="lv2-dv-code">phrase = ["E4", "D4", "C4"]</code>
+        <button class="lv1-play-btn" style="background:rgba(46,128,208,0.15);color:var(--text)"
+          onclick="lv2HCBPlayPhrase()">${icon('volume',12)}</button>
       </div>
-      <div id="lv2-qz-fb" class="lv1-feedback" style="display:none"></div>
-      <div class="lv1-actions">
-        <button class="lv1-btn primary" id="lv2-qz-next" onclick="lv2P3Goto(${lv2P3Step + 1})" style="display:none">
-          ${qIdx < 2 ? 'Next question →' : 'Next: Fill in the blanks →'}
+
+      <div class="lv1-blocks-area">
+        <div class="lv1-mini-palette">
+          <div class="lv1-palette-label">Block</div>
+          <div class="lv2-pal-block" style="background:#2E80D0;cursor:pointer" onclick="lv2HCBAddBlock()">
+            ${icon('music',12)} play( <span class="lv2-pal-badge">phrase</span> )
+          </div>
+          <div class="lv1-palette-hint">tap to add</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px;flex:1">
+          <div class="lv1-dropzone" id="lv2-hcb-canvas" style="min-height:80px">
+            <div class="lv1-dz-placeholder" id="lv2-hcb-ph">Tap the block 3 times...</div>
+          </div>
+          <div class="lv1-actions">
+            <button class="lv1-btn secondary" onclick="lv2HCBClear()">Clear</button>
+            <button class="lv1-btn secondary" onclick="lv2HCBPlay()">Play</button>
+            <button class="lv1-btn secondary" onclick="lv2HCBCheck()">Check</button>
+          </div>
+          <div id="lv2-hcb-fb" class="lv1-feedback" style="display:none"></div>
+        </div>
+      </div>
+    </div>
+  `;
+  lv2HCBRenderCanvas();
+}
+
+async function lv2HCBPlayPhrase() {
+  await initTone();
+  for (const n of LV2_HCB_PHRASE) { await playNote(n, 0.75); }
+}
+
+function lv2HCBAddBlock() {
+  if (lv2HCBBlocks.length >= 5) return;
+  lv2HCBBlocks.push('play');
+  lv2HCBRenderCanvas();
+}
+
+function lv2HCBRemoveBlock(i) {
+  lv2HCBBlocks.splice(i, 1);
+  lv2HCBRenderCanvas();
+}
+
+function lv2HCBRenderCanvas() {
+  const canvas = document.getElementById('lv2-hcb-canvas');
+  const ph = document.getElementById('lv2-hcb-ph');
+  if (!canvas) return;
+  canvas.querySelectorAll('.lv1-seq-block').forEach(e => e.remove());
+  if (ph) ph.style.display = lv2HCBBlocks.length ? 'none' : 'block';
+  lv2HCBBlocks.forEach((_, i) => {
+    const el = document.createElement('div');
+    el.className = 'lv1-seq-block';
+    el.innerHTML = `${icon('music',12)} play( <span style="background:rgba(255,255,255,0.28);padding:1px 7px;border-radius:4px;font-weight:700;font-size:12px">phrase</span> )
+      <button class="lv1-rm-btn" onclick="lv2HCBRemoveBlock(${i})">${icon('close',11)}</button>`;
+    canvas.appendChild(el);
+  });
+}
+
+function lv2HCBClear() {
+  lv2HCBBlocks = [];
+  lv2HCBRenderCanvas();
+  const fb = document.getElementById('lv2-hcb-fb');
+  if (fb) fb.style.display = 'none';
+}
+
+async function lv2HCBPlay() {
+  if (!lv2HCBBlocks.length) return;
+  await initTone();
+  for (let i = 0; i < lv2HCBBlocks.length; i++) {
+    for (const n of LV2_HCB_PHRASE) { await playNote(n, 0.75); }
+  }
+}
+
+async function lv2HCBCheck() {
+  const fb = document.getElementById('lv2-hcb-fb');
+  if (!fb) return;
+  fb.style.display = 'block';
+  if (lv2HCBBlocks.length !== 3) {
+    fb.className = 'lv1-feedback error';
+    fb.textContent = `You need exactly 3 play(phrase) blocks — you have ${lv2HCBBlocks.length}. The phrase repeats 3 times in the song!`;
+    return;
+  }
+  fb.className = 'lv1-feedback success';
+  fb.textContent = 'Perfect! Listen to your song...';
+  await initTone();
+  for (let t = 0; t < 3; t++) {
+    for (const n of LV2_HCB_PHRASE) { await playNote(n, 0.75); }
+  }
+  fb.textContent = '🎵 That\'s Hot Cross Buns — built with one variable used 3 times!';
+  setTimeout(() => lv2P3Goto(3), 1400);
+}
+
+/* ── Song Workshop: Step 3 — Discover ───────────────────── */
+async function lv2HCBDiscover(main) {
+  main.innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:14px;padding-top:4px">
+      <div class="lv1-concept">
+        <div class="lv1-concept-label">One variable. Used three times.</div>
+        <p>Instead of writing <code>"E4", "D4", "C4"</code> over and over, you stored it once in <code>phrase</code> and reused it. That's the power of variables — <strong>abstraction + reuse</strong>.</p>
+      </div>
+
+      <div class="lv1-song-card" style="background:linear-gradient(135deg,rgba(46,128,208,0.08),rgba(112,80,208,0.08))">
+        <div class="lv1-song-card-title">Your song = 1 variable × 3</div>
+        <div class="lv1-song-card-notes" style="gap:8px">
+          ${[0,1,2].map(i =>
+            `<div style="display:flex;gap:4px;align-items:center">
+              ${LV2_HCB_PHRASE.map((n,j) => `<span class="lv1-song-note-pill" id="lv2-disc-${i}-${j}">${n}</span>`).join('')}
+            </div>`
+          ).join('<span style="color:var(--text-muted);font-size:12px">+</span>')}
+        </div>
+        <button class="lv1-btn primary" style="margin-top:12px" onclick="lv2HCBDiscoverPlay()">
+          ${icon('play',13)} Play & highlight
         </button>
       </div>
-    </div>
-  `;
-}
 
-function lv2P3Answer(btn, correct, qIdx) {
-  document.querySelectorAll('#lv2-qz-opts .lv1-quiz-opt').forEach(b => {
-    b.disabled = true; b.style.opacity = '0.55';
-  });
-  btn.style.opacity = '1';
-  btn.classList.add(correct ? 'correct' : 'wrong');
-  if (!correct) {
-    const correctText = LV2_QUIZZES[qIdx].opts.find(o => o.ok).t;
-    document.querySelectorAll('#lv2-qz-opts .lv1-quiz-opt').forEach(b => {
-      if (b.textContent === correctText) { b.classList.add('correct'); b.style.opacity = '1'; }
-    });
-  }
-  const fb = document.getElementById('lv2-qz-fb');
-  if (fb) {
-    fb.style.display = 'block';
-    fb.className = 'lv1-feedback ' + (correct ? 'success' : 'error');
-    fb.innerHTML = correct ? LV2_QUIZZES[qIdx].exp : 'Not quite! ' + LV2_QUIZZES[qIdx].exp;
-  }
-  document.getElementById('lv2-qz-next').style.display = 'inline-flex';
-}
-
-/* Step 4 — Fill in the blanks (pseudocode) */
-function lv2P3FillIn(main) {
-  const notes = lv2SelectedNotes.length >= 2 ? lv2SelectedNotes : ['C4', 'E4', 'G4', 'A4'];
-  const noteSpans = notes.map(n => `<span class="py-str">"${n}"</span>`).join('<span class="py-op">, </span>');
-  const vn = lv2VarName || 'notes';
-  const blankW = Math.max(70, vn.length * 9 + 20) + 'px';
-  main.innerHTML = `
-    <div style="display:flex;flex-direction:column;gap:12px;padding-top:4px">
-      <div class="lv1-activity-heading">Fill in the Blanks</div>
-      <p class="lv1-activity-sub">
-        Look at the pseudocode in the <strong>left panel</strong> — what variable name was used?
-        Type it into both blanks below.
-      </p>
-      <div class="lv1-code-panel" style="line-height:2.2;background:#1e1a3a">
-        <span class="lv1-code-line">
-          <span class="pseudo-kw">DEFINE</span>
-          <input class="lv1-code-blank" id="lv2-blank1" placeholder="?????" autocomplete="off" spellcheck="false" style="width:${blankW};margin:0 6px">
-          ← [${noteSpans}]
-        </span>
-        <span class="lv1-code-line">
-          <span class="pseudo-fn">PLAY</span>(<input class="lv1-code-blank" id="lv2-blank2" placeholder="?????" autocomplete="off" spellcheck="false" style="width:${blankW};margin:0 2px">)
-        </span>
+      <div class="lv1-song-card" style="padding:14px 16px;align-items:flex-start;text-align:left">
+        <div style="font-size:11px;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">In Python this looks like:</div>
+        <div class="lv1-code-panel" style="font-size:12px;padding:10px 13px;line-height:1.85;width:100%">
+          <span class="lv1-code-line"><span class="py-var">phrase</span><span class="py-op"> = </span>[<span class="py-str">"E4"</span><span class="py-op">, </span><span class="py-str">"D4"</span><span class="py-op">, </span><span class="py-str">"C4"</span>]</span>
+          <span class="lv1-code-line">&nbsp;</span>
+          <span class="lv1-code-line"><span class="py-fn">play</span><span class="py-op">(</span><span class="py-var">phrase</span><span class="py-op">)</span></span>
+          <span class="lv1-code-line"><span class="py-fn">play</span><span class="py-op">(</span><span class="py-var">phrase</span><span class="py-op">)</span></span>
+          <span class="lv1-code-line"><span class="py-fn">play</span><span class="py-op">(</span><span class="py-var">phrase</span><span class="py-op">)</span></span>
+        </div>
+        <p style="font-size:11.5px;color:var(--text-muted);margin-top:8px">
+          One definition, three uses. Change <code>phrase</code> once and all three calls update automatically.
+        </p>
       </div>
+
       <div class="lv1-actions">
-        <button class="lv1-btn secondary" onclick="lv2P3CheckFill()">Check</button>
-        <button class="lv1-btn primary" id="lv2-fill-next" onclick="lv2P3Goto(5)" style="display:none">Next: Make it your own →</button>
+        <button class="lv1-btn primary" onclick="lv2P3Goto(4)">Next: Make it your own →</button>
       </div>
-      <div id="lv2-fill-fb" class="lv1-feedback" style="display:none"></div>
     </div>
   `;
+  await initTone();
+  for (let t = 0; t < 3; t++) {
+    for (const n of LV2_HCB_PHRASE) { await playNote(n, 0.75); }
+  }
 }
 
-function lv2P3CheckFill() {
-  const vn = lv2VarName || 'notes';
-  const b1 = document.getElementById('lv2-blank1').value.trim();
-  const b2 = document.getElementById('lv2-blank2').value.trim();
-  const fb = document.getElementById('lv2-fill-fb');
-  fb.style.display = 'block';
-  const ok1 = b1 === vn, ok2 = b2 === vn;
-  document.getElementById('lv2-blank1').className = 'lv1-code-blank ' + (ok1 ? 'ok' : 'bad');
-  document.getElementById('lv2-blank2').className = 'lv1-code-blank ' + (ok2 ? 'ok' : 'bad');
-  if (ok1 && ok2) {
-    fb.className = 'lv1-feedback success';
-    fb.innerHTML = `Correct! Both blanks use <code>${vn}</code> — the same name in the definition and the call. That's how the computer knows they refer to the same container.`;
-    document.getElementById('lv2-fill-next').style.display = 'inline-flex';
-  } else {
-    fb.className = 'lv1-feedback error';
-    fb.textContent = 'Check the pseudocode in the left panel — what is the variable called?';
+async function lv2HCBDiscoverPlay() {
+  await initTone();
+  for (let t = 0; t < 3; t++) {
+    for (let j = 0; j < LV2_HCB_PHRASE.length; j++) {
+      document.querySelectorAll('.lv1-song-note-pill').forEach(p => p.classList.remove('playing'));
+      const pill = document.getElementById(`lv2-disc-${t}-${j}`);
+      if (pill) pill.classList.add('playing');
+      await playNote(LV2_HCB_PHRASE[j], 0.75);
+    }
   }
+  document.querySelectorAll('.lv1-song-note-pill').forEach(p => p.classList.remove('playing'));
 }
 
 function lv2P3WriteOwn(main) {
@@ -728,15 +797,14 @@ function lv2P3WriteOwn(main) {
       <p class="lv1-activity-sub">
         Choose your own variable name and pick up to 4 notes. Hit <strong>Play</strong> to hear your melody, then complete the level!
       </p>
-      <div class="lv1-code-panel" style="line-height:2.2;background:#1e1a3a">
+      <div class="lv1-code-panel" style="line-height:2.2">
         <span class="lv1-code-line">
-          <span class="pseudo-kw">DEFINE</span>
           <input class="lv1-code-blank" id="lv2-own-name" value="myMelody" maxlength="20"
             autocomplete="off" spellcheck="false" style="width:110px;margin:0 6px" oninput="lv2OwnPreview()">
-          ← [<span id="lv2-own-preview-notes" class="py-str">"C4", "E4", "G4"</span>]
+          <span class="py-op"> = </span>[<span id="lv2-own-preview-notes" class="py-str">"C4", "E4", "G4"</span>]
         </span>
         <span class="lv1-code-line">
-          <span class="pseudo-fn">PLAY</span>(<span id="lv2-own-name-display" class="py-var">myMelody</span>)
+          <span class="py-fn">play</span><span class="py-op">(</span><span id="lv2-own-name-display" class="py-var">myMelody</span><span class="py-op">)</span>
         </span>
       </div>
       <div class="lv2-note-picker" id="lv2-own-picker">
