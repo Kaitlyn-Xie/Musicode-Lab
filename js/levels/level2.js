@@ -431,77 +431,17 @@ function lv2GetCTConcepts(vn) {
 
 function lv2RenderPhase3(body) {
   lv2P3Step = 0;
-  const notes = lv2SelectedNotes.length >= 2 ? lv2SelectedNotes : ['C4', 'E4', 'G4', 'A4'];
-  const vn = lv2VarName || 'notes';
-  const notePyList = notes.map(n => `<span class="py-str">"${n}"</span>`).join('<span class="py-op">, </span>');
-
   body.innerHTML = `
-    <div class="lv1-p3-split">
-      <div class="lv1-p3-sidebar" id="lv2-p3-sidebar">
-        <div class="lv1-p3-sidebar-label">Reference</div>
-        <div>
-          <div class="lv1-compare-title">Your block code</div>
-          <div class="lv1-block-preview" style="margin-top:7px">
-            <div class="lv1-prev-block" style="font-size:11px;padding:5px 9px;background:rgba(46,128,208,0.12);color:#1860A0">
-              ${vn} = [${notes.join(', ')}]
-            </div>
-            <div class="lv1-prev-block" style="font-size:11px;padding:5px 9px;margin-top:4px">
-              play( ${vn} )
-            </div>
-          </div>
-        </div>
-        <div>
-          <div class="lv1-compare-title" style="margin-bottom:7px">Python</div>
-          <div class="lv1-code-panel" style="font-size:11.5px;padding:11px 13px;line-height:1.85">
-            <span class="lv1-code-line"><span class="py-var">${vn}</span><span class="py-op"> = </span>[${notePyList}]</span>
-            <span class="lv1-code-line">&nbsp;</span>
-            <span class="lv1-code-line"><span class="py-fn">play</span><span class="py-op">(</span><span class="py-var">${vn}</span><span class="py-op">)</span></span>
-          </div>
-          <div style="font-size:10.5px;color:var(--text-muted);margin-top:6px;line-height:1.5">
-            <code style="font-size:10.5px">${vn}</code> is your choice — call it anything!
-          </div>
-        </div>
+    <div style="max-width:700px;margin:0 auto;padding:0 4px">
+      <div class="lv1-p3-nav-bar">
+        <div class="lv1-p3-nav" id="lv2-p3-nav"></div>
       </div>
-
-      <div class="lv1-p3-resizer" id="lv2-p3-resizer"></div>
-
-      <div class="lv1-p3-right">
-        <div class="lv1-p3-nav-bar">
-          <div class="lv1-p3-nav" id="lv2-p3-nav"></div>
-        </div>
-        <div class="lv1-p3-right-scroll">
-          <div id="lv2-p3-main"></div>
-        </div>
+      <div style="padding:16px 0 24px">
+        <div id="lv2-p3-main"></div>
       </div>
     </div>
   `;
-
   lv2P3Goto(0);
-
-  const resizer = document.getElementById('lv2-p3-resizer');
-  const sidebar = document.getElementById('lv2-p3-sidebar');
-  if (resizer && sidebar) {
-    let startX, startW;
-    resizer.addEventListener('mousedown', e => {
-      startX = e.clientX;
-      startW = sidebar.getBoundingClientRect().width;
-      resizer.classList.add('dragging');
-      document.body.style.cursor = 'col-resize';
-      document.body.style.userSelect = 'none';
-      const onMove = ev => {
-        sidebar.style.width = Math.min(420, Math.max(140, startW + (ev.clientX - startX))) + 'px';
-      };
-      const onUp = () => {
-        resizer.classList.remove('dragging');
-        document.body.style.cursor = '';
-        document.body.style.userSelect = '';
-        document.removeEventListener('mousemove', onMove);
-        document.removeEventListener('mouseup', onUp);
-      };
-      document.addEventListener('mousemove', onMove);
-      document.addEventListener('mouseup', onUp);
-    });
-  }
 }
 
 function lv2P3UpdateNav(step) {
@@ -751,18 +691,22 @@ async function lv2HCBDiscover(main) {
         </button>
       </div>
 
-      <div class="lv1-song-card" style="padding:14px 16px;align-items:flex-start;text-align:left">
-        <div style="font-size:11px;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">In Python this looks like:</div>
-        <div class="lv1-code-panel" style="font-size:12px;padding:10px 13px;line-height:1.85;width:100%">
-          <span class="lv1-code-line"><span class="py-var">phrase</span><span class="py-op"> = </span>[<span class="py-str">"E4"</span><span class="py-op">, </span><span class="py-str">"D4"</span><span class="py-op">, </span><span class="py-str">"C4"</span>]</span>
-          <span class="lv1-code-line">&nbsp;</span>
-          <span class="lv1-code-line"><span class="py-fn">play</span><span class="py-op">(</span><span class="py-var">phrase</span><span class="py-op">)</span></span>
-          <span class="lv1-code-line"><span class="py-fn">play</span><span class="py-op">(</span><span class="py-var">phrase</span><span class="py-op">)</span></span>
-          <span class="lv1-code-line"><span class="py-fn">play</span><span class="py-op">(</span><span class="py-var">phrase</span><span class="py-op">)</span></span>
+      <div class="lv1-song-card" style="padding:14px 16px;align-items:flex-start;text-align:left;background:linear-gradient(135deg,rgba(46,128,208,0.07),rgba(112,80,208,0.05))">
+        <div class="lv1-song-card-title" style="margin-bottom:10px">Computational Thinking in Action</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%">
+          <div style="background:rgba(46,128,208,0.12);border-radius:10px;padding:10px;text-align:center">
+            <div style="font-size:11px;font-weight:800;color:#1860A0;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Variable</div>
+            <div style="font-size:11.5px;color:var(--text);line-height:1.5">One name, stores the whole phrase</div>
+          </div>
+          <div style="background:rgba(112,80,208,0.12);border-radius:10px;padding:10px;text-align:center">
+            <div style="font-size:11px;font-weight:800;color:#7050D0;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Abstraction</div>
+            <div style="font-size:11.5px;color:var(--text);line-height:1.5">Hide detail behind a simple label</div>
+          </div>
+          <div style="background:rgba(24,160,80,0.12);border-radius:10px;padding:10px;text-align:center">
+            <div style="font-size:11px;font-weight:800;color:#1A7040;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Reuse</div>
+            <div style="font-size:11.5px;color:var(--text);line-height:1.5">Change once, update everywhere</div>
+          </div>
         </div>
-        <p style="font-size:11.5px;color:var(--text-muted);margin-top:8px">
-          One definition, three uses. Change <code>phrase</code> once and all three calls update automatically.
-        </p>
       </div>
 
       <div class="lv1-actions">
@@ -795,17 +739,13 @@ function lv2P3WriteOwn(main) {
     <div style="display:flex;flex-direction:column;gap:14px;padding-top:4px">
       <div class="lv1-activity-heading">Make It Your Own</div>
       <p class="lv1-activity-sub">
-        Choose your own variable name and pick up to 4 notes. Hit <strong>Play</strong> to hear your melody, then complete the level!
+        Give your melody a name and pick up to 4 notes. Hit <strong>Play</strong> to hear it, then complete the level!
       </p>
-      <div class="lv1-code-panel" style="line-height:2.2">
-        <span class="lv1-code-line">
-          <input class="lv1-code-blank" id="lv2-own-name" value="myMelody" maxlength="20"
-            autocomplete="off" spellcheck="false" style="width:110px;margin:0 6px" oninput="lv2OwnPreview()">
-          <span class="py-op"> = </span>[<span id="lv2-own-preview-notes" class="py-str">"C4", "E4", "G4"</span>]
-        </span>
-        <span class="lv1-code-line">
-          <span class="py-fn">play</span><span class="py-op">(</span><span id="lv2-own-name-display" class="py-var">myMelody</span><span class="py-op">)</span>
-        </span>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <span style="font-size:13px;font-weight:700;color:var(--text-muted)">Variable name:</span>
+        <input class="lv1-code-blank" id="lv2-own-name" value="myMelody" maxlength="20"
+          autocomplete="off" spellcheck="false" style="width:130px;font-size:13px;padding:6px 10px" oninput="lv2OwnPreview()">
+        <span style="font-size:12px;color:var(--text-muted)">→ holds <span id="lv2-own-preview-notes" style="font-weight:700;color:var(--text)">"C4", "E4", "G4"</span></span>
       </div>
       <div class="lv2-note-picker" id="lv2-own-picker">
         ${LV2_NOTE_OPTIONS.map(note => `

@@ -460,86 +460,16 @@ let lv1TwinkleSeq = [];
 function lv1RenderPhase3(body) {
   lv1P3Step = 0;
   body.innerHTML = `
-    <div class="lv1-p3-split">
-
-      <!-- Left sidebar: always-visible reference -->
-      <div class="lv1-p3-sidebar">
-        <div class="lv1-p3-sidebar-label">Reference</div>
-
-        <div>
-          <div class="lv1-compare-title">Your block code</div>
-          <div class="lv1-block-preview" style="margin-top:7px">
-            ${LV1_CORRECT_ORDER.map(n =>
-              '<div class="lv1-prev-block" style="font-size:11px;padding:5px 9px">play note ' + n + '</div>'
-            ).join('')}
-          </div>
-        </div>
-
-        <div>
-          <div class="lv1-compare-title" style="margin-bottom:7px">Python</div>
-          <div class="lv1-code-panel" style="font-size:11.5px;padding:11px 13px;line-height:1.85">
-            <span class="lv1-code-line"><span class="py-var">scale</span><span class="py-op"> = </span>[<span class="py-str">"C4"</span><span class="py-op">, </span><span class="py-str">"E4"</span><span class="py-op">, </span><span class="py-str">"G4"</span><span class="py-op">, </span><span class="py-str">"A4"</span>]</span>
-            <span class="lv1-code-line">&nbsp;</span>
-            <span class="lv1-code-line"><span class="py-kw">for</span> <span class="py-var">note</span> <span class="py-kw">in</span> <span class="py-var">scale</span><span class="py-op">:</span></span>
-            <span class="lv1-code-line">&nbsp;&nbsp;&nbsp;&nbsp;<span class="py-fn">play</span><span class="py-op">(</span><span class="py-var">note</span><span class="py-op">)</span></span>
-          </div>
-          <div style="font-size:10.5px;color:var(--text-muted);margin-top:6px;line-height:1.5">
-            The name <code style="font-size:10.5px">scale</code> is your choice — call it anything!
-          </div>
-        </div>
+    <div style="max-width:700px;margin:0 auto;padding:0 4px">
+      <div class="lv1-p3-nav-bar">
+        <div class="lv1-p3-nav" id="lv1-p3-nav"></div>
       </div>
-
-      <!-- Resize handle -->
-      <div class="lv1-p3-resizer" id="lv1-p3-resizer"></div>
-
-      <!-- Right panel: stepper + activities -->
-      <div class="lv1-p3-right">
-        <div class="lv1-p3-nav-bar">
-          <div class="lv1-p3-nav" id="lv1-p3-nav"></div>
-        </div>
-        <div class="lv1-p3-right-scroll">
-          <div id="lv1-p3-main"></div>
-        </div>
+      <div style="padding:16px 0 24px">
+        <div id="lv1-p3-main"></div>
       </div>
-
     </div>
   `;
   lv1P3Goto(0);
-
-  const resizer = document.getElementById('lv1-p3-resizer');
-  const sidebar = resizer && resizer.previousElementSibling;
-  if (resizer && sidebar) {
-    let startX, startW;
-    resizer.addEventListener('mousedown', e => {
-      startX = e.clientX;
-      startW = sidebar.getBoundingClientRect().width;
-      resizer.classList.add('dragging');
-      document.body.style.cursor = 'col-resize';
-      document.body.style.userSelect = 'none';
-      const onMove = ev => {
-        const newW = Math.min(420, Math.max(140, startW + (ev.clientX - startX)));
-        sidebar.style.width = newW + 'px';
-      };
-      const onUp = () => {
-        resizer.classList.remove('dragging');
-        document.body.style.cursor = '';
-        document.body.style.userSelect = '';
-        document.removeEventListener('mousemove', onMove);
-        document.removeEventListener('mouseup', onUp);
-      };
-      document.addEventListener('mousemove', onMove);
-      document.addEventListener('mouseup', onUp);
-    });
-  }
-}
-
-function lv1TogglePySidebar() {
-  const panel = document.getElementById('lv1-py-sidebar');
-  const arrow = document.getElementById('lv1-py-arrow');
-  if (!panel) return;
-  const open = panel.style.display !== 'none';
-  panel.style.display = open ? 'none' : 'block';
-  if (arrow) arrow.textContent = open ? '↓' : '↑';
 }
 
 function lv1P3UpdateNav(step) {
@@ -776,16 +706,22 @@ async function lv1TwinkleDiscover(main) {
         </button>
       </div>
 
-      <div class="lv1-song-card" style="padding:14px 16px">
-        <div style="font-size:11px;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">In Python this looks like:</div>
-        <div class="lv1-code-panel" style="font-size:12px;padding:10px 13px;line-height:1.85">
-          <span class="lv1-code-line"><span class="py-var">twinkle</span><span class="py-op"> = </span>[<span class="py-str">"C4"</span><span class="py-op">, </span><span class="py-str">"C4"</span><span class="py-op">, </span><span class="py-str">"G4"</span><span class="py-op">, </span><span class="py-str">"G4"</span><span class="py-op">, </span><span class="py-str">"A4"</span><span class="py-op">, </span><span class="py-str">"A4"</span><span class="py-op">, </span><span class="py-str">"G4"</span>]</span>
-          <span class="lv1-code-line"><span class="py-kw">for</span> <span class="py-var">note</span> <span class="py-kw">in</span> <span class="py-var">twinkle</span><span class="py-op">:</span></span>
-          <span class="lv1-code-line">&nbsp;&nbsp;&nbsp;&nbsp;<span class="py-fn">play</span><span class="py-op">(</span><span class="py-var">note</span><span class="py-op">)</span></span>
+      <div class="lv1-song-card" style="padding:14px 16px;align-items:flex-start;text-align:left;background:linear-gradient(135deg,rgba(112,80,208,0.07),rgba(46,128,208,0.05))">
+        <div class="lv1-song-card-title" style="margin-bottom:10px">Computational Thinking in Action</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%">
+          <div style="background:rgba(112,80,208,0.12);border-radius:10px;padding:10px;text-align:center">
+            <div style="font-size:11px;font-weight:800;color:#7050D0;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Sequencing</div>
+            <div style="font-size:11.5px;color:var(--text);line-height:1.5">Right note, right place, right order</div>
+          </div>
+          <div style="background:rgba(46,128,208,0.12);border-radius:10px;padding:10px;text-align:center">
+            <div style="font-size:11px;font-weight:800;color:#1860A0;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Variable</div>
+            <div style="font-size:11.5px;color:var(--text);line-height:1.5">A named list holding your notes</div>
+          </div>
+          <div style="background:rgba(24,160,80,0.12);border-radius:10px;padding:10px;text-align:center">
+            <div style="font-size:11px;font-weight:800;color:#1A7040;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Algorithm</div>
+            <div style="font-size:11.5px;color:var(--text);line-height:1.5">Define → Sequence → Execute</div>
+          </div>
         </div>
-        <p style="font-size:11.5px;color:var(--text-muted);margin-top:8px">
-          <code>twinkle</code> is a <strong>variable</strong> — the named container holding all 7 notes. The <code>for</code> loop plays each one in order.
-        </p>
       </div>
 
       <div class="lv1-actions">
@@ -809,66 +745,55 @@ async function lv1TwinklePlayAndHighlight() {
 }
 
 /* Step 4 — Make it your own */
-const LV1_VALID_NOTES = ['C3','D3','E3','F3','G3','A3','B3',
-  'C4','D4','E4','F4','G4','A4','B4',
-  'C5','D5','E5','F5','G5','A5','B5'];
+const LV1_OWN_NOTE_OPTIONS = ['C4','D4','E4','F4','G4','A4','B4'];
+const LV1_OWN_PITCH_PCT = { 'C4': 12, 'D4': 25, 'E4': 38, 'F4': 50, 'G4': 63, 'A4': 75, 'B4': 88 };
+let lv1OwnPickedNotes = ['C4','E4','G4','A4'];
 
 function lv1P3WriteOwn(main) {
+  lv1OwnPickedNotes = ['C4','E4','G4','A4'];
   main.innerHTML = `
     <div style="display:flex;flex-direction:column;gap:12px;padding-top:4px">
       <div class="lv1-activity-heading">Make It Your Own</div>
-      <p class="lv1-activity-sub">Change the last note in your scale to anything you like! Type a note (e.g. <code>B4</code>, <code>D5</code>, <code>F4</code>) into the blank, then hit Play.</p>
+      <p class="lv1-activity-sub">Pick up to 7 notes to create your own melody sequence, then play it!</p>
 
-      <div class="lv1-code-panel" style="line-height:2">
-        <span class="lv1-code-line">
-          <span class="py-var">scale</span><span class="py-op"> = </span>[<span class="py-str">"C4"</span><span class="py-op">, </span><span class="py-str">"E4"</span><span class="py-op">, </span><span class="py-str">"G4"</span><span class="py-op">, </span><span class="py-str">"</span><input class="lv1-note-input" id="lv1-own-note" value="A4" maxlength="3" autocomplete="off" spellcheck="false" oninput="lv1OwnPreview()"><span class="py-str">"</span>]
-        </span>
-        <span class="lv1-code-line">
-          <span class="py-kw">for</span> <span class="py-var">note</span> <span class="py-kw">in</span> <span class="py-var">scale</span><span class="py-op">:</span>
-        </span>
-        <span class="lv1-code-line">
-          &nbsp;&nbsp;&nbsp;&nbsp;<span class="py-fn">play</span><span class="py-op">(</span><span class="py-var">note</span><span class="py-op">)</span>
-        </span>
+      <div class="lv2-note-picker" id="lv1-own-picker">
+        ${LV1_OWN_NOTE_OPTIONS.map(note => `
+          <div class="lv2-note-tile" id="lv1-own-tile-${note}" onclick="lv1OwnToggleNote('${note}')">
+            <div class="lv1-note-name" style="font-size:13px;font-weight:900;font-family:'JetBrains Mono',monospace">${note}</div>
+            <div class="lv1-pitch-track" style="margin:5px 0 2px">
+              <div class="lv1-pitch-fill" style="width:${LV1_OWN_PITCH_PCT[note]}%"></div>
+            </div>
+          </div>
+        `).join('')}
       </div>
-
-      <div id="lv1-own-invalid" class="lv1-feedback error" style="display:none">
-        That doesn't look like a valid note. Try something like <code>B4</code>, <code>D5</code>, or <code>F4</code>.
-      </div>
-
-      <p style="font-size:11.5px;color:var(--text-muted);font-weight:600">
-        Available notes: C3–B5 &nbsp;·&nbsp; e.g. C4, D4, E4, F4, G4, A4, B4, C5 ...
-      </p>
 
       <div class="lv1-actions">
-        <button class="lv1-btn secondary" onclick="lv1OwnPlay()">Play my sequence</button>
+        <button class="lv1-btn secondary" onclick="lv1OwnPlay()">${icon('play',12)} Play my melody</button>
         <button class="lv1-btn success" onclick="lv1Complete()">Complete Level 1!</button>
       </div>
     </div>
   `;
+  lv1UpdateOwnPicker();
 }
 
-function lv1OwnPreview() {
-  const inp = document.getElementById('lv1-own-note');
-  const warn = document.getElementById('lv1-own-invalid');
-  if (!inp || !warn) return;
-  const v = inp.value.trim().toUpperCase().replace(/[^A-G#B0-9]/g,'');
-  inp.value = v;
-  const valid = LV1_VALID_NOTES.includes(v) || v === '';
-  warn.style.display = (!valid && v.length >= 2) ? 'block' : 'none';
+function lv1OwnToggleNote(note) {
+  const idx = lv1OwnPickedNotes.indexOf(note);
+  if (idx >= 0) lv1OwnPickedNotes.splice(idx, 1);
+  else { if (lv1OwnPickedNotes.length >= 7) return; lv1OwnPickedNotes.push(note); }
+  lv1UpdateOwnPicker();
+}
+
+function lv1UpdateOwnPicker() {
+  LV1_OWN_NOTE_OPTIONS.forEach(note => {
+    const tile = document.getElementById('lv1-own-tile-' + note);
+    if (tile) tile.classList.toggle('selected', lv1OwnPickedNotes.includes(note));
+  });
 }
 
 async function lv1OwnPlay() {
-  const inp = document.getElementById('lv1-own-note');
-  const warn = document.getElementById('lv1-own-invalid');
-  const raw = (inp ? inp.value.trim().toUpperCase() : 'A4');
-  const fourth = LV1_VALID_NOTES.includes(raw) ? raw : 'A4';
-  if (inp && !LV1_VALID_NOTES.includes(raw)) {
-    if (warn) warn.style.display = 'block';
-    return;
-  }
-  if (warn) warn.style.display = 'none';
+  if (!lv1OwnPickedNotes.length) return;
   await initTone();
-  for (const n of ['C4','E4','G4', fourth]) { await playNote(n, 1); }
+  for (const n of lv1OwnPickedNotes) { await playNote(n, 1); }
 }
 
 function lv1Complete() {
