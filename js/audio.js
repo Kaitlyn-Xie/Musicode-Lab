@@ -159,23 +159,74 @@ function downloadProgram() {
   showToast('Program saved!');
 }
 
+function updateExportBtn() {
+  const label = document.getElementById('export-cost-label');
+  if (!label) return;
+  const allDone = (typeof completedLevels !== 'undefined') && completedLevels.length >= 7;
+  label.textContent = allDone ? '(free!)' : '(5 pts)';
+}
+
 async function downloadAudio() {
+  // Check if all 7 levels done → free; else need 5 pts
+  const allDone = (typeof completedLevels !== 'undefined') && completedLevels.length >= 7;
+  if (!allDone) {
+    if (score < 5) {
+      showToast('Need 5 pts to export! Earn pts by completing Challenge levels.');
+      return;
+    }
+  }
+
   await initTone();
-  const dest=Tone.context.createMediaStreamDestination();
-  Tone.getDestination().connect(dest);
-  const mr=new MediaRecorder(dest.stream);
-  const chunks=[];
-  mr.ondataavailable=e=>chunks.push(e.data);
-  mr.onstop=()=>{
-    const blob=new Blob(chunks,{type:'audio/webm'});
-    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='my-music.webm';a.click();
-    document.getElementById('rec-dot').classList.remove('show');
-    showToast('Audio downloaded!');
+  const sampleRate = Tone.context.sampleRate;
+
+  // Capture raw PCM via ScriptProcessorNode
+  const bufferSize = 4096;
+  const pcmChunks = [];
+  const processor = Tone.context.createScriptProcessor(bufferSize, 1, 1);
+  Tone.getDestination().connect(processor);
+  processor.connect(Tone.context.destination);
+
+  processor.onaudioprocess = (e) => {
+    const raw = e.inputBuffer.getChannelData(0);
+    const int16 = new Int16Array(raw.length);
+    for (let i = 0; i < raw.length; i++) {
+      int16[i] = Math.max(-32768, Math.min(32767, raw[i] * 32767));
+    }
+    pcmChunks.push(int16);
   };
-  mr.start();
+
   document.getElementById('rec-dot').classList.add('show');
   await execBlocks(canvas);
-  await sleep(400);
-  mr.stop();
-  Tone.getDestination().disconnect(dest);
+  await sleep(600);
+
+  processor.onaudioprocess = null;
+  processor.disconnect();
+  try { Tone.getDestination().disconnect(processor); } catch(e) {}
+
+  // Encode to MP3 with lamejs
+  const mp3enc = new lamejs.Mp3Encoder(1, sampleRate, 128);
+  const mp3Parts = [];
+  for (const chunk of pcmChunks) {
+    const buf = mp3enc.encodeBuffer(chunk);
+    if (buf.length > 0) mp3Parts.push(new Uint8Array(buf));
+  }
+  const tail = mp3enc.flush();
+  if (tail.length > 0) mp3Parts.push(new Uint8Array(tail));
+
+  const blob = new Blob(mp3Parts, { type: 'audio/mp3' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'my-music.mp3';
+  a.click();
+
+  document.getElementById('rec-dot').classList.remove('show');
+
+  if (!allDone) {
+    score -= 5;
+    document.getElementById('score-display').textContent = score;
+    showToast('MP3 downloaded! (−5 pts)');
+  } else {
+    showToast('MP3 downloaded! 🎵');
+  }
+  updateExportBtn();
 }

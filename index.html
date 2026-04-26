@@ -100,7 +100,7 @@
   <div class="footer-btns">
     <div class="rec-dot" id="rec-dot"></div>
     <button class="footer-btn" onclick="downloadProgram()"><span data-icon="save" data-size="13"></span> Save</button>
-    <button class="footer-btn" onclick="downloadAudio()"><span data-icon="download" data-size="13"></span> Export</button>
+    <button class="footer-btn" id="export-btn" onclick="downloadAudio()"><span data-icon="download" data-size="13"></span> Export <span id="export-cost-label" style="font-size:10px;opacity:0.75">(5 pts)</span></button>
   </div>
 </div>
 
@@ -135,14 +135,16 @@
     <div class="home-mode-card primary" onclick="enterMode('challenge')">
       <div class="home-mode-icon" style="background:#E3EEFF">&#9654;</div>
       <div class="home-mode-title">Challenge Mode</div>
-      <div class="home-mode-desc">Complete levels, learn coding concepts through music step by step.</div>
-      <div class="home-mode-badge" style="background:#E3EEFF;color:#1860A0" id="home-progress-badge">0 / 6 levels done</div>
+      <div class="home-mode-desc">Complete levels, earn points, and learn coding concepts through music step by step.</div>
+      <div class="home-mode-badge" style="background:#E3EEFF;color:#1860A0" id="home-progress-badge">0 / 7 levels done</div>
+      <div style="font-size:11px;color:#1860A0;margin-top:6px;font-weight:700">&#127381; Complete all 7 levels → unlimited free MP3 exports!</div>
     </div>
     <div class="home-mode-card" onclick="enterMode('free')">
       <div class="home-mode-icon" style="background:#F0EDF8">&#9835;</div>
       <div class="home-mode-title">Free Create</div>
       <div class="home-mode-desc">Open sandbox — build any music program you like with all blocks.</div>
-      <div class="home-mode-badge" style="background:#F0EDF8;color:#7A6E9E">No limits</div>
+      <div class="home-mode-badge" style="background:#F0EDF8;color:#7A6E9E">Export costs 5 pts</div>
+      <div style="font-size:11px;color:#7A6E9E;margin-top:6px;font-weight:700">Earn pts by completing Challenge levels</div>
     </div>
   </div>
   <div class="home-tip">
@@ -245,6 +247,7 @@
 
 <!-- SCRIPTS (order matters — dependencies first) -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lamejs@1.2.1/lame.min.js"></script>
 <script src="js/icons.js"></script>
 <script src="js/state.js"></script>
 <script src="js/audio.js"></script>

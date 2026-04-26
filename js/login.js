@@ -55,6 +55,7 @@ function showHomeScreen(name) {
 function enterMode(m) {
   document.getElementById('home-screen').classList.add('hidden');
   setMode(m);
+  updateExportBtn();
 }
 
 function showHomeFromApp() {

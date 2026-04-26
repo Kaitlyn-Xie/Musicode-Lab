@@ -54,6 +54,7 @@ function completeLevel(levelId) {
   score += 20;
   document.getElementById('score-display').textContent = score;
   fireConfetti(80);
+  updateExportBtn();
 }
 
 function backToLevels() {
