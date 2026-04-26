@@ -405,7 +405,7 @@ function lv2P2Check() {
 // ══════════════════════════════════════════════════════
 
 // Hot Cross Buns: phrase = [E4, D4, C4], repeated 3×
-const LV2_HCB_PHRASE = ['E4', 'D4', 'C4'];
+const LV2_HCB_PHRASE = ['C4', 'D4', 'E4', 'C4'];
 let lv2HCBBlocks = []; // array of 'play' entries
 let lv2HCBVarName = 'phrase';
 
@@ -524,17 +524,17 @@ function lv2HCBListen(main) {
   main.innerHTML = `
     <div style="display:flex;flex-direction:column;gap:14px;padding-top:4px">
       <div class="lv1-concept">
-        <div class="lv1-concept-label">Hot Cross Buns</div>
-        <p>Listen to this classic tune. Can you spot a phrase that keeps repeating?</p>
+        <div class="lv1-concept-label">两只老虎</div>
+        <p>听这首经典童谣！找找看那个反复出现的旋律片段。</p>
       </div>
 
       <div class="lv1-song-card">
-        <div class="lv1-song-card-title">♪ Hot Cross Buns</div>
-        <div class="lv1-song-card-lyrics">"Hot cross buns, hot cross buns, one a penny, two a penny..."</div>
+        <div class="lv1-song-card-title">♪ 两只老虎 (Two Tigers)</div>
+        <div class="lv1-song-card-lyrics">"两只老虎，两只老虎，跑得快，跑得快..."</div>
         <div style="margin-top:10px;font-size:12px;font-weight:700;color:var(--text-muted)">The repeating phrase:</div>
         <div class="lv1-song-card-notes" style="margin-top:4px">
           ${LV2_HCB_PHRASE.map(n => `<span class="lv1-song-note-pill">${n}</span>`).join('')}
-          <span style="font-size:12px;color:var(--text-muted);align-self:center">× 3 times</span>
+          <span style="font-size:12px;color:var(--text-muted);align-self:center">× 2 times</span>
         </div>
         <button class="lv1-btn primary" style="margin-top:14px" onclick="lv2HCBPlayFull()">
           ${icon('play',13)} Listen to the song
@@ -553,8 +553,8 @@ async function lv2HCBPlayFull() {
   const ind = document.getElementById('lv2-hcb-playing');
   if (ind) ind.style.display = 'block';
   await initTone();
-  // Play phrase 3 times
-  for (let t = 0; t < 3; t++) {
+  // Play phrase 2 times (两只老虎，两只老虎)
+  for (let t = 0; t < 2; t++) {
     for (const n of LV2_HCB_PHRASE) { await playNote(n, 0.75); }
   }
   if (ind) ind.style.display = 'none';
@@ -567,13 +567,13 @@ function lv2HCBBuild(main) {
     <div style="display:flex;flex-direction:column;gap:12px;padding-top:4px">
       <div class="lv1-activity-heading">Use the Variable!</div>
       <p class="lv1-activity-sub">
-        The phrase <strong>E4, D4, C4</strong> is already stored in a variable called <code>phrase</code>.
-        Tap the block below to add <code>play(phrase)</code> to your song — you need it <strong>3 times</strong>.
+        The phrase <strong>C4, D4, E4, C4</strong> is already stored in a variable called <code>phrase</code>.
+        Tap the block below to add <code>play(phrase)</code> to your song — you need it <strong>2 times</strong> (两只老虎，两只老虎…).
       </p>
 
       <div class="lv2-defined-var" style="font-size:12px">
         <span class="lv2-dv-label">Variable defined:</span>
-        <code class="lv2-dv-code">phrase = ["E4", "D4", "C4"]</code>
+        <code class="lv2-dv-code">phrase = ["C4", "D4", "E4", "C4"]</code>
         <button class="lv1-play-btn" style="background:rgba(46,128,208,0.15);color:var(--text)"
           onclick="lv2HCBPlayPhrase()">${icon('volume',12)}</button>
       </div>
@@ -588,7 +588,7 @@ function lv2HCBBuild(main) {
         </div>
         <div style="display:flex;flex-direction:column;gap:10px;flex:1">
           <div class="lv1-dropzone" id="lv2-hcb-canvas" style="min-height:80px">
-            <div class="lv1-dz-placeholder" id="lv2-hcb-ph">Tap the block 3 times...</div>
+            <div class="lv1-dz-placeholder" id="lv2-hcb-ph">Tap the block 2 times...</div>
           </div>
           <div class="lv1-actions">
             <button class="lv1-btn secondary" onclick="lv2HCBClear()">Clear</button>
@@ -653,18 +653,18 @@ async function lv2HCBCheck() {
   const fb = document.getElementById('lv2-hcb-fb');
   if (!fb) return;
   fb.style.display = 'block';
-  if (lv2HCBBlocks.length !== 3) {
+  if (lv2HCBBlocks.length !== 2) {
     fb.className = 'lv1-feedback error';
-    fb.textContent = `You need exactly 3 play(phrase) blocks — you have ${lv2HCBBlocks.length}. The phrase repeats 3 times in the song!`;
+    fb.textContent = `You need exactly 2 play(phrase) blocks — you have ${lv2HCBBlocks.length}. 两只老虎，两只老虎 — the phrase plays twice!`;
     return;
   }
   fb.className = 'lv1-feedback success';
   fb.textContent = 'Perfect! Listen to your song...';
   await initTone();
-  for (let t = 0; t < 3; t++) {
+  for (let t = 0; t < 2; t++) {
     for (const n of LV2_HCB_PHRASE) { await playNote(n, 0.75); }
   }
-  fb.textContent = '🎵 That\'s Hot Cross Buns — built with one variable used 3 times!';
+  fb.textContent = '🎵 两只老虎！Built with one variable used 2 times!';
   setTimeout(() => lv2P3Goto(3), 1400);
 }
 
@@ -673,14 +673,14 @@ async function lv2HCBDiscover(main) {
   main.innerHTML = `
     <div style="display:flex;flex-direction:column;gap:14px;padding-top:4px">
       <div class="lv1-concept">
-        <div class="lv1-concept-label">One variable. Used three times.</div>
-        <p>Instead of writing <code>"E4", "D4", "C4"</code> over and over, you stored it once in <code>phrase</code> and reused it. That's the power of variables — <strong>abstraction + reuse</strong>.</p>
+        <div class="lv1-concept-label">One variable. Used twice.</div>
+        <p>Instead of writing <code>"C4", "D4", "E4", "C4"</code> twice, you stored it once in <code>phrase</code> and reused it. That's the power of variables — <strong>abstraction + reuse</strong>.</p>
       </div>
 
       <div class="lv1-song-card" style="background:linear-gradient(135deg,rgba(46,128,208,0.08),rgba(112,80,208,0.08))">
-        <div class="lv1-song-card-title">Your song = 1 variable × 3</div>
+        <div class="lv1-song-card-title">Your song = 1 variable × 2</div>
         <div class="lv1-song-card-notes" style="gap:8px">
-          ${[0,1,2].map(i =>
+          ${[0,1].map(i =>
             `<div style="display:flex;gap:4px;align-items:center">
               ${LV2_HCB_PHRASE.map((n,j) => `<span class="lv1-song-note-pill" id="lv2-disc-${i}-${j}">${n}</span>`).join('')}
             </div>`
@@ -715,14 +715,14 @@ async function lv2HCBDiscover(main) {
     </div>
   `;
   await initTone();
-  for (let t = 0; t < 3; t++) {
+  for (let t = 0; t < 2; t++) {
     for (const n of LV2_HCB_PHRASE) { await playNote(n, 0.75); }
   }
 }
 
 async function lv2HCBDiscoverPlay() {
   await initTone();
-  for (let t = 0; t < 3; t++) {
+  for (let t = 0; t < 2; t++) {
     for (let j = 0; j < LV2_HCB_PHRASE.length; j++) {
       document.querySelectorAll('.lv1-song-note-pill').forEach(p => p.classList.remove('playing'));
       const pill = document.getElementById(`lv2-disc-${t}-${j}`);

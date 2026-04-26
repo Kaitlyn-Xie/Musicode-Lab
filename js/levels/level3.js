@@ -13,8 +13,8 @@ let lv3ReadOpened = [false, false, false];
 let lv3OwnCount = 3;
 
 // Song Workshop state
-const LV3_JINGLE = ['E4','E4','E4','D4','C4','D4','E4'];
-const LV3_JINGLE_PALETTE = ['C4','D4','E4'];
+const LV3_JINGLE = ['E4','E4','E4','G4','E4','D4','C4'];
+const LV3_JINGLE_PALETTE = ['C4','D4','E4','G4'];
 let lv3JingleSeq = [];
 const LV3_OWN_NOTE_OPTIONS = ['C4','D4','E4','F4','G4','A4','B4'];
 const LV3_OWN_PITCH_PCT = { 'C4':12,'D4':25,'E4':38,'F4':50,'G4':63,'A4':75,'B4':88 };
@@ -533,13 +533,13 @@ function lv3JingleListen(main) {
   main.innerHTML = `
     <div style="display:flex;flex-direction:column;gap:14px;padding-top:4px">
       <div class="lv1-concept">
-        <div class="lv1-concept-label">铃儿响叮当 — Jingle Bells</div>
-        <p>Listen to the opening phrase of Jingle Bells! Notice how the E4 note repeats — that's a loop in music form.</p>
+        <div class="lv1-concept-label">新年好 — Happy New Year</div>
+        <p>听这首家喻户晓的新年歌！注意前三个E4音符的重复——这就是循环在音乐里的样子。</p>
       </div>
 
       <div class="lv1-song-card">
-        <div class="lv1-song-card-title">♪ Jingle Bells 铃儿响叮当</div>
-        <div class="lv1-song-card-lyrics">"铃儿响，叮当叮当，叮当叮当响..."</div>
+        <div class="lv1-song-card-title">♪ 新年好 (Happy New Year)</div>
+        <div class="lv1-song-card-lyrics">"新年好呀，新年好呀，祝贺大家新年好..."</div>
         <div class="lv1-song-card-notes">
           ${LV3_JINGLE.map(n => `<span class="lv1-song-note-pill">${n}</span>`).join('')}
         </div>
@@ -594,7 +594,7 @@ function lv3JingleBuild(main) {
       </div>
       <div id="lv3-jingle-fb" class="lv1-feedback" style="display:none"></div>
       <div id="lv3-jingle-hint" class="lv1-hint-box" style="display:none">
-        <strong>Hint:</strong> Jingle Bells starts E E E, then drops to D C, then D, then back to E.<br>
+        <strong>Hint:</strong> 新年好 starts E E E, then goes up to G, then comes back down E D C.<br>
         <span style="font-family:monospace;font-size:12px;color:var(--text)">E4 E4 E4 D4 C4 D4 E4</span>
       </div>
     </div>
