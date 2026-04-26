@@ -404,27 +404,29 @@ function lv2P2Check() {
 // PHASE 3 — How Computers Think (Song Workshop)
 // ══════════════════════════════════════════════════════
 
-// Hot Cross Buns: phrase = [E4, D4, C4], repeated 3×
-const LV2_HCB_PHRASE = ['C4', 'D4', 'E4', 'C4'];
-let lv2HCBBlocks = []; // array of 'play' entries
-let lv2HCBVarName = 'phrase';
+// 两只老虎: two phrases — phrase1 = 两只老虎, phrase2 = 跑得快
+const LV2_PHRASE1 = ['C4', 'D4', 'E4', 'C4']; // 两只老虎
+const LV2_PHRASE2 = ['E4', 'F4', 'G4'];         // 跑得快
+// target sequence: phrase1 phrase1 phrase2 phrase2
+const LV2_HCB_TARGET = ['p1', 'p1', 'p2', 'p2'];
+let lv2HCBBlocks = []; // array of 'p1' | 'p2'
 
-function lv2GetCTConcepts(vn) {
+function lv2GetCTConcepts() {
   return [
     {
       title: 'Variable',
       icon: 'variable',
-      body: `<strong>${vn}</strong> is a <em>variable</em> — a named container that stores data. The name is a label you chose. You could call it <code>mySong</code>, <code>phrase</code>, or anything — the notes inside stay the same.`
+      body: `A <em>variable</em> is a named container for data. <code>phrase1</code> holds "两只老虎" and <code>phrase2</code> holds "跑得快" — two different variables, each storing a different musical idea.`
     },
     {
       title: 'Abstraction',
       icon: 'blocks',
-      body: `Instead of writing out every note every time, you give the list a name and use that name. This is <strong>abstraction</strong>: hiding detail behind a simple label. <code>play(${vn})</code> is simpler than writing every note separately.`
+      body: `Instead of listing every note every time, you give each phrase a name. <code>play(phrase1)</code> is simpler than writing <code>C4 D4 E4 C4</code> every time. This is <strong>abstraction</strong>: hiding complexity behind a label.`
     },
     {
       title: 'Reuse',
       icon: 'repeat',
-      body: `Change <code>${vn}</code> once and it updates <em>everywhere</em> it's used. You don't have to find and change every note individually. That's the real power of variables — <strong>change once, update everywhere</strong>.`
+      body: `Both <code>phrase1</code> and <code>phrase2</code> are used <em>twice each</em>. Define once, reuse anywhere. Change a variable once and every use updates automatically — that's the real power of variables.`
     }
   ];
 }
@@ -482,13 +484,12 @@ function lv2P3Goto(step) {
 /* Step 0 — CT Concept Cards */
 function lv2P3Read(main) {
   lv2ReadOpened = [false, false, false];
-  const vn = lv2VarName || 'notes';
-  const concepts = lv2GetCTConcepts(vn);
+  const concepts = lv2GetCTConcepts();
   main.innerHTML = `
     <div style="display:flex;flex-direction:column;gap:12px;padding-top:4px">
       <div class="lv1-concept">
         <div class="lv1-concept-label">Three Big Ideas</div>
-        <p>You just stored your melody in a variable. Click each card to explore what that means.</p>
+        <p>两只老虎有两段旋律 — 两个变量！Click each card to explore what that means in Computational Thinking.</p>
       </div>
       ${concepts.map((c, i) => `
         <div class="lv1-read-block" id="lv2-read-${i}">
@@ -525,17 +526,30 @@ function lv2HCBListen(main) {
     <div style="display:flex;flex-direction:column;gap:14px;padding-top:4px">
       <div class="lv1-concept">
         <div class="lv1-concept-label">两只老虎</div>
-        <p>听这首经典童谣！找找看那个反复出现的旋律片段。</p>
+        <p>这首歌有<strong>两段不同的旋律</strong>——"两只老虎"和"跑得快"。我们把它们分别存进两个变量！</p>
       </div>
 
       <div class="lv1-song-card">
         <div class="lv1-song-card-title">♪ 两只老虎 (Two Tigers)</div>
         <div class="lv1-song-card-lyrics">"两只老虎，两只老虎，跑得快，跑得快..."</div>
-        <div style="margin-top:10px;font-size:12px;font-weight:700;color:var(--text-muted)">The repeating phrase:</div>
-        <div class="lv1-song-card-notes" style="margin-top:4px">
-          ${LV2_HCB_PHRASE.map(n => `<span class="lv1-song-note-pill">${n}</span>`).join('')}
-          <span style="font-size:12px;color:var(--text-muted);align-self:center">× 2 times</span>
+
+        <div style="margin-top:12px;display:flex;flex-direction:column;gap:8px;width:100%">
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="font-size:11px;font-weight:800;color:#1860A0;background:rgba(46,128,208,0.12);border-radius:6px;padding:3px 8px;white-space:nowrap">phrase1</span>
+            <div class="lv1-song-card-notes" style="margin:0;flex-wrap:nowrap">
+              ${LV2_PHRASE1.map(n => `<span class="lv1-song-note-pill">${n}</span>`).join('')}
+            </div>
+            <span style="font-size:11.5px;color:var(--text-muted);white-space:nowrap">两只老虎</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="font-size:11px;font-weight:800;color:#7050D0;background:rgba(112,80,208,0.12);border-radius:6px;padding:3px 8px;white-space:nowrap">phrase2</span>
+            <div class="lv1-song-card-notes" style="margin:0;flex-wrap:nowrap">
+              ${LV2_PHRASE2.map(n => `<span class="lv1-song-note-pill">${n}</span>`).join('')}
+            </div>
+            <span style="font-size:11.5px;color:var(--text-muted);white-space:nowrap">跑得快</span>
+          </div>
         </div>
+
         <button class="lv1-btn primary" style="margin-top:14px" onclick="lv2HCBPlayFull()">
           ${icon('play',13)} Listen to the song
         </button>
@@ -553,10 +567,11 @@ async function lv2HCBPlayFull() {
   const ind = document.getElementById('lv2-hcb-playing');
   if (ind) ind.style.display = 'block';
   await initTone();
-  // Play phrase 2 times (两只老虎，两只老虎)
-  for (let t = 0; t < 2; t++) {
-    for (const n of LV2_HCB_PHRASE) { await playNote(n, 0.75); }
-  }
+  // 两只老虎，两只老虎，跑得快，跑得快
+  for (const n of LV2_PHRASE1) { await playNote(n, 0.75); }
+  for (const n of LV2_PHRASE1) { await playNote(n, 0.75); }
+  for (const n of LV2_PHRASE2) { await playNote(n, 0.75); }
+  for (const n of LV2_PHRASE2) { await playNote(n, 0.75); }
   if (ind) ind.style.display = 'none';
 }
 
@@ -565,30 +580,42 @@ function lv2HCBBuild(main) {
   lv2HCBBlocks = [];
   main.innerHTML = `
     <div style="display:flex;flex-direction:column;gap:12px;padding-top:4px">
-      <div class="lv1-activity-heading">Use the Variable!</div>
+      <div class="lv1-activity-heading">Use Both Variables!</div>
       <p class="lv1-activity-sub">
-        The phrase <strong>C4, D4, E4, C4</strong> is already stored in a variable called <code>phrase</code>.
-        Tap the block below to add <code>play(phrase)</code> to your song — you need it <strong>2 times</strong> (两只老虎，两只老虎…).
+        两个变量已经定义好了。把它们按顺序拼出完整的歌：<strong>phrase1 → phrase1 → phrase2 → phrase2</strong>
       </p>
 
-      <div class="lv2-defined-var" style="font-size:12px">
-        <span class="lv2-dv-label">Variable defined:</span>
-        <code class="lv2-dv-code">phrase = ["C4", "D4", "E4", "C4"]</code>
-        <button class="lv1-play-btn" style="background:rgba(46,128,208,0.15);color:var(--text)"
-          onclick="lv2HCBPlayPhrase()">${icon('volume',12)}</button>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <div class="lv2-defined-var" style="font-size:12px">
+          <span class="lv2-dv-label" style="color:#1860A0">phrase1 =</span>
+          <code class="lv2-dv-code">["C4", "D4", "E4", "C4"]</code>
+          <span style="font-size:11px;color:var(--text-muted)">两只老虎</span>
+          <button class="lv1-play-btn" style="background:rgba(46,128,208,0.15);color:var(--text)"
+            onclick="lv2HCBPlayPhrase1()">${icon('volume',12)}</button>
+        </div>
+        <div class="lv2-defined-var" style="font-size:12px">
+          <span class="lv2-dv-label" style="color:#7050D0">phrase2 =</span>
+          <code class="lv2-dv-code">["E4", "F4", "G4"]</code>
+          <span style="font-size:11px;color:var(--text-muted)">跑得快</span>
+          <button class="lv1-play-btn" style="background:rgba(112,80,208,0.15);color:var(--text)"
+            onclick="lv2HCBPlayPhrase2()">${icon('volume',12)}</button>
+        </div>
       </div>
 
       <div class="lv1-blocks-area">
         <div class="lv1-mini-palette">
-          <div class="lv1-palette-label">Block</div>
-          <div class="lv2-pal-block" style="background:#2E80D0;cursor:pointer" onclick="lv2HCBAddBlock()">
-            ${icon('music',12)} play( <span class="lv2-pal-badge">phrase</span> )
+          <div class="lv1-palette-label">Blocks</div>
+          <div class="lv2-pal-block" style="background:#2E80D0;cursor:pointer;margin-bottom:6px" onclick="lv2HCBAddBlock('p1')">
+            ${icon('music',12)} play( <span class="lv2-pal-badge">phrase1</span> )
           </div>
-          <div class="lv1-palette-hint">tap to add</div>
+          <div class="lv2-pal-block" style="background:#7050D0;cursor:pointer" onclick="lv2HCBAddBlock('p2')">
+            ${icon('music',12)} play( <span class="lv2-pal-badge">phrase2</span> )
+          </div>
+          <div class="lv1-palette-hint" style="margin-top:6px">tap to add</div>
         </div>
         <div style="display:flex;flex-direction:column;gap:10px;flex:1">
-          <div class="lv1-dropzone" id="lv2-hcb-canvas" style="min-height:80px">
-            <div class="lv1-dz-placeholder" id="lv2-hcb-ph">Tap the block 2 times...</div>
+          <div class="lv1-dropzone" id="lv2-hcb-canvas" style="min-height:100px">
+            <div class="lv1-dz-placeholder" id="lv2-hcb-ph">Tap blocks to build the song...</div>
           </div>
           <div class="lv1-actions">
             <button class="lv1-btn secondary" onclick="lv2HCBClear()">Clear</button>
@@ -603,14 +630,19 @@ function lv2HCBBuild(main) {
   lv2HCBRenderCanvas();
 }
 
-async function lv2HCBPlayPhrase() {
+async function lv2HCBPlayPhrase1() {
   await initTone();
-  for (const n of LV2_HCB_PHRASE) { await playNote(n, 0.75); }
+  for (const n of LV2_PHRASE1) { await playNote(n, 0.75); }
 }
 
-function lv2HCBAddBlock() {
-  if (lv2HCBBlocks.length >= 5) return;
-  lv2HCBBlocks.push('play');
+async function lv2HCBPlayPhrase2() {
+  await initTone();
+  for (const n of LV2_PHRASE2) { await playNote(n, 0.75); }
+}
+
+function lv2HCBAddBlock(type) {
+  if (lv2HCBBlocks.length >= 6) return;
+  lv2HCBBlocks.push(type);
   lv2HCBRenderCanvas();
 }
 
@@ -625,10 +657,12 @@ function lv2HCBRenderCanvas() {
   if (!canvas) return;
   canvas.querySelectorAll('.lv1-seq-block').forEach(e => e.remove());
   if (ph) ph.style.display = lv2HCBBlocks.length ? 'none' : 'block';
-  lv2HCBBlocks.forEach((_, i) => {
+  lv2HCBBlocks.forEach((type, i) => {
     const el = document.createElement('div');
     el.className = 'lv1-seq-block';
-    el.innerHTML = `${icon('music',12)} play( <span style="background:rgba(255,255,255,0.28);padding:1px 7px;border-radius:4px;font-weight:700;font-size:12px">phrase</span> )
+    el.style.background = type === 'p1' ? '#2E80D0' : '#7050D0';
+    const label = type === 'p1' ? 'phrase1' : 'phrase2';
+    el.innerHTML = `${icon('music',12)} play( <span style="background:rgba(255,255,255,0.28);padding:1px 7px;border-radius:4px;font-weight:700;font-size:12px">${label}</span> )
       <button class="lv1-rm-btn" onclick="lv2HCBRemoveBlock(${i})">${icon('close',11)}</button>`;
     canvas.appendChild(el);
   });
@@ -644,8 +678,9 @@ function lv2HCBClear() {
 async function lv2HCBPlay() {
   if (!lv2HCBBlocks.length) return;
   await initTone();
-  for (let i = 0; i < lv2HCBBlocks.length; i++) {
-    for (const n of LV2_HCB_PHRASE) { await playNote(n, 0.75); }
+  for (const type of lv2HCBBlocks) {
+    const phrase = type === 'p1' ? LV2_PHRASE1 : LV2_PHRASE2;
+    for (const n of phrase) { await playNote(n, 0.75); }
   }
 }
 
@@ -653,19 +688,26 @@ async function lv2HCBCheck() {
   const fb = document.getElementById('lv2-hcb-fb');
   if (!fb) return;
   fb.style.display = 'block';
-  if (lv2HCBBlocks.length !== 2) {
+  const correct = lv2HCBBlocks.length === 4 &&
+    lv2HCBBlocks.every((b, i) => b === LV2_HCB_TARGET[i]);
+  if (!correct) {
     fb.className = 'lv1-feedback error';
-    fb.textContent = `You need exactly 2 play(phrase) blocks — you have ${lv2HCBBlocks.length}. 两只老虎，两只老虎 — the phrase plays twice!`;
+    if (lv2HCBBlocks.length !== 4) {
+      fb.textContent = `You need 4 blocks — you have ${lv2HCBBlocks.length}. The order is: phrase1, phrase1, phrase2, phrase2.`;
+    } else {
+      fb.textContent = 'Order isn\'t right yet! Try: phrase1 → phrase1 → phrase2 → phrase2.';
+    }
     return;
   }
   fb.className = 'lv1-feedback success';
   fb.textContent = 'Perfect! Listen to your song...';
   await initTone();
-  for (let t = 0; t < 2; t++) {
-    for (const n of LV2_HCB_PHRASE) { await playNote(n, 0.75); }
-  }
-  fb.textContent = '🎵 两只老虎！Built with one variable used 2 times!';
-  setTimeout(() => lv2P3Goto(3), 1400);
+  for (const n of LV2_PHRASE1) { await playNote(n, 0.75); }
+  for (const n of LV2_PHRASE1) { await playNote(n, 0.75); }
+  for (const n of LV2_PHRASE2) { await playNote(n, 0.75); }
+  for (const n of LV2_PHRASE2) { await playNote(n, 0.75); }
+  fb.textContent = '🎵 两只老虎，两只老虎，跑得快，跑得快！Two variables, one song!';
+  setTimeout(() => lv2P3Goto(3), 1600);
 }
 
 /* ── Song Workshop: Step 3 — Discover ───────────────────── */
@@ -673,18 +715,24 @@ async function lv2HCBDiscover(main) {
   main.innerHTML = `
     <div style="display:flex;flex-direction:column;gap:14px;padding-top:4px">
       <div class="lv1-concept">
-        <div class="lv1-concept-label">One variable. Used twice.</div>
-        <p>Instead of writing <code>"C4", "D4", "E4", "C4"</code> twice, you stored it once in <code>phrase</code> and reused it. That's the power of variables — <strong>abstraction + reuse</strong>.</p>
+        <div class="lv1-concept-label">Two variables. Four uses.</div>
+        <p><code>phrase1</code> plays twice, <code>phrase2</code> plays twice. Two different ideas, each stored cleanly — that's the power of multiple variables.</p>
       </div>
 
       <div class="lv1-song-card" style="background:linear-gradient(135deg,rgba(46,128,208,0.08),rgba(112,80,208,0.08))">
-        <div class="lv1-song-card-title">Your song = 1 variable × 2</div>
-        <div class="lv1-song-card-notes" style="gap:8px">
+        <div class="lv1-song-card-title">Your song = phrase1×2 + phrase2×2</div>
+        <div class="lv1-song-card-notes" style="gap:6px;flex-wrap:wrap">
           ${[0,1].map(i =>
-            `<div style="display:flex;gap:4px;align-items:center">
-              ${LV2_HCB_PHRASE.map((n,j) => `<span class="lv1-song-note-pill" id="lv2-disc-${i}-${j}">${n}</span>`).join('')}
+            `<div style="display:flex;gap:3px;align-items:center">
+              ${LV2_PHRASE1.map((n,j) => `<span class="lv1-song-note-pill" style="background:rgba(46,128,208,0.18)" id="lv2-disc-p1-${i}-${j}">${n}</span>`).join('')}
             </div>`
-          ).join('<span style="color:var(--text-muted);font-size:12px">+</span>')}
+          ).join('<span style="color:var(--text-muted);font-size:11px;margin:0 2px">+</span>')}
+          <span style="color:var(--text-muted);font-size:12px">+</span>
+          ${[0,1].map(i =>
+            `<div style="display:flex;gap:3px;align-items:center">
+              ${LV2_PHRASE2.map((n,j) => `<span class="lv1-song-note-pill" style="background:rgba(112,80,208,0.18)" id="lv2-disc-p2-${i}-${j}">${n}</span>`).join('')}
+            </div>`
+          ).join('<span style="color:var(--text-muted);font-size:11px;margin:0 2px">+</span>')}
         </div>
         <button class="lv1-btn primary" style="margin-top:12px" onclick="lv2HCBDiscoverPlay()">
           ${icon('play',13)} Play & highlight
@@ -696,7 +744,7 @@ async function lv2HCBDiscover(main) {
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%">
           <div style="background:rgba(46,128,208,0.12);border-radius:10px;padding:10px;text-align:center">
             <div style="font-size:11px;font-weight:800;color:#1860A0;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Variable</div>
-            <div style="font-size:11.5px;color:var(--text);line-height:1.5">One name, stores the whole phrase</div>
+            <div style="font-size:11.5px;color:var(--text);line-height:1.5">Named containers for different musical ideas</div>
           </div>
           <div style="background:rgba(112,80,208,0.12);border-radius:10px;padding:10px;text-align:center">
             <div style="font-size:11px;font-weight:800;color:#7050D0;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Abstraction</div>
@@ -715,19 +763,29 @@ async function lv2HCBDiscover(main) {
     </div>
   `;
   await initTone();
-  for (let t = 0; t < 2; t++) {
-    for (const n of LV2_HCB_PHRASE) { await playNote(n, 0.75); }
-  }
+  for (const n of LV2_PHRASE1) { await playNote(n, 0.75); }
+  for (const n of LV2_PHRASE1) { await playNote(n, 0.75); }
+  for (const n of LV2_PHRASE2) { await playNote(n, 0.75); }
+  for (const n of LV2_PHRASE2) { await playNote(n, 0.75); }
 }
 
 async function lv2HCBDiscoverPlay() {
   await initTone();
+  document.querySelectorAll('.lv1-song-note-pill').forEach(p => p.classList.remove('playing'));
   for (let t = 0; t < 2; t++) {
-    for (let j = 0; j < LV2_HCB_PHRASE.length; j++) {
+    for (let j = 0; j < LV2_PHRASE1.length; j++) {
       document.querySelectorAll('.lv1-song-note-pill').forEach(p => p.classList.remove('playing'));
-      const pill = document.getElementById(`lv2-disc-${t}-${j}`);
+      const pill = document.getElementById(`lv2-disc-p1-${t}-${j}`);
       if (pill) pill.classList.add('playing');
-      await playNote(LV2_HCB_PHRASE[j], 0.75);
+      await playNote(LV2_PHRASE1[j], 0.75);
+    }
+  }
+  for (let t = 0; t < 2; t++) {
+    for (let j = 0; j < LV2_PHRASE2.length; j++) {
+      document.querySelectorAll('.lv1-song-note-pill').forEach(p => p.classList.remove('playing'));
+      const pill = document.getElementById(`lv2-disc-p2-${t}-${j}`);
+      if (pill) pill.classList.add('playing');
+      await playNote(LV2_PHRASE2[j], 0.75);
     }
   }
   document.querySelectorAll('.lv1-song-note-pill').forEach(p => p.classList.remove('playing'));
