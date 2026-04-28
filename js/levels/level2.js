@@ -72,7 +72,7 @@ function lv2RenderPhase1(body) {
 
       <div class="lv1-hint-box visible" style="display:block">
         🎵 <strong>Try this:</strong> Name your variable <code>phrase1</code> and add notes
-        <strong>C4 → D4 → E4 → C4</strong> — that's the melody for <strong>两只老虎 (Two Tigers)</strong>!
+        <strong>C4 → D4 → E4 → C4</strong> — that's the melody for <strong>Frère Jacques</strong>!
         In Phase 3, you'll build the whole song using multiple variables.
       </div>
 
@@ -500,7 +500,7 @@ function lv2P3Read(main) {
     <div style="display:flex;flex-direction:column;gap:12px;padding-top:4px">
       <div class="lv1-concept">
         <div class="lv1-concept-label">Three Big Ideas</div>
-        <p>两只老虎有四段旋律 — 四个变量！Click each card to explore what that means in Computational Thinking.</p>
+        <p>Frère Jacques has four musical phrases — four variables! Click each card to explore what that means in Computational Thinking.</p>
       </div>
       ${concepts.map((c, i) => `
         <div class="lv1-read-block" id="lv2-read-${i}">
@@ -555,13 +555,13 @@ function lv2HCBListen(main) {
   main.innerHTML = `
     <div style="display:flex;flex-direction:column;gap:14px;padding-top:4px">
       <div class="lv1-concept">
-        <div class="lv1-concept-label">两只老虎</div>
-        <p>这首歌有<strong>四段旋律</strong>，我们用四个变量分别存储——注意每个变量颜色不同！</p>
+        <div class="lv1-concept-label">Frère Jacques</div>
+        <p>This song has <strong>four distinct phrases</strong> — we store each one in its own variable. Notice each variable has a different colour!</p>
       </div>
 
       <div class="lv1-song-card">
-        <div class="lv1-song-card-title">♪ 两只老虎 (Two Tigers)</div>
-        <div class="lv1-song-card-lyrics">"两只老虎，两只老虎，跑得快，跑得快，一只没有耳朵，一只没有眼睛，真奇怪，真奇怪"</div>
+        <div class="lv1-song-card-title">♪ Frère Jacques</div>
+        <div class="lv1-song-card-lyrics">"Frère Jacques, Frère Jacques, dormez-vous? dormez-vous? Sonnez les matines! Sonnez les matines! Din din don! Din din don!"</div>
 
         <div style="margin-top:12px;display:flex;flex-direction:column;gap:8px;width:100%">
           ${phraseRows}
@@ -622,7 +622,7 @@ function lv2HCBBuild(main) {
     <div style="display:flex;flex-direction:column;gap:12px;padding-top:4px">
       <div class="lv1-activity-heading">Use All Four Variables!</div>
       <p class="lv1-activity-sub">
-        四个变量都定义好了——每种颜色代表一个变量。按顺序拼出完整的歌：<strong>p1→p1→p2→p2→p3→p3→p4→p4</strong>（共8块）
+        All four variables are defined — each colour represents one variable. Arrange them in order to build the full song: <strong>p1→p1→p2→p2→p3→p3→p4→p4</strong> (8 blocks total)
       </p>
 
       <div style="display:flex;flex-direction:column;gap:5px">
@@ -721,7 +721,7 @@ async function lv2HCBCheck() {
   for (const k of LV2_HCB_TARGET) {
     for (const n of LV2_PHRASES[k]) { await playNote(n, 0.75); }
   }
-  fb.textContent = '🎵 两只老虎，两只老虎，跑得快，跑得快，一只没有耳朵，一只没有眼睛，真奇怪，真奇怪！';
+  fb.textContent = '🎵 Frère Jacques! Four phrases, eight blocks, one song!';
   setTimeout(() => lv2P3Goto(3), 1800);
 }
 

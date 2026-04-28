@@ -2446,11 +2446,6 @@ body {
 }
 .lv2-max-hint { font-size: 13px; color: var(--text-muted); }
 
-/* Full state — dim tiles when box is full */
-.lv2-note-tile.full {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
 
 /* Phase 2 single-column palette */
 .lv2-p2-palette {
@@ -2644,23 +2639,29 @@ body {
 }
 .lv2-note-tile {
   width: 80px;
-  background: #FFFFFF;
-  border: 2px solid #D8D4EC;
+  background: #2E80D0;
+  border: 2px solid transparent;
   border-radius: 10px;
   padding: 8px;
   cursor: pointer;
-  transition: border-color 0.15s, background 0.15s, transform 0.1s;
+  color: #fff;
+  transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
   user-select: none;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
 }
 .lv2-note-tile:hover {
-  border-color: #2E80D0;
-  background: rgba(46,128,208,0.08);
+  background: #1860A0;
   transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.22);
 }
 .lv2-note-tile.selected {
-  border-color: #2E80D0;
-  background: rgba(46,128,208,0.14);
-  box-shadow: 0 0 0 3px rgba(46,128,208,0.20);
+  background: #2EA870;
+  border-color: #1A8A58;
+  box-shadow: 0 0 0 3px rgba(46,168,112,0.30);
+}
+.lv2-note-tile.full {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
 /* Defined-variable display strip (Phase 2) */
