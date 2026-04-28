@@ -70,6 +70,12 @@ function lv2RenderPhase1(body) {
         Pick a name for your variable, fill it with notes, then hit <strong>Play</strong>!
       </p>
 
+      <div class="lv1-hint-box visible" style="display:block">
+        🎵 <strong>Try this:</strong> Name your variable <code>phrase1</code> and add notes
+        <strong>C4 → D4 → E4 → C4</strong> — that's the melody for <strong>两只老虎 (Two Tigers)</strong>!
+        In Phase 3, you'll build the whole song using multiple variables.
+      </div>
+
       <div class="lv2-name-row">
         <span class="lv2-max-label">Variable name:</span>
         <input class="lv2-name-input" id="lv2-name-input" value="notes" maxlength="16"
