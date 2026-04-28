@@ -494,7 +494,7 @@ function lv2P3Read(main) {
     <div style="display:flex;flex-direction:column;gap:12px;padding-top:4px">
       <div class="lv1-concept">
         <div class="lv1-concept-label">Three Big Ideas</div>
-        <p>两只老虎有两段旋律 — 两个变量！Click each card to explore what that means in Computational Thinking.</p>
+        <p>两只老虎有四段旋律 — 四个变量！Click each card to explore what that means in Computational Thinking.</p>
       </div>
       ${concepts.map((c, i) => `
         <div class="lv1-read-block" id="lv2-read-${i}">
