@@ -1601,9 +1601,16 @@ body {
   font-weight: 900;
   padding: 3px 10px;
   border-radius: 20px;
-  background: #E3EEFF;
+  background: #E3F0FF;
   color: #1860A0;
 }
+/* Per-level badge accent colours */
+.lv1-lvbadge.lv-2 { background: #E3FBF5; color: #186858; }
+.lv1-lvbadge.lv-3 { background: #FFF8E1; color: #885800; }
+.lv1-lvbadge.lv-4 { background: #E3FFE8; color: #186840; }
+.lv1-lvbadge.lv-5 { background: #FFE8E3; color: #882000; }
+.lv1-lvbadge.lv-6 { background: #FFF3E0; color: #885020; }
+.lv1-lvbadge.lv-7 { background: #F5E8FF; color: #681888; }
 .lv1-phases {
   display: flex;
   align-items: center;
@@ -2243,30 +2250,31 @@ body {
 .lv1-p3-nav-label.active { color: var(--text); }
 .lv1-p3-nav-sep    { font-size: 11px; color: var(--text-muted); }
 
-/* Read-step: clickable code lines */
+/* CT Concept expand cards */
 .lv1-read-block {
   border: 1.5px solid var(--border);
-  border-radius: 10px;
+  border-radius: 12px;
   overflow: hidden;
+  background: var(--surface);
 }
 .lv1-read-line-btn {
   width: 100%; text-align: left;
-  background: #1E1E1E; border: none; cursor: pointer;
-  padding: 10px 14px; font-family: 'JetBrains Mono', monospace;
-  font-size: 12.5px; color: #9CDCFE;
-  display: flex; align-items: center; gap: 8px;
+  background: var(--surface); border: none; cursor: pointer;
+  padding: 12px 16px; font-family: 'Nunito', sans-serif;
+  font-size: 13px; font-weight: 700; color: var(--text);
+  display: flex; align-items: center; gap: 10px;
   transition: background 0.12s;
 }
-.lv1-read-line-btn:hover { background: #252525; }
-.lv1-read-line-btn.opened { background: #1a2a3a; }
-.lv1-read-expand-icon { font-size: 11px; color: rgba(255,255,255,0.35); flex-shrink: 0; transition: transform 0.15s; }
-.lv1-read-line-btn.opened .lv1-read-expand-icon { transform: rotate(90deg); color: #7EB8F7; }
+.lv1-read-line-btn:hover { background: rgba(46,128,208,0.05); }
+.lv1-read-line-btn.opened { background: rgba(46,128,208,0.07); }
+.lv1-read-expand-icon { font-size: 13px; color: var(--text-muted); flex-shrink: 0; transition: transform 0.15s; }
+.lv1-read-line-btn.opened .lv1-read-expand-icon { transform: rotate(90deg); color: #2E80D0; }
 .lv1-read-explanation {
-  display: none; padding: 10px 14px 12px;
-  background: rgba(46,128,208,0.06);
+  display: none; padding: 12px 16px 14px;
+  background: rgba(46,128,208,0.04);
   border-top: 1px solid var(--border);
-  font-size: 12.5px; color: var(--text);
-  font-family: 'Nunito', sans-serif; line-height: 1.55;
+  font-size: 13px; color: var(--text);
+  font-family: 'Nunito', sans-serif; line-height: 1.6;
 }
 .lv1-read-explanation.open { display: block; }
 
@@ -2534,22 +2542,23 @@ body {
   padding: 4px 12px;
 }
 
-/* Phase 2 palette blocks — match main app block style */
+/* Challenge-mode palette blocks — unified with main app block style */
 .lv2-pal-block {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   padding: 8px 12px;
   border-radius: 10px;
   font-size: 13px;
   font-weight: 700;
   color: #fff;
-  cursor: grab;
+  cursor: pointer;
   user-select: none;
   margin-bottom: 6px;
-  transition: opacity 0.12s, transform 0.1s;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  transition: box-shadow 0.15s, transform 0.1s, opacity 0.12s;
 }
-.lv2-pal-block:hover { opacity: 0.85; transform: translateY(-1px); }
+.lv2-pal-block:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.22); transform: translateY(-1px); }
 .lv2-pal-badge {
   background: rgba(255,255,255,0.28);
   border-radius: 5px;
@@ -2644,14 +2653,14 @@ body {
   user-select: none;
 }
 .lv2-note-tile:hover {
-  border-color: #388E3C;
-  background: rgba(56,142,60,0.12);
+  border-color: #2E80D0;
+  background: rgba(46,128,208,0.08);
   transform: translateY(-2px);
 }
 .lv2-note-tile.selected {
-  border-color: #2E7D32;
-  background: rgba(46,125,50,0.18);
-  box-shadow: 0 0 0 3px rgba(46,125,50,0.25);
+  border-color: #2E80D0;
+  background: rgba(46,128,208,0.14);
+  box-shadow: 0 0 0 3px rgba(46,128,208,0.20);
 }
 
 /* Defined-variable display strip (Phase 2) */
@@ -2659,11 +2668,11 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.12);
-  border-radius: 8px;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
   padding: 8px 14px;
-  margin: 10px 0;
+  margin: 4px 0;
   flex-wrap: wrap;
 }
 .lv2-dv-label {
@@ -2674,9 +2683,9 @@ body {
 .lv2-dv-code {
   font-family: 'JetBrains Mono', monospace;
   font-size: 12.5px;
-  color: #CE9178;
-  background: rgba(0,0,0,0.2);
-  border-radius: 4px;
+  color: var(--text);
+  background: rgba(46,128,208,0.08);
+  border-radius: 6px;
   padding: 2px 8px;
 }
 
@@ -2998,15 +3007,15 @@ body {
 .lv5-listen-card {
   flex: 1;
   min-width: 180px;
-  background: #FFFFFF;
-  border: 2px solid #C8EDD8;
-  border-radius: 14px;
-  padding: 14px;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
-.lv5-listen-card.buggy { border-color: #FFCDD2; background: #FFF8F8; }
+.lv5-listen-card.buggy { border-color: #FFCDD2 !important; background: #FFF8F8; }
 .lv5-listen-label {
   font-size: 11px;
   font-weight: 800;

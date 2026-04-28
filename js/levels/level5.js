@@ -66,7 +66,7 @@ function renderLevel5() {
       <div class="lv1-topbar">
         <button class="lv1-back" onclick="backToLevels()">← Levels</button>
         <div class="lv1-breadcrumb">
-          <div class="lv1-lvbadge" style="background:#FFE8E3;color:#882000">Level 5</div>
+          <div class="lv1-lvbadge lv-5">Level 5</div>
           <div class="lv1-title-text">Debug the Music</div>
         </div>
         <div class="lv1-phases">
@@ -379,7 +379,7 @@ function lv5P3Read(main) {
         <div class="lv1-read-block" id="lv5-read-${i}">
           <button class="lv1-read-line-btn" onclick="lv5ReadToggle(${i})">
             <span class="lv1-read-expand-icon">${icon(c.icon, 14)}</span>
-            <span class="lv1-read-code" style="font-family:inherit;font-size:13px;font-weight:700;color:var(--text)">${c.title}</span>
+            <span class="lv1-read-code">${c.title}</span>
             <span class="ct-concept-tag">CT Concept</span>
           </button>
           <div class="lv1-read-explanation" id="lv5-re-${i}">${c.body}</div>

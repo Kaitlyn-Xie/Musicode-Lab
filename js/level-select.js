@@ -80,7 +80,7 @@ function buildLevelShell(levelId, bodyHTML) {
       <div class="lv1-topbar">
         <button class="lv1-back" onclick="backToLevels()">← Levels</button>
         <div class="lv1-breadcrumb">
-          <span class="lv1-lvbadge" style="background:${lv.tagBg};color:${lv.tagColor}">Level ${lv.id}</span>
+          <span class="lv1-lvbadge lv-${lv.id}">Level ${lv.id}</span>
           <span class="lv1-title-text">${lv.title}</span>
         </div>
         <div class="lv1-phases">${phasePills}</div>

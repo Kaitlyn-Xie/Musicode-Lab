@@ -35,7 +35,7 @@ function renderLevel7() {
       <div class="lv1-topbar">
         <button class="lv1-back" onclick="backToLevels()">← Levels</button>
         <div class="lv1-breadcrumb">
-          <div class="lv1-lvbadge" style="background:#F5E8FF;color:#681888">Level 7</div>
+          <div class="lv1-lvbadge lv-7">Level 7</div>
           <div class="lv1-title-text">Create Your Song</div>
         </div>
         <div class="lv1-phases">
