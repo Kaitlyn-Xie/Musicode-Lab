@@ -1,15 +1,28 @@
 // ════════════════════════════════════════════════════════════
-// LEVEL 2 — VARIABLES & MUSIC PHRASES
+// LEVEL 2 — VARIABLES & MUSIC PHRASES  (Happy Birthday)
 // ════════════════════════════════════════════════════════════
 
 let lv2Phase = 1;
-let lv2P2Blocks = [];          // Phase 2 song-builder canvas
+let lv2P2Blocks = [];
 let lv2OwnNotes = ['C4', 'E4', 'G4'];
 let lv2P3Step = 0;
 let lv2ReadOpened = [false, false, false];
 
 const LV2_NOTE_OPTIONS = ['C4', 'D4', 'E4', 'F4', 'G4', 'A4'];
 const LV2_PITCH_PCT = { 'C4': 12, 'D4': 25, 'E4': 38, 'F4': 50, 'G4': 63, 'A4': 75 };
+
+// Happy Birthday: four phrases, each plays ONCE
+const LV2_PHRASE1 = ['C4','C4','D4','C4','F4','E4'];   // Happy birthday to you
+const LV2_PHRASE2 = ['C4','C4','D4','C4','G4','F4'];   // Happy birthday to you
+const LV2_PHRASE3 = ['C4','C4','A4','F4','E4','D4'];   // Happy birthday, dear…
+const LV2_PHRASE4 = ['F4','F4','E4','C4','D4','C4'];   // Happy birthday to you!
+const LV2_PHRASES    = { p1: LV2_PHRASE1, p2: LV2_PHRASE2, p3: LV2_PHRASE3, p4: LV2_PHRASE4 };
+const LV2_PHRASE_LABELS = { p1: 'phrase1', p2: 'phrase2', p3: 'phrase3', p4: 'phrase4' };
+const LV2_PHRASE_NAMES  = { p1: 'Happy birthday to you', p2: 'Happy birthday to you', p3: 'Happy birthday, dear…', p4: 'Happy birthday to you!' };
+const LV2_PHRASE_COLORS = { p1: '#2E80D0', p2: '#7050D0', p3: '#D06030', p4: '#20A060' };
+const LV2_PHRASE_BGALPHA = { p1: 'rgba(46,128,208,0.14)', p2: 'rgba(112,80,208,0.14)', p3: 'rgba(208,96,48,0.14)', p4: 'rgba(32,160,96,0.14)' };
+// target: play each phrase once in order → 4 blocks
+const LV2_HCB_TARGET = ['p1','p2','p3','p4'];
 
 // ─── Entry point ─────────────────────────────────────────────
 function renderLevel2() {
@@ -79,8 +92,8 @@ function lv2RenderPhase1(body) {
     <div class="lv1-scroll">
       <div class="lv1-activity-heading">Meet Your Four Phrases</div>
       <p class="lv1-activity-sub">
-        <em>Frère Jacques</em> is built from four musical ideas. We'll store each one as a
-        <strong>variable</strong> — a named box. Hear each phrase, then build the song!
+        <em>Happy Birthday</em> is built from four musical lines. We'll store each one as a
+        <strong>variable</strong> — a named box. Hear each phrase, then arrange them to build the song!
       </p>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
         ${phraseCards}
@@ -100,7 +113,7 @@ function lv2RenderPhase1(body) {
 
 async function lv2PlayP1Phrase(k) {
   await initTone();
-  for (const n of LV2_PHRASES[k]) { await playNote(n, 0.75); }
+  for (const n of LV2_PHRASES[k]) { await playNote(n, 0.65); }
 }
 
 async function lv2PlayNote(note) {
@@ -109,7 +122,7 @@ async function lv2PlayNote(note) {
 }
 
 // ══════════════════════════════════════════════════════
-// PHASE 2 — Build Frère Jacques
+// PHASE 2 — Build Happy Birthday
 // ══════════════════════════════════════════════════════
 function lv2RenderPhase2(body) {
   lv2P2Blocks = [];
@@ -140,10 +153,10 @@ function lv2RenderPhase2(body) {
 
   body.innerHTML = `
     <div class="lv1-scroll">
-      <div class="lv1-activity-heading">Build Frère Jacques</div>
+      <div class="lv1-activity-heading">Build Happy Birthday</div>
       <p class="lv1-activity-sub">
-        All four variables are ready. Tap each block <strong>twice</strong> to arrange the full song:
-        <strong>phrase1 × 2 → phrase2 × 2 → phrase3 × 2 → phrase4 × 2</strong>
+        All four variables are ready. Tap each block <strong>once</strong> to arrange the song:
+        <strong>phrase1 → phrase2 → phrase3 → phrase4</strong>
       </p>
       <div style="display:flex;flex-direction:column;gap:4px">${varDefs}</div>
       <div class="lv1-blocks-area">
@@ -153,7 +166,7 @@ function lv2RenderPhase2(body) {
           <div class="lv1-palette-hint" style="margin-top:4px">tap to add</div>
         </div>
         <div style="display:flex;flex-direction:column;gap:10px;flex:1">
-          <div class="lv1-dropzone" id="lv2-p2-canvas" style="min-height:140px">
+          <div class="lv1-dropzone" id="lv2-p2-canvas" style="min-height:120px">
             <div class="lv1-dz-placeholder" id="lv2-p2-ph">Tap blocks to build the song...</div>
           </div>
           <div class="lv1-actions">
@@ -171,7 +184,7 @@ function lv2RenderPhase2(body) {
 }
 
 function lv2P2AddBlock(k) {
-  if (lv2P2Blocks.length >= 8) return;
+  if (lv2P2Blocks.length >= 4) return;
   lv2P2Blocks.push(k);
   lv2P2RenderCanvas();
 }
@@ -211,7 +224,7 @@ async function lv2P2Play() {
   if (!lv2P2Blocks.length) return;
   await initTone();
   for (const k of lv2P2Blocks) {
-    for (const n of LV2_PHRASES[k]) { await playNote(n, 0.75); }
+    for (const n of LV2_PHRASES[k]) { await playNote(n, 0.65); }
   }
 }
 
@@ -219,22 +232,22 @@ async function lv2P2CheckAnswer() {
   const fb = document.getElementById('lv2-p2-fb');
   if (!fb) return;
   fb.style.display = 'block';
-  const correct = lv2P2Blocks.length === 8 &&
+  const correct = lv2P2Blocks.length === 4 &&
     lv2P2Blocks.every((b, i) => b === LV2_HCB_TARGET[i]);
   if (!correct) {
     fb.className = 'lv1-feedback error';
-    fb.textContent = lv2P2Blocks.length !== 8
-      ? `You need 8 blocks — you have ${lv2P2Blocks.length}. Each phrase plays twice!`
-      : 'Not quite! Order: phrase1 → phrase1 → phrase2 → phrase2 → phrase3 → phrase3 → phrase4 → phrase4.';
+    fb.textContent = lv2P2Blocks.length !== 4
+      ? `You need 4 blocks — you have ${lv2P2Blocks.length}. Tap phrase1, phrase2, phrase3, phrase4 in order!`
+      : 'Not quite! The order should be phrase1 → phrase2 → phrase3 → phrase4.';
     return;
   }
   fb.className = 'lv1-feedback success';
-  fb.textContent = '🎵 Perfect! Playing Frère Jacques…';
+  fb.textContent = '🎂 Perfect! Playing Happy Birthday…';
   await initTone();
   for (const k of LV2_HCB_TARGET) {
-    for (const n of LV2_PHRASES[k]) { await playNote(n, 0.75); }
+    for (const n of LV2_PHRASES[k]) { await playNote(n, 0.65); }
   }
-  fb.innerHTML = '🎵 <strong>Frère Jacques!</strong> Four variables, eight plays — that\'s the power of variables!';
+  fb.innerHTML = '🎂 <strong>Happy Birthday!</strong> Four variables, one song — that\'s the power of variables!';
   document.getElementById('lv2-p2-next').style.display = 'inline-flex';
 }
 
@@ -242,33 +255,22 @@ async function lv2P2CheckAnswer() {
 // PHASE 3 — How Computers Think (Song Workshop)
 // ══════════════════════════════════════════════════════
 
-// Frère Jacques: four phrases
-const LV2_PHRASE1 = ['C4', 'D4', 'E4', 'C4'];               // Frère Jacques
-const LV2_PHRASE2 = ['E4', 'F4', 'G4'];                     // dormez-vous?
-const LV2_PHRASE3 = ['G4', 'A4', 'G4', 'F4', 'E4', 'C4'];  // Sonnez les matines
-const LV2_PHRASE4 = ['C4', 'G3', 'C4'];                     // Din din don
-const LV2_PHRASES = { p1: LV2_PHRASE1, p2: LV2_PHRASE2, p3: LV2_PHRASE3, p4: LV2_PHRASE4 };
-const LV2_PHRASE_LABELS = { p1: 'phrase1', p2: 'phrase2', p3: 'phrase3', p4: 'phrase4' };
-const LV2_PHRASE_NAMES = { p1: 'Frère Jacques', p2: 'dormez-vous?', p3: 'Sonnez les matines', p4: 'Din din don' };
-// target: p1 p1 p2 p2 p3 p3 p4 p4
-const LV2_HCB_TARGET = ['p1','p1','p2','p2','p3','p3','p4','p4'];
-
 function lv2GetCTConcepts() {
   return [
     {
       title: 'Variable',
       icon: 'variable',
-      body: `A <em>variable</em> is a named container for data. <code>phrase1</code> = "Frère Jacques", <code>phrase2</code> = "dormez-vous?", <code>phrase3</code> = "Sonnez les matines", <code>phrase4</code> = "Din din don" — four different variables, each storing a different musical idea.`
+      body: `A <em>variable</em> is a named container for data. <code>phrase1</code>, <code>phrase2</code>, <code>phrase3</code>, <code>phrase4</code> — four different variables, each storing one musical line of Happy Birthday.`
     },
     {
       title: 'Abstraction',
       icon: 'blocks',
-      body: `Instead of listing every note every time, you give each phrase a name. <code>play(phrase3)</code> is simpler than writing <code>G4 A4 G4 F4 E4 C4</code> every time. This is <strong>abstraction</strong>: hiding complexity behind a label.`
+      body: `Instead of listing every note every time, write <code>play(phrase2)</code>. The computer fills in all the notes automatically. This is <strong>abstraction</strong>: hiding complexity behind a simple, meaningful name.`
     },
     {
-      title: 'Reuse',
-      icon: 'repeat',
-      body: `Each of the four phrases is used <em>twice</em>. Define once, reuse anywhere. Change a variable once and every use updates automatically — that's the real power of variables.`
+      title: 'Composition',
+      icon: 'algorithm',
+      body: `Four separate variables, played one after another, form a complete song. This is <strong>composition</strong> — combining small, independent pieces into something bigger. Each piece is self-contained and reusable.`
     }
   ];
 }
@@ -330,7 +332,7 @@ function lv2P3Read(main) {
     <div style="display:flex;flex-direction:column;gap:12px;padding-top:4px">
       <div class="lv1-concept">
         <div class="lv1-concept-label">Three Big Ideas</div>
-        <p>Frère Jacques has four musical phrases — four variables! Click each card to explore what that means in Computational Thinking.</p>
+        <p>Happy Birthday has four musical phrases — four variables! Click each card to explore what that means in Computational Thinking.</p>
       </div>
       ${concepts.map((c, i) => `
         <div class="lv1-read-block" id="lv2-read-${i}">
@@ -361,16 +363,13 @@ function lv2ReadToggle(idx) {
   }
 }
 
-const LV2_PHRASE_COLORS = { p1: '#2E80D0', p2: '#7050D0', p3: '#D06030', p4: '#20A060' };
-const LV2_PHRASE_BGALPHA = { p1: 'rgba(46,128,208,0.14)', p2: 'rgba(112,80,208,0.14)', p3: 'rgba(208,96,48,0.14)', p4: 'rgba(32,160,96,0.14)' };
-
-/* ── Song Workshop: Step 1 — Listen ─────────────────────── */
+/* Step 1 — Listen */
 function lv2HCBListen(main) {
   const phraseRows = ['p1','p2','p3','p4'].map(k => {
-    const col = LV2_PHRASE_COLORS[k];
-    const bg = LV2_PHRASE_BGALPHA[k];
+    const col   = LV2_PHRASE_COLORS[k];
+    const bg    = LV2_PHRASE_BGALPHA[k];
     const label = LV2_PHRASE_LABELS[k];
-    const name = LV2_PHRASE_NAMES[k];
+    const name  = LV2_PHRASE_NAMES[k];
     const notes = LV2_PHRASES[k];
     return `
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
@@ -378,20 +377,20 @@ function lv2HCBListen(main) {
         <div class="lv1-song-card-notes" style="margin:0;flex-wrap:nowrap">
           ${notes.map(n => `<span class="lv1-song-note-pill" style="background:${bg};border:1.5px solid ${col}40">${n}</span>`).join('')}
         </div>
-        <span style="font-size:11.5px;color:var(--text-muted);white-space:nowrap">${name}</span>
+        <span style="font-size:11.5px;color:var(--text-muted);white-space:nowrap;font-style:italic">${name}</span>
       </div>`;
   }).join('');
 
   main.innerHTML = `
     <div style="display:flex;flex-direction:column;gap:14px;padding-top:4px">
       <div class="lv1-concept">
-        <div class="lv1-concept-label">Frère Jacques</div>
-        <p>This song has <strong>four distinct phrases</strong> — we store each one in its own variable. Notice each variable has a different colour!</p>
+        <div class="lv1-concept-label">Happy Birthday</div>
+        <p>This song has <strong>four distinct phrases</strong> — we store each one in its own variable. Each phrase is a different colour!</p>
       </div>
 
       <div class="lv1-song-card">
-        <div class="lv1-song-card-title">♪ Frère Jacques</div>
-        <div class="lv1-song-card-lyrics">"Frère Jacques, Frère Jacques, dormez-vous? dormez-vous? Sonnez les matines! Sonnez les matines! Din din don! Din din don!"</div>
+        <div class="lv1-song-card-title">🎂 Happy Birthday</div>
+        <div class="lv1-song-card-lyrics">"Happy birthday to you, Happy birthday to you, Happy birthday dear [name], Happy birthday to you!"</div>
 
         <div style="margin-top:12px;display:flex;flex-direction:column;gap:8px;width:100%">
           ${phraseRows}
@@ -415,21 +414,19 @@ async function lv2HCBPlayFull() {
   if (ind) ind.style.display = 'block';
   await initTone();
   for (const k of LV2_HCB_TARGET) {
-    for (const n of LV2_PHRASES[k]) { await playNote(n, 0.75); }
+    for (const n of LV2_PHRASES[k]) { await playNote(n, 0.65); }
   }
   if (ind) ind.style.display = 'none';
 }
 
-/* ── Song Workshop: Step 2 — Discover ───────────────────── */
+/* Step 2 — Discover */
 async function lv2HCBDiscover(main) {
-  // Build note-pill rows for all 8 uses: p1 p1 p2 p2 p3 p3 p4 p4
-  const pillRows = LV2_HCB_TARGET.map((k, useIdx) => {
-    const col = LV2_PHRASE_COLORS[k];
-    const bg = LV2_PHRASE_BGALPHA[k];
+  const pillRows = LV2_HCB_TARGET.map(k => {
+    const col   = LV2_PHRASE_COLORS[k];
+    const bg    = LV2_PHRASE_BGALPHA[k];
     const label = LV2_PHRASE_LABELS[k];
-    const repeatIdx = LV2_HCB_TARGET.slice(0, useIdx).filter(x => x === k).length; // 0 or 1
     const pills = LV2_PHRASES[k].map((n, j) =>
-      `<span class="lv1-song-note-pill" style="background:${bg};border:1.5px solid ${col}50" id="lv2-disc-${k}-${repeatIdx}-${j}">${n}</span>`
+      `<span class="lv1-song-note-pill" style="background:${bg};border:1.5px solid ${col}50" id="lv2-disc-${k}-${j}">${n}</span>`
     ).join('');
     return `
       <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
@@ -441,12 +438,12 @@ async function lv2HCBDiscover(main) {
   main.innerHTML = `
     <div style="display:flex;flex-direction:column;gap:14px;padding-top:4px">
       <div class="lv1-concept">
-        <div class="lv1-concept-label">Four variables. Eight plays.</div>
-        <p>Every phrase plays twice. Four different ideas, each stored cleanly — that's the power of variables!</p>
+        <div class="lv1-concept-label">Four variables. One song.</div>
+        <p>Each phrase plays <em>once</em>, one after another. Four different musical ideas, each stored cleanly in its own variable.</p>
       </div>
 
       <div class="lv1-song-card" style="background:linear-gradient(135deg,rgba(46,128,208,0.06),rgba(32,160,96,0.06))">
-        <div class="lv1-song-card-title">Your song = p1×2 + p2×2 + p3×2 + p4×2</div>
+        <div class="lv1-song-card-title">Your song = phrase1 + phrase2 + phrase3 + phrase4</div>
         <div style="display:flex;flex-direction:column;gap:6px;margin-top:8px;width:100%">
           ${pillRows}
         </div>
@@ -467,8 +464,8 @@ async function lv2HCBDiscover(main) {
             <div style="font-size:11.5px;color:var(--text);line-height:1.5">Hide detail behind a simple label</div>
           </div>
           <div style="background:rgba(24,160,80,0.12);border-radius:10px;padding:10px;text-align:center">
-            <div style="font-size:11px;font-weight:800;color:#1A7040;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Reuse</div>
-            <div style="font-size:11.5px;color:var(--text);line-height:1.5">Change once, update everywhere</div>
+            <div style="font-size:11px;font-weight:800;color:#1A7040;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Composition</div>
+            <div style="font-size:11.5px;color:var(--text);line-height:1.5">Combine pieces to build something bigger</div>
           </div>
         </div>
       </div>
@@ -480,29 +477,26 @@ async function lv2HCBDiscover(main) {
   `;
   await initTone();
   for (const k of LV2_HCB_TARGET) {
-    for (const n of LV2_PHRASES[k]) { await playNote(n, 0.75); }
+    for (const n of LV2_PHRASES[k]) { await playNote(n, 0.65); }
   }
 }
 
 async function lv2HCBDiscoverPlay() {
   await initTone();
   document.querySelectorAll('.lv1-song-note-pill').forEach(p => p.classList.remove('playing'));
-  // Track repeat index per phrase key
-  const repeatCount = { p1:0, p2:0, p3:0, p4:0 };
   for (const k of LV2_HCB_TARGET) {
-    const rIdx = repeatCount[k];
     const phrase = LV2_PHRASES[k];
     for (let j = 0; j < phrase.length; j++) {
       document.querySelectorAll('.lv1-song-note-pill').forEach(p => p.classList.remove('playing'));
-      const pill = document.getElementById(`lv2-disc-${k}-${rIdx}-${j}`);
+      const pill = document.getElementById(`lv2-disc-${k}-${j}`);
       if (pill) pill.classList.add('playing');
-      await playNote(phrase[j], 0.75);
+      await playNote(phrase[j], 0.65);
     }
-    repeatCount[k]++;
   }
   document.querySelectorAll('.lv1-song-note-pill').forEach(p => p.classList.remove('playing'));
 }
 
+/* Step 3 — Create! */
 function lv2P3WriteOwn(main) {
   lv2OwnNotes = ['C4', 'E4', 'G4'];
   main.innerHTML = `
@@ -561,8 +555,6 @@ function lv2OwnPreview() {
   const valid = /^[a-zA-Z_][a-zA-Z0-9_]*$/.test(name);
   const invalid = document.getElementById('lv2-own-invalid');
   if (invalid) invalid.style.display = (name && !valid) ? 'block' : 'none';
-  const nd = document.getElementById('lv2-own-name-display');
-  if (nd) nd.textContent = valid ? name : '???';
   const np = document.getElementById('lv2-own-preview-notes');
   if (np) np.textContent = lv2OwnNotes.length ? lv2OwnNotes.map(n => '"' + n + '"').join(', ') : '...';
 }
