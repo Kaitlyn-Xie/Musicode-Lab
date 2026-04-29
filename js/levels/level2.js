@@ -33,7 +33,7 @@ function renderLevel2() {
         <button class="lv1-back" onclick="backToLevels()">← Levels</button>
         <div class="lv1-breadcrumb">
           <div class="lv1-lvbadge lv-2">Level 2</div>
-          <div class="lv1-title-text">Variables &amp; Music Phrases</div>
+          <div class="lv1-title-text">Variables</div>
         </div>
         <div class="lv1-phases">
           <div class="lv1-phase active" id="lv2-ph-0">1 — Phrases</div>

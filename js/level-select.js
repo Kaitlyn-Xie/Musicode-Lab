@@ -23,6 +23,7 @@ function renderLevelSelect() {
         <span class="ls-card-tag" style="background:${lv.tagBg};color:${lv.tagColor}">${lv.tag}</span>
       </div>
       <div class="ls-card-title">${lv.title}</div>
+      ${lv.song ? `<div class="ls-card-song">♪ ${lv.song}</div>` : ''}
       <div class="ls-card-desc">${lv.desc}</div>
       <div class="ls-phases-row">
         ${phaseDots}

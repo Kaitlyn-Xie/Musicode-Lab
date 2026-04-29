@@ -34,7 +34,7 @@ function renderLevel3() {
         <button class="lv1-back" onclick="backToLevels()">← Levels</button>
         <div class="lv1-breadcrumb">
           <div class="lv1-lvbadge lv-3">Level 3</div>
-          <div class="lv1-title-text">Loops &amp; Frère Jacques</div>
+          <div class="lv1-title-text">Loops</div>
         </div>
         <div class="lv1-phases">
           <div class="lv1-phase active" id="lv3-ph-0">1 — Phrases</div>
@@ -123,17 +123,22 @@ async function lv3PlayPhrase(k) {
 function lv3RenderPhase2(body) {
   lv3P2Blocks = [];
 
-  // Palette: each item is a "repeat 2×  play(phraseN)" loop block
+  // Palette: each item mirrors Free Create's repeat block structure (header/body/footer)
   const palBlocks = ['p1','p2','p3','p4'].map(k => {
     const col = LV3_PHRASE_COLORS[k];
     const bg  = LV3_PHRASE_BGALPHA[k];
     const lbl = LV3_PHRASE_LABELS[k];
     return `
-      <div class="lv3-pal-loop" style="background:var(--surface);border:1.5px solid ${col};border-left:4px solid ${col}" onclick="lv3P2AddBlock('${k}')">
-        <div style="font-size:10.5px;font-weight:800;color:${col};font-family:'JetBrains Mono',monospace;margin-bottom:4px">${icon('repeat',10)} repeat ${LV3_REPEAT}×</div>
-        <div class="lv2-pal-block" style="background:${col};margin:0;padding:5px 10px">
-          ${icon('music',11)} play( <span class="lv2-pal-badge">${lbl}</span> )
+      <div class="lv3-pal-loop" onclick="lv3P2AddBlock('${k}')">
+        <div class="lv3-pal-loop-hdr" style="background:${col}">
+          ${icon('repeat',11)} repeat ${LV3_REPEAT}×
         </div>
+        <div class="lv3-pal-loop-body" style="border-color:${col};background:${bg}">
+          <div class="lv2-pal-block" style="background:${col};margin:0;padding:6px 10px">
+            ${icon('music',11)} play( <span class="lv2-pal-badge">${lbl}</span> )
+          </div>
+        </div>
+        <div class="lv3-pal-loop-end" style="background:${col}">end</div>
       </div>`;
   }).join('');
 
@@ -203,22 +208,24 @@ function lv3P2RenderCanvas() {
   if (ph) ph.style.display = lv3P2Blocks.length ? 'none' : 'block';
   lv3P2Blocks.forEach((k, i) => {
     const col = LV3_PHRASE_COLORS[k];
+    const bg  = LV3_PHRASE_BGALPHA[k];
     const lbl = LV3_PHRASE_LABELS[k];
     const wrap = document.createElement('div');
-    wrap.className = 'lv3-canvas-loop';
-    wrap.style.cssText = `background:var(--surface);border:1.5px solid ${col};border-left:4px solid ${col};border-radius:10px;padding:8px 10px;display:flex;flex-direction:column;gap:5px;position:relative`;
+    // Reuse the Free Create repeat-block CSS, override colors via inline style
+    wrap.className = 'lv3-canvas-loop lv2-seq-repeat';
 
-    const hdr = document.createElement('div');
-    hdr.style.cssText = `font-size:10.5px;font-weight:800;color:${col};font-family:'JetBrains Mono',monospace;display:flex;align-items:center;gap:6px`;
-    hdr.innerHTML = `${icon('repeat',10)} repeat ${LV3_REPEAT}×
-      <button class="lv1-rm-btn" style="margin-left:auto" onclick="lv3P2RemoveBlock(${i})">${icon('close',11)}</button>`;
-    wrap.appendChild(hdr);
-
-    const inner = document.createElement('div');
-    inner.className = 'lv1-seq-block';
-    inner.style.cssText = `background:${col};margin:0`;
-    inner.innerHTML = `${icon('music',12)} play( <span style="background:rgba(255,255,255,0.28);padding:1px 7px;border-radius:4px;font-weight:700;font-size:12px">${lbl}</span> )`;
-    wrap.appendChild(inner);
+    wrap.innerHTML = `
+      <div class="lv2-seq-repeat-header" style="background:${col}">
+        ${icon('repeat',12)} repeat ${LV3_REPEAT}× &nbsp;·&nbsp; ${lbl}
+        <button class="lv1-rm-btn" style="margin-left:auto" onclick="lv3P2RemoveBlock(${i})">${icon('close',11)}</button>
+      </div>
+      <div class="lv2-seq-repeat-body" style="border-left-color:${col};border-right-color:${col};background:${bg}">
+        <div class="lv1-seq-block" style="background:${col};margin:0">
+          ${icon('music',12)} play( <span style="background:rgba(255,255,255,0.28);padding:1px 7px;border-radius:4px;font-weight:700;font-size:12px">${lbl}</span> )
+        </div>
+      </div>
+      <div class="lv2-seq-repeat-footer" style="background:${col}">end</div>
+    `;
     cv.appendChild(wrap);
   });
 }
@@ -451,16 +458,21 @@ async function lv3Discover(main) {
       `<span class="lv1-song-note-pill" style="background:${bg};border:1.5px solid ${col}50" id="lv3-disc-${k}-${rep}-${j}">${n}</span>`
     ).join('');
     return `
-      <div style="background:var(--surface);border:1.5px solid ${col};border-left:4px solid ${col};border-radius:10px;padding:8px 12px;display:flex;flex-direction:column;gap:5px">
-        <div style="font-size:10.5px;font-weight:800;color:${col};font-family:'JetBrains Mono',monospace">${icon('repeat',10)} repeat 2× · ${label}</div>
-        <div style="display:flex;flex-direction:column;gap:3px">
-          <div style="display:flex;gap:4px;align-items:center;flex-wrap:wrap">
-            <span style="font-size:10px;color:var(--text-muted);min-width:18px">1×</span>${pillsRow(0)}
-          </div>
-          <div style="display:flex;gap:4px;align-items:center;flex-wrap:wrap">
-            <span style="font-size:10px;color:var(--text-muted);min-width:18px">2×</span>${pillsRow(1)}
+      <div class="lv2-seq-repeat">
+        <div class="lv2-seq-repeat-header" style="background:${col}">
+          ${icon('repeat',11)} repeat 2× &nbsp;·&nbsp; ${label}
+        </div>
+        <div class="lv2-seq-repeat-body" style="border-left-color:${col};border-right-color:${col};background:${bg}">
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <div style="display:flex;gap:4px;align-items:center;flex-wrap:wrap">
+              <span style="font-size:10px;color:var(--text-muted);min-width:18px;font-family:'JetBrains Mono',monospace">1×</span>${pillsRow(0)}
+            </div>
+            <div style="display:flex;gap:4px;align-items:center;flex-wrap:wrap">
+              <span style="font-size:10px;color:var(--text-muted);min-width:18px;font-family:'JetBrains Mono',monospace">2×</span>${pillsRow(1)}
+            </div>
           </div>
         </div>
+        <div class="lv2-seq-repeat-footer" style="background:${col}">end</div>
       </div>`;
   }).join('');
 

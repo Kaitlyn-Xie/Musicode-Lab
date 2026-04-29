@@ -2555,17 +2555,51 @@ body {
 }
 .lv2-pal-block:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.22); transform: translateY(-1px); }
 
-/* Level 3 loop palette blocks */
+/* Level 3 loop palette blocks — mirrors Free Create repeat block structure */
 .lv3-pal-loop {
   border-radius: 10px;
-  padding: 8px 10px;
+  overflow: hidden;
   cursor: pointer;
   user-select: none;
   margin-bottom: 8px;
-  transition: box-shadow 0.15s, transform 0.1s;
+  transition: opacity 0.12s, transform 0.1s;
 }
-.lv3-pal-loop:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.18); transform: translateY(-1px); }
+.lv3-pal-loop:hover { opacity: 0.85; transform: translateY(-1px); }
+.lv3-pal-loop-hdr {
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 7px 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'JetBrains Mono', monospace;
+}
+.lv3-pal-loop-body {
+  border-left: 4px solid;
+  border-right: 4px solid;
+  padding: 8px 12px;
+}
+.lv3-pal-loop-end {
+  color: rgba(255,255,255,0.8);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 12px;
+  font-family: 'JetBrains Mono', monospace;
+}
+/* Canvas loop blocks reuse lv2-seq-repeat but override colors via inline style */
 .lv3-canvas-loop { margin-bottom: 6px; }
+
+/* Level select card song subtitle */
+.ls-card-song {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: -2px;
+}
 .lv2-pal-badge {
   background: rgba(255,255,255,0.28);
   border-radius: 5px;

@@ -36,8 +36,8 @@ const LEVELS = [
   {
     id: 1,
     icon: 'algorithm',
-    title: 'Algorithms & Sequencing',
-    desc: 'Sort musical notes into the right order, then code it with blocks and Python.',
+    title: 'Sequencing',
+    desc: 'Sort musical notes into the right order, then code it with blocks.',
     tag: 'CT: Sequencing',
     tagColor: '#1860A0', tagBg: '#E3F0FF',
     color: '#2E80D0',
@@ -46,8 +46,9 @@ const LEVELS = [
   {
     id: 2,
     icon: 'variable',
-    title: 'Variables & Music Phrases',
-    desc: 'Store four Birthday phrases as variables and arrange them into a complete song.',
+    title: 'Variables',
+    song: 'Happy Birthday',
+    desc: 'Store each phrase as a variable and arrange them into a complete song.',
     tag: 'Coding: Variables',
     tagColor: '#186858', tagBg: '#E3FBF5',
     color: '#20A880',
@@ -56,8 +57,9 @@ const LEVELS = [
   {
     id: 3,
     icon: 'loop',
-    title: 'Loops & Frère Jacques',
-    desc: 'Each phrase repeats twice — that\'s a loop! Use repeat blocks to build Frère Jacques.',
+    title: 'Loops',
+    song: 'Frère Jacques',
+    desc: 'Each phrase repeats twice — that\'s a loop! Use repeat blocks to build the song.',
     tag: 'Coding: Loops',
     tagColor: '#885800', tagBg: '#FFF8E1',
     color: '#D4A020',
@@ -66,7 +68,7 @@ const LEVELS = [
   {
     id: 4,
     icon: 'binary',
-    title: 'Binary Music',
+    title: 'Binary',
     desc: 'Clap = 1, Rest = 0. Decode a binary rhythm and encode your own!',
     tag: 'CT: Binary',
     tagColor: '#186840', tagBg: '#E3FFE8',
@@ -76,7 +78,7 @@ const LEVELS = [
   {
     id: 5,
     icon: 'debug',
-    title: 'Debug the Music',
+    title: 'Debugging',
     desc: 'Something sounds wrong. Read the code, find the bug, and fix it.',
     tag: 'CT: Debugging',
     tagColor: '#882000', tagBg: '#FFE8E3',
@@ -96,7 +98,7 @@ const LEVELS = [
   {
     id: 7,
     icon: 'compose',
-    title: 'Create Your Song',
+    title: 'Composition',
     desc: 'Use everything you\'ve learned — variables, loops, and more — to compose your own piece.',
     tag: 'Create',
     tagColor: '#681888', tagBg: '#F5E8FF',
