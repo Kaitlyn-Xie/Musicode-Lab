@@ -54,7 +54,7 @@
       <div class="col-title"><span class="col-icon" data-icon="blocks" data-size="14"></span> My Program</div>
       <button class="clear-btn" onclick="clearCanvas()"><span data-icon="trash" data-size="13"></span> Clear</button>
     </div>
-    <div id="canvas-scroll" class="drop-zone" ondragover="onCanvasDragOver(event)" ondrop="onCanvasDrop(event)">
+    <div id="canvas-scroll" class="drop-zone" ondragover="onCanvasDragOver(event)" ondrop="onCanvasDrop(event)" ondragleave="onCanvasDragLeave(event)">
       <div class="canvas-empty" id="canvas-empty">
         <div class="empty-icon"><span data-icon="pointer" data-size="32"></span></div>
         <p>Click or drag blocks here!</p>

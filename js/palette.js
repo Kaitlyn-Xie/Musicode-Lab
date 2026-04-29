@@ -99,10 +99,18 @@ function renderPalette() {
       scroll.appendChild(wrap);
     });
 
+    // Divider + create new note variable
+    const hr1 = document.createElement('hr');hr1.className='palette-divider';scroll.appendChild(hr1);
+    const noteTitle = document.createElement('div');noteTitle.className='palette-section-title';noteTitle.textContent='Create Note Variable';
+    scroll.appendChild(noteTitle);
+
+    const noteChip = makeChip(icon('music',12)+' New Note Variable','#2E80D0',()=>createNoteVar());
+    noteChip.draggable=false;scroll.appendChild(noteChip);
+
     // Divider + add audio
-    const hr = document.createElement('hr');hr.className='palette-divider';scroll.appendChild(hr);
-    const title = document.createElement('div');title.className='palette-section-title';title.textContent='Add Audio Variable';
-    scroll.appendChild(title);
+    const hr2 = document.createElement('hr');hr2.className='palette-divider';scroll.appendChild(hr2);
+    const audioTitle = document.createElement('div');audioTitle.className='palette-section-title';audioTitle.textContent='Add Audio Variable';
+    scroll.appendChild(audioTitle);
 
     const uploadChip = makeChip(icon('upload',12)+' Upload Audio File','#448844',()=>document.getElementById('upload-input').click());
     uploadChip.draggable=false;scroll.appendChild(uploadChip);

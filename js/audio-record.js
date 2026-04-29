@@ -21,6 +21,20 @@ function addCustomVar(name, audioBuffer) {
   showToast(`Added "${dedupedName}"!`);
 }
 
+function createNoteVar() {
+  const id='cv'+(++customVarCounter);
+  const name=dedupeVarName('melody'+customVarCounter);
+  const color=CUSTOM_COLORS[customVarCounter%CUSTOM_COLORS.length];
+  customVars.push({id,name,color,dark:darken(color),notes:['C4','E4','G4'],audioBuffer:null,duration:0});
+  renderPalette();
+  updateCodePreview();
+  // Auto-open the edit drawer for the new variable so user can type notes right away
+  const scroll=document.getElementById('palette-scroll');
+  const wraps=scroll.querySelectorAll('.var-edit-drawer');
+  if(wraps.length) wraps[wraps.length-1].classList.add('open');
+  showToast(`New note variable "${name}" created!`);
+}
+
 function dedupeVarName(name) {
   let n=name,i=1;
   while(allVars().find(v=>v.name===n)) n=name+(i++);

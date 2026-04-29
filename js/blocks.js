@@ -283,20 +283,119 @@ function syncAll() {
 }
 
 // ════════════════════════════════════════════════════════════
-// DRAG & DROP
+// DRAG & DROP — position-aware insertion
 // ════════════════════════════════════════════════════════════
+let dropLineIdx = -1;
+
 function onCanvasDragOver(e) {
   e.preventDefault();
-  document.getElementById('canvas-scroll').classList.add('drag-over');
+  const scroll = document.getElementById('canvas-scroll');
+  scroll.classList.add('drag-over');
+  dropLineIdx = getDropIndexFromY(scroll, e.clientY);
+  showDropLine(scroll, dropLineIdx);
+}
+
+function onCanvasDragLeave(e) {
+  const scroll = document.getElementById('canvas-scroll');
+  if (!scroll.contains(e.relatedTarget)) {
+    scroll.classList.remove('drag-over');
+    removeDropLine();
+  }
 }
 
 function onCanvasDrop(e) {
   e.preventDefault();
-  document.getElementById('canvas-scroll').classList.remove('drag-over');
+  const scroll = document.getElementById('canvas-scroll');
+  scroll.classList.remove('drag-over');
+  removeDropLine();
   if (!dragPayload) return;
-  if (dragPayload.makeBlock) { addBlockToCanvas(dragPayload.makeBlock()); }
-  else if (dragPayload.type === 'play') { addBlockToCanvas(makeBlock('play',{varId:dragPayload.varId})); }
-  else if (dragPayload.moveId) { /* reorder not implemented for simplicity */ }
+  handleCanvasInsert(dropLineIdx >= 0 ? dropLineIdx : canvas.length);
+}
+
+/* Calculate which index (0..canvas.length) the cursor is closest to */
+function getDropIndexFromY(container, clientY) {
+  const blockEls = Array.from(container.querySelectorAll(
+    ':scope > .block, :scope > .loop-block, :scope > .if-block'
+  ));
+  for (let i = 0; i < blockEls.length; i++) {
+    const rect = blockEls[i].getBoundingClientRect();
+    if (clientY < rect.top + rect.height / 2) return i;
+  }
+  return canvas.length;
+}
+
+/* Show a thin blue insertion line at the target gap */
+function showDropLine(container, idx) {
+  let line = document.getElementById('canvas-drop-line');
+  if (!line) {
+    line = document.createElement('div');
+    line.id = 'canvas-drop-line';
+    line.className = 'canvas-drop-line';
+    document.body.appendChild(line);
+  }
+  const blockEls = Array.from(container.querySelectorAll(
+    ':scope > .block, :scope > .loop-block, :scope > .if-block'
+  ));
+  const cRect = container.getBoundingClientRect();
+  let lineY;
+  if (blockEls.length === 0) {
+    lineY = cRect.top + 20;
+  } else if (idx === 0) {
+    lineY = blockEls[0].getBoundingClientRect().top - 4;
+  } else if (idx >= blockEls.length) {
+    lineY = blockEls[blockEls.length - 1].getBoundingClientRect().bottom + 4;
+  } else {
+    const above = blockEls[idx - 1].getBoundingClientRect().bottom;
+    const below = blockEls[idx].getBoundingClientRect().top;
+    lineY = (above + below) / 2;
+  }
+  line.style.cssText = [
+    `position:fixed`,
+    `left:${cRect.left + 8}px`,
+    `top:${lineY - 2}px`,
+    `width:${cRect.width - 16}px`,
+    `height:4px`,
+    `border-radius:2px`,
+    `background:#2E80D0`,
+    `pointer-events:none`,
+    `z-index:9999`,
+    `box-shadow:0 0 0 2px rgba(46,128,208,0.25)`,
+  ].join(';');
+}
+
+function removeDropLine() {
+  const line = document.getElementById('canvas-drop-line');
+  if (line) line.remove();
+  dropLineIdx = -1;
+}
+
+/* Insert a block (new or moved) at the given canvas index */
+function handleCanvasInsert(idx) {
+  if (!dragPayload) return;
+  let nb;
+  if (dragPayload.makeBlock) {
+    nb = dragPayload.makeBlock();
+  } else if (dragPayload.type === 'play') {
+    nb = makeBlock('play', { varId: dragPayload.varId });
+  } else if (dragPayload.moveId) {
+    // Move existing top-level block to new position
+    const origIdx = canvas.findIndex(b => b.id === dragPayload.moveId);
+    const b = extractBlock(dragPayload.moveId, canvas);
+    if (b) {
+      // If we removed from before the target, shift index down by 1
+      let pos = (origIdx >= 0 && origIdx < idx) ? idx - 1 : idx;
+      pos = Math.max(0, Math.min(pos, canvas.length));
+      canvas.splice(pos, 0, b);
+      dragPayload = null;
+      syncAll();
+      return;
+    }
+  }
+  if (nb) {
+    const pos = Math.max(0, Math.min(idx, canvas.length));
+    canvas.splice(pos, 0, nb);
+    syncAll();
+  }
   dragPayload = null;
 }
 
