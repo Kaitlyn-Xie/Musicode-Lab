@@ -121,56 +121,40 @@ async function lv3PlayPhrase(k) {
 // PHASE 2 — Build Frère Jacques with Loop Blocks
 // lv3P2Blocks: array of { phrase: 'p1'|null }
 //   phrase=null → empty loop waiting for a variable
+// Visually mirrors Free Create's renderRepeatBlock exactly.
 // ══════════════════════════════════════════════════════
 function lv3RenderPhase2(body) {
   lv3P2Blocks = [];
 
-  // Palette: ONE generic loop block (gold, like Free Create) + 4 variable chips
-  const loopPalBlock = `
-    <div class="lv3-pal-loop" onclick="lv3P2AddLoop()" title="Add a loop block">
-      <div class="lv3-pal-loop-hdr" style="background:#C49020">
-        ${icon('repeat',11)} repeat ${LV3_REPEAT}× …
-      </div>
-      <div class="lv3-pal-loop-body" style="border-color:#C49020;background:rgba(212,160,32,0.12)">
-        <div style="font-size:11px;color:var(--text-muted);font-style:italic;padding:2px 0">
-          ← tap a variable to fill
-        </div>
-      </div>
-      <div class="lv3-pal-loop-end" style="background:#C49020">end</div>
-    </div>`;
-
-  const varChips = ['p1','p2','p3','p4'].map(k => {
-    const col = LV3_PHRASE_COLORS[k];
-    const lbl = LV3_PHRASE_LABELS[k];
-    return `
-      <div class="lv3-pal-var-chip" style="background:${col}" onclick="lv3P2AssignPhrase('${k}')"
-           title="Assign ${lbl} to the next empty loop">
-        <div style="display:flex;align-items:center;gap:5px">
-          <span style="width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.5);flex-shrink:0"></span>
-          <span style="font-family:'JetBrains Mono',monospace;font-weight:800;font-size:12px;color:#fff">${lbl}</span>
-        </div>
-        <button style="background:none;border:none;color:rgba(255,255,255,0.7);cursor:pointer;padding:0 2px;font-size:11px"
-          onclick="event.stopPropagation();lv3PlayPhrase('${k}')" title="Preview">${icon('play',10)}</button>
-      </div>`;
-  }).join('');
-
+  // Palette: ONE generic loop block chip (mirrors loop-block header style)
+  // then 4 variable chips below
   body.innerHTML = `
     <div class="lv1-scroll">
       <div class="lv1-activity-heading">Build Frère Jacques with Loops</div>
       <p class="lv1-activity-sub">
         <strong>Step 1</strong> — tap the loop block to add it to your program.
         <strong>Step 2</strong> — tap a variable chip to place it inside the loop.
-        Do this 4 times in order: phrase1 → phrase2 → phrase3 → phrase4.
+        Build: phrase1 → phrase2 → phrase3 → phrase4, each looping <strong>2×</strong>.
       </p>
       <div class="lv1-blocks-area">
-        <div class="lv1-mini-palette">
+        <div class="lv1-mini-palette" id="lv3-p2-palette">
           <div class="lv1-palette-label">Loop Block</div>
-          ${loopPalBlock}
+          <div class="lv3-pal-loop-chip" onclick="lv3P2AddLoop()">
+            <div class="loop-header" style="border-radius:8px 8px 0 0;cursor:pointer">
+              <span>${icon('repeat',12)} repeat </span>
+              <span class="count-val" style="margin:0 4px">2</span>
+              <span>times:</span>
+            </div>
+            <div style="background:rgba(212,160,32,0.18);border-left:4px solid #C49020;border-right:4px solid #C49020;padding:7px 12px;font-size:11px;color:var(--text-muted);font-style:italic">
+              ← tap variable to fill
+            </div>
+            <div class="loop-footer" style="border-radius:0 0 8px 8px;cursor:pointer">end</div>
+          </div>
           <div class="lv1-palette-label" style="margin-top:10px">Variables</div>
-          <div style="display:flex;flex-direction:column;gap:6px">${varChips}</div>
+          <div id="lv3-p2-var-chips"></div>
         </div>
         <div style="display:flex;flex-direction:column;gap:10px;flex:1">
-          <div class="lv1-dropzone" id="lv3-p2-canvas" style="min-height:160px">
+          <div class="lv1-dropzone" id="lv3-p2-canvas" style="min-height:180px;padding:10px;gap:8px;display:flex;flex-direction:column">
             <div class="lv1-dz-placeholder" id="lv3-p2-ph">Tap the loop block to start building…</div>
           </div>
           <div class="lv1-actions">
@@ -184,7 +168,32 @@ function lv3RenderPhase2(body) {
       </div>
     </div>
   `;
+  lv3P2RenderVarChips();
   lv3P2RenderCanvas();
+}
+
+function lv3P2RenderVarChips() {
+  const container = document.getElementById('lv3-p2-var-chips');
+  if (!container) return;
+  container.innerHTML = '';
+  ['p1','p2','p3','p4'].forEach(k => {
+    const col = LV3_PHRASE_COLORS[k];
+    const lbl = LV3_PHRASE_LABELS[k];
+    const chip = document.createElement('div');
+    chip.className = 'lv3-pal-var-chip';
+    chip.style.background = col;
+    chip.onclick = () => lv3P2AssignPhrase(k);
+    chip.title = `Assign ${lbl} to the next empty loop`;
+    chip.innerHTML = `
+      <div style="display:flex;align-items:center;gap:6px">
+        <span style="width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.5);flex-shrink:0"></span>
+        <span style="font-family:'JetBrains Mono',monospace;font-weight:800;font-size:12px;color:#fff">${lbl}</span>
+      </div>
+      <button style="background:none;border:none;color:rgba(255,255,255,0.7);cursor:pointer;padding:0 2px"
+        onclick="event.stopPropagation();lv3PlayPhrase('${k}')" title="Preview">${icon('play',10)}</button>
+    `;
+    container.appendChild(chip);
+  });
 }
 
 // Add an empty loop block to canvas
@@ -194,13 +203,10 @@ function lv3P2AddLoop() {
   lv3P2RenderCanvas();
 }
 
-// Assign a phrase to the first empty loop; if no empty loop, notify
+// Assign a phrase to the first empty loop
 function lv3P2AssignPhrase(k) {
   const emptyIdx = lv3P2Blocks.findIndex(b => b.phrase === null);
-  if (emptyIdx < 0) {
-    showToast('Add a loop block first!');
-    return;
-  }
+  if (emptyIdx < 0) { showToast('Add a loop block first!'); return; }
   lv3P2Blocks[emptyIdx].phrase = k;
   lv3P2RenderCanvas();
 }
@@ -214,45 +220,70 @@ function lv3P2RenderCanvas() {
   const cv = document.getElementById('lv3-p2-canvas');
   const ph = document.getElementById('lv3-p2-ph');
   if (!cv) return;
+  // Remove existing loop blocks
   cv.querySelectorAll('.lv3-canvas-loop').forEach(e => e.remove());
-  if (ph) ph.style.display = lv3P2Blocks.length ? 'none' : 'block';
+  if (ph) ph.style.display = lv3P2Blocks.length ? 'none' : '';
 
   lv3P2Blocks.forEach((b, i) => {
+    // Build a block that looks exactly like renderRepeatBlock in blocks.js
     const wrap = document.createElement('div');
-    wrap.className = 'lv3-canvas-loop lv2-seq-repeat';
+    wrap.className = 'loop-block lv3-canvas-loop';
+
+    // ── Header ──
+    const header = document.createElement('div');
+    header.className = 'loop-header';
+    header.innerHTML = icon('repeat', 12) + ' repeat ';
+    // count display (fixed at 2, no editing needed in the challenge)
+    const countWrap = document.createElement('div');
+    countWrap.className = 'count-btns';
+    countWrap.innerHTML = `<span class="count-val">${LV3_REPEAT}</span>`;
+    header.appendChild(countWrap);
+    const timesLbl = document.createElement('span');
+    timesLbl.textContent = ' times:';
+    header.appendChild(timesLbl);
+    // delete button
+    const delB = document.createElement('button');
+    delB.className = 'block-del';
+    delB.innerHTML = icon('close', 11);
+    delB.style.opacity = '0';
+    delB.onclick = e => { e.stopPropagation(); lv3P2RemoveBlock(i); };
+    header.addEventListener('mouseenter', () => delB.style.opacity = '1');
+    header.addEventListener('mouseleave', () => delB.style.opacity = '0');
+    header.appendChild(delB);
+    wrap.appendChild(header);
+
+    // ── Body ──
+    const loopBody = document.createElement('div');
+    loopBody.className = 'loop-body';
 
     if (b.phrase === null) {
-      // Empty loop — gold, waiting for a variable
-      wrap.innerHTML = `
-        <div class="lv2-seq-repeat-header" style="background:#C49020">
-          ${icon('repeat',12)} repeat ${LV3_REPEAT}× &nbsp;·&nbsp; <em style="opacity:0.7">empty</em>
-          <button class="lv1-rm-btn" style="margin-left:auto" onclick="lv3P2RemoveBlock(${i})">${icon('close',11)}</button>
-        </div>
-        <div class="lv2-seq-repeat-body" style="border-left-color:#C49020;border-right-color:#C49020;background:rgba(212,160,32,0.10)">
-          <div style="font-size:11.5px;color:var(--text-muted);font-style:italic;padding:4px 6px">
-            ← tap a variable to fill this loop
-          </div>
-        </div>
-        <div class="lv2-seq-repeat-footer" style="background:#C49020">end</div>
-      `;
+      // empty — show hint, clicking assigns first pending variable
+      const hint = document.createElement('div');
+      hint.className = 'drop-hint';
+      hint.style.cursor = 'pointer';
+      hint.textContent = '← tap a variable to fill';
+      loopBody.appendChild(hint);
     } else {
-      // Filled loop — phrase color
+      // filled — show a play block in the phrase color
       const col = LV3_PHRASE_COLORS[b.phrase];
-      const bg  = LV3_PHRASE_BGALPHA[b.phrase];
       const lbl = LV3_PHRASE_LABELS[b.phrase];
-      wrap.innerHTML = `
-        <div class="lv2-seq-repeat-header" style="background:${col}">
-          ${icon('repeat',12)} repeat ${LV3_REPEAT}× &nbsp;·&nbsp; ${lbl}
-          <button class="lv1-rm-btn" style="margin-left:auto" onclick="lv3P2RemoveBlock(${i})">${icon('close',11)}</button>
-        </div>
-        <div class="lv2-seq-repeat-body" style="border-left-color:${col};border-right-color:${col};background:${bg}">
-          <div class="lv1-seq-block" style="background:${col};margin:0">
-            ${icon('music',12)} play( <span style="background:rgba(255,255,255,0.28);padding:1px 7px;border-radius:4px;font-weight:700;font-size:12px">${lbl}</span> )
-          </div>
-        </div>
-        <div class="lv2-seq-repeat-footer" style="background:${col}">end</div>
-      `;
+      const playEl = document.createElement('div');
+      playEl.className = 'block';
+      playEl.style.background = col;
+      playEl.innerHTML = `${icon('music', 12)} play( <span class="block-badge" style="background:rgba(0,0,0,0.25)">${lbl}</span> )`;
+      // clicking the play block unassigns the phrase
+      playEl.title = 'Click to remove';
+      playEl.onclick = e => { e.stopPropagation(); lv3P2Blocks[i].phrase = null; lv3P2RenderCanvas(); };
+      loopBody.appendChild(playEl);
     }
+    wrap.appendChild(loopBody);
+
+    // ── Footer ──
+    const footer = document.createElement('div');
+    footer.className = 'loop-footer';
+    footer.innerHTML = '<span style="opacity:0.6;font-size:11px">end</span>';
+    wrap.appendChild(footer);
+
     cv.appendChild(wrap);
   });
 }
