@@ -119,41 +119,38 @@ async function lv3PlayPhrase(k) {
 
 // ══════════════════════════════════════════════════════
 // PHASE 2 — Build Frère Jacques with Loop Blocks
+// lv3P2Blocks: array of { phrase: 'p1'|null }
+//   phrase=null → empty loop waiting for a variable
 // ══════════════════════════════════════════════════════
 function lv3RenderPhase2(body) {
   lv3P2Blocks = [];
 
-  // Palette: each item mirrors Free Create's repeat block structure (header/body/footer)
-  const palBlocks = ['p1','p2','p3','p4'].map(k => {
+  // Palette: ONE generic loop block (gold, like Free Create) + 4 variable chips
+  const loopPalBlock = `
+    <div class="lv3-pal-loop" onclick="lv3P2AddLoop()" title="Add a loop block">
+      <div class="lv3-pal-loop-hdr" style="background:#C49020">
+        ${icon('repeat',11)} repeat ${LV3_REPEAT}× …
+      </div>
+      <div class="lv3-pal-loop-body" style="border-color:#C49020;background:rgba(212,160,32,0.12)">
+        <div style="font-size:11px;color:var(--text-muted);font-style:italic;padding:2px 0">
+          ← tap a variable to fill
+        </div>
+      </div>
+      <div class="lv3-pal-loop-end" style="background:#C49020">end</div>
+    </div>`;
+
+  const varChips = ['p1','p2','p3','p4'].map(k => {
     const col = LV3_PHRASE_COLORS[k];
-    const bg  = LV3_PHRASE_BGALPHA[k];
     const lbl = LV3_PHRASE_LABELS[k];
     return `
-      <div class="lv3-pal-loop" onclick="lv3P2AddBlock('${k}')">
-        <div class="lv3-pal-loop-hdr" style="background:${col}">
-          ${icon('repeat',11)} repeat ${LV3_REPEAT}×
+      <div class="lv3-pal-var-chip" style="background:${col}" onclick="lv3P2AssignPhrase('${k}')"
+           title="Assign ${lbl} to the next empty loop">
+        <div style="display:flex;align-items:center;gap:5px">
+          <span style="width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.5);flex-shrink:0"></span>
+          <span style="font-family:'JetBrains Mono',monospace;font-weight:800;font-size:12px;color:#fff">${lbl}</span>
         </div>
-        <div class="lv3-pal-loop-body" style="border-color:${col};background:${bg}">
-          <div class="lv2-pal-block" style="background:${col};margin:0;padding:6px 10px">
-            ${icon('music',11)} play( <span class="lv2-pal-badge">${lbl}</span> )
-          </div>
-        </div>
-        <div class="lv3-pal-loop-end" style="background:${col}">end</div>
-      </div>`;
-  }).join('');
-
-  const varDefs = ['p1','p2','p3','p4'].map(k => {
-    const col   = LV3_PHRASE_COLORS[k];
-    const lbl   = LV3_PHRASE_LABELS[k];
-    const nm    = LV3_PHRASE_NAMES[k];
-    const notes = LV3_PHRASES[k].map(n => `"${n}"`).join(', ');
-    return `
-      <div class="lv2-defined-var" style="font-size:12px">
-        <span class="lv2-dv-label" style="color:${col};font-weight:800">${lbl} =</span>
-        <code class="lv2-dv-code">[${notes}]</code>
-        <span style="font-size:11px;color:var(--text-muted);font-style:italic">"${nm}"</span>
-        <button class="lv1-play-btn" style="background:${LV3_PHRASE_BGALPHA[k]};color:var(--text)"
-          onclick="lv3PlayPhrase('${k}')">${icon('volume',12)}</button>
+        <button style="background:none;border:none;color:rgba(255,255,255,0.7);cursor:pointer;padding:0 2px;font-size:11px"
+          onclick="event.stopPropagation();lv3PlayPhrase('${k}')" title="Preview">${icon('play',10)}</button>
       </div>`;
   }).join('');
 
@@ -161,19 +158,20 @@ function lv3RenderPhase2(body) {
     <div class="lv1-scroll">
       <div class="lv1-activity-heading">Build Frère Jacques with Loops</div>
       <p class="lv1-activity-sub">
-        Each loop block plays its phrase <strong>${LV3_REPEAT} times</strong>. Tap them in order —
-        <strong>phrase1 → phrase2 → phrase3 → phrase4</strong> — to build the full song with just <strong>4 blocks</strong>!
+        <strong>Step 1</strong> — tap the loop block to add it to your program.
+        <strong>Step 2</strong> — tap a variable chip to place it inside the loop.
+        Do this 4 times in order: phrase1 → phrase2 → phrase3 → phrase4.
       </p>
-      <div style="display:flex;flex-direction:column;gap:4px">${varDefs}</div>
       <div class="lv1-blocks-area">
         <div class="lv1-mini-palette">
-          <div class="lv1-palette-label">Loop Blocks</div>
-          ${palBlocks}
-          <div class="lv1-palette-hint" style="margin-top:4px">tap to add</div>
+          <div class="lv1-palette-label">Loop Block</div>
+          ${loopPalBlock}
+          <div class="lv1-palette-label" style="margin-top:10px">Variables</div>
+          <div style="display:flex;flex-direction:column;gap:6px">${varChips}</div>
         </div>
         <div style="display:flex;flex-direction:column;gap:10px;flex:1">
-          <div class="lv1-dropzone" id="lv3-p2-canvas" style="min-height:140px">
-            <div class="lv1-dz-placeholder" id="lv3-p2-ph">Tap loop blocks to build the song...</div>
+          <div class="lv1-dropzone" id="lv3-p2-canvas" style="min-height:160px">
+            <div class="lv1-dz-placeholder" id="lv3-p2-ph">Tap the loop block to start building…</div>
           </div>
           <div class="lv1-actions">
             <button class="lv1-btn secondary" onclick="lv3P2Clear()">Clear</button>
@@ -189,9 +187,21 @@ function lv3RenderPhase2(body) {
   lv3P2RenderCanvas();
 }
 
-function lv3P2AddBlock(k) {
-  if (lv3P2Blocks.length >= 4) return;
-  lv3P2Blocks.push(k);
+// Add an empty loop block to canvas
+function lv3P2AddLoop() {
+  if (lv3P2Blocks.length >= 4) { showToast('Max 4 loop blocks!'); return; }
+  lv3P2Blocks.push({ phrase: null });
+  lv3P2RenderCanvas();
+}
+
+// Assign a phrase to the first empty loop; if no empty loop, notify
+function lv3P2AssignPhrase(k) {
+  const emptyIdx = lv3P2Blocks.findIndex(b => b.phrase === null);
+  if (emptyIdx < 0) {
+    showToast('Add a loop block first!');
+    return;
+  }
+  lv3P2Blocks[emptyIdx].phrase = k;
   lv3P2RenderCanvas();
 }
 
@@ -206,26 +216,43 @@ function lv3P2RenderCanvas() {
   if (!cv) return;
   cv.querySelectorAll('.lv3-canvas-loop').forEach(e => e.remove());
   if (ph) ph.style.display = lv3P2Blocks.length ? 'none' : 'block';
-  lv3P2Blocks.forEach((k, i) => {
-    const col = LV3_PHRASE_COLORS[k];
-    const bg  = LV3_PHRASE_BGALPHA[k];
-    const lbl = LV3_PHRASE_LABELS[k];
+
+  lv3P2Blocks.forEach((b, i) => {
     const wrap = document.createElement('div');
-    // Reuse the Free Create repeat-block CSS, override colors via inline style
     wrap.className = 'lv3-canvas-loop lv2-seq-repeat';
 
-    wrap.innerHTML = `
-      <div class="lv2-seq-repeat-header" style="background:${col}">
-        ${icon('repeat',12)} repeat ${LV3_REPEAT}× &nbsp;·&nbsp; ${lbl}
-        <button class="lv1-rm-btn" style="margin-left:auto" onclick="lv3P2RemoveBlock(${i})">${icon('close',11)}</button>
-      </div>
-      <div class="lv2-seq-repeat-body" style="border-left-color:${col};border-right-color:${col};background:${bg}">
-        <div class="lv1-seq-block" style="background:${col};margin:0">
-          ${icon('music',12)} play( <span style="background:rgba(255,255,255,0.28);padding:1px 7px;border-radius:4px;font-weight:700;font-size:12px">${lbl}</span> )
+    if (b.phrase === null) {
+      // Empty loop — gold, waiting for a variable
+      wrap.innerHTML = `
+        <div class="lv2-seq-repeat-header" style="background:#C49020">
+          ${icon('repeat',12)} repeat ${LV3_REPEAT}× &nbsp;·&nbsp; <em style="opacity:0.7">empty</em>
+          <button class="lv1-rm-btn" style="margin-left:auto" onclick="lv3P2RemoveBlock(${i})">${icon('close',11)}</button>
         </div>
-      </div>
-      <div class="lv2-seq-repeat-footer" style="background:${col}">end</div>
-    `;
+        <div class="lv2-seq-repeat-body" style="border-left-color:#C49020;border-right-color:#C49020;background:rgba(212,160,32,0.10)">
+          <div style="font-size:11.5px;color:var(--text-muted);font-style:italic;padding:4px 6px">
+            ← tap a variable to fill this loop
+          </div>
+        </div>
+        <div class="lv2-seq-repeat-footer" style="background:#C49020">end</div>
+      `;
+    } else {
+      // Filled loop — phrase color
+      const col = LV3_PHRASE_COLORS[b.phrase];
+      const bg  = LV3_PHRASE_BGALPHA[b.phrase];
+      const lbl = LV3_PHRASE_LABELS[b.phrase];
+      wrap.innerHTML = `
+        <div class="lv2-seq-repeat-header" style="background:${col}">
+          ${icon('repeat',12)} repeat ${LV3_REPEAT}× &nbsp;·&nbsp; ${lbl}
+          <button class="lv1-rm-btn" style="margin-left:auto" onclick="lv3P2RemoveBlock(${i})">${icon('close',11)}</button>
+        </div>
+        <div class="lv2-seq-repeat-body" style="border-left-color:${col};border-right-color:${col};background:${bg}">
+          <div class="lv1-seq-block" style="background:${col};margin:0">
+            ${icon('music',12)} play( <span style="background:rgba(255,255,255,0.28);padding:1px 7px;border-radius:4px;font-weight:700;font-size:12px">${lbl}</span> )
+          </div>
+        </div>
+        <div class="lv2-seq-repeat-footer" style="background:${col}">end</div>
+      `;
+    }
     cv.appendChild(wrap);
   });
 }
@@ -242,9 +269,10 @@ function lv3P2Clear() {
 async function lv3P2Play() {
   if (!lv3P2Blocks.length) return;
   await initTone();
-  for (const k of lv3P2Blocks) {
+  for (const b of lv3P2Blocks) {
+    if (!b.phrase) continue;
     for (let r = 0; r < LV3_REPEAT; r++) {
-      for (const n of LV3_PHRASES[k]) { await playNote(n, 0.75); }
+      for (const n of LV3_PHRASES[b.phrase]) { await playNote(n, 0.75); }
     }
   }
 }
@@ -253,13 +281,17 @@ async function lv3P2CheckAnswer() {
   const fb = document.getElementById('lv3-p2-fb');
   if (!fb) return;
   fb.style.display = 'block';
-  const correct = lv3P2Blocks.length === 4 &&
-    lv3P2Blocks.every((b, i) => b === LV3_LOOP_TARGET[i]);
+  const hasEmpty = lv3P2Blocks.some(b => b.phrase === null);
+  const correct = lv3P2Blocks.length === 4 && !hasEmpty &&
+    lv3P2Blocks.every((b, i) => b.phrase === LV3_LOOP_TARGET[i]);
   if (!correct) {
     fb.className = 'lv1-feedback error';
-    fb.textContent = lv3P2Blocks.length !== 4
-      ? `You need 4 loop blocks — you have ${lv3P2Blocks.length}. One loop block per phrase, in order!`
-      : 'Not quite! The order should be phrase1 → phrase2 → phrase3 → phrase4.';
+    if (lv3P2Blocks.length !== 4)
+      fb.textContent = `You need 4 loop blocks — you have ${lv3P2Blocks.length}. Add one loop block per phrase!`;
+    else if (hasEmpty)
+      fb.textContent = 'Some loops are still empty! Tap a variable chip to fill each loop.';
+    else
+      fb.textContent = 'Not quite! The order should be phrase1 → phrase2 → phrase3 → phrase4.';
     return;
   }
   fb.className = 'lv1-feedback success';
