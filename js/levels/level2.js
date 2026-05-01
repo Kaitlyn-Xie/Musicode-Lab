@@ -177,9 +177,42 @@ function lv2P1OnInput(k) {
   // Update stored phrase
   lv2UserPhrases[k] = valid;
 
-  // Update pills
+  // ── Update hint pills: done → dim, next → glow, pending → normal ──
+  const hintNotes = { p1:'C4 C4 D4 C4 F4 E4', p2:'C4 C4 D4 C4 G4 F4', p3:'C4 C4 A4 F4 E4 D4', p4:'F4 F4 E4 C4 D4 C4' };
+  const hintSeq = hintNotes[k].split(' ');
   const col = LV2_PHRASE_COLORS[k];
   const bg  = LV2_PHRASE_BGALPHA[k];
+  const hintPills = document.querySelectorAll(`#lv2-p1-card-${k} .lv2-p1-hint-pill`);
+  hintPills.forEach((pill, i) => {
+    if (i < valid.length) {
+      // already typed — dim + strikethrough
+      pill.style.opacity = '0.3';
+      pill.style.textDecoration = 'line-through';
+      pill.style.transform = '';
+      pill.style.boxShadow = '';
+      pill.style.fontWeight = '700';
+    } else if (i === valid.length) {
+      // next to type — bright highlight with pulse outline
+      pill.style.opacity = '1';
+      pill.style.textDecoration = '';
+      pill.style.transform = 'translateY(-2px) scale(1.12)';
+      pill.style.boxShadow = `0 0 0 2.5px ${col}, 0 3px 10px ${col}55`;
+      pill.style.fontWeight = '900';
+      pill.style.background = col;
+      pill.style.color = '#fff';
+    } else {
+      // pending — normal
+      pill.style.opacity = '0.7';
+      pill.style.textDecoration = '';
+      pill.style.transform = '';
+      pill.style.boxShadow = '';
+      pill.style.fontWeight = '700';
+      pill.style.background = bg;
+      pill.style.color = '';
+    }
+  });
+
+  // Update pills (typed notes preview)
   const pillsEl = document.getElementById('lv2-p1-pills-' + k);
   if (pillsEl) {
     pillsEl.innerHTML = valid.map(n =>
@@ -193,8 +226,11 @@ function lv2P1OnInput(k) {
     if (valid.length === 0) {
       statusEl.textContent = 'empty';
       statusEl.style.color = 'var(--text-muted)';
+    } else if (valid.length >= hintSeq.length) {
+      statusEl.textContent = `✓ done!`;
+      statusEl.style.color = col;
     } else {
-      statusEl.textContent = `✓ ${valid.length} note${valid.length>1?'s':''}`;
+      statusEl.textContent = `${valid.length} / ${hintSeq.length} notes`;
       statusEl.style.color = col;
     }
   }
