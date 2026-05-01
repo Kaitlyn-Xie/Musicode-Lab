@@ -16,13 +16,14 @@ let lv4ReadOpened = [false, false, false];
 const LV4_INTRO_BITS = [1, 0, 1, 1]; // Phase 1 demo
 const LV4_SECRET     = [1, 0, 1, 1, 0, 1, 0, 0]; // Phase 2 target
 
-// "If You're Happy and You Know It" — opening phrase
+// "If You're Happy and You Know It" — opening phrase (key of F, 1=F4)
+// 简谱: 5 5 | 1 1 1 1 1 7 1 | 2  (10 notes)
 // "If you're hap-py and you know it clap your hands"
-const LV4_IYHA        = ['C4','C4','F4','F4','F4','E4','F4','G4']; // melody
+const LV4_IYHA        = ['C4','C4','F4','F4','F4','F4','F4','E4','F4','G4'];
 const LV4_IYHA_PALETTE = ['C4','D4','E4','F4','G4'];
 let lv4IYHASeq = [];
-// Clap pattern for the song (1=clap 🙌, 0=rest): two claps at end of each line
-const LV4_CLAP_PATTERN = [0,0,0,0,0,0,1,1];
+// Clap pattern: melody = 0, clap beats = 1 (two claps on "clap your hands")
+const LV4_CLAP_PATTERN = [0,0,0,0,0,0,0,0,1,1];
 // Own rhythm
 let lv4OwnPattern = new Array(8).fill(0);
 
@@ -478,7 +479,7 @@ function lv4IYHAListen(main) {
       <div class="lv1-concept">
         <div class="lv1-concept-label">👏 If You're Happy and You Know It!</div>
         <p>This song is <strong>literally about clapping and not clapping</strong> — which is exactly what binary is!
-          <strong>1 = CLAP 👏</strong>, <strong>0 = rest (no clap)</strong>. The chorus ends with two big claps — that's <code>…0 0 0 0 0 0 <strong>1 1</strong></code> in binary!</p>
+          <strong>1 = CLAP 👏</strong>, <strong>0 = rest (no clap)</strong>. The chorus ends with two big claps — that's <code>…0 0 0 0 0 0 0 0 <strong>1 1</strong></code> in binary!</p>
       </div>
 
       <div class="lv1-song-card">
@@ -497,7 +498,7 @@ function lv4IYHAListen(main) {
 
       <div class="lv1-concept" style="border-left-color:#C49020;background:rgba(212,160,32,0.07)">
         <div class="lv1-concept-label" style="color:#B87800">The clap pattern in binary</div>
-        <p>One line of the song = 8 beats. The melody plays for 6 beats, then <strong>CLAP CLAP</strong> on beats 7 & 8:</p>
+        <p>One line of the song = 10 beats. The melody plays for 8 beats, then <strong>CLAP CLAP</strong> on beats 9 & 10:</p>
         <div class="lv4-bit-row" style="margin-top:8px">${clapRow}</div>
       </div>
 
@@ -526,7 +527,7 @@ function lv4IYHABuild(main) {
     <div style="display:flex;flex-direction:column;gap:12px;padding-top:4px">
       <div class="lv1-activity-heading">Build the Melody</div>
       <p class="lv1-activity-sub">
-        Tap the note tiles to spell out <strong>"If you're happy and you know it"</strong> — 8 notes.
+        Tap the note tiles to spell out <strong>"If you're happy and you know it"</strong> — 10 notes.
         Use the hint if you get stuck!
       </p>
       <div class="lv1-tw-slots" id="lv4-iyha-slots"></div>
@@ -545,8 +546,8 @@ function lv4IYHABuild(main) {
       </div>
       <div id="lv4-iyha-fb" class="lv1-feedback" style="display:none"></div>
       <div id="lv4-iyha-hint" class="lv1-hint-box" style="display:none">
-        <strong>Hint:</strong> "If you're hap-py and you know it" — starts C C, then F F F, then down to E, up to F, then G.<br>
-        <span style="font-family:monospace;font-size:12px;color:var(--text)">C4 C4 F4 F4 F4 E4 F4 G4</span>
+        <strong>Hint:</strong> "If you're hap-py and you know it" — starts C C, then F F F F F, then down to E, up to F, then G.<br>
+        <span style="font-family:monospace;font-size:12px;color:var(--text)">C4 C4 F4 F4 F4 F4 F4 E4 F4 G4</span>
       </div>
     </div>
   `;
@@ -638,7 +639,7 @@ async function lv4IYHADiscover(main) {
       </div>
 
       <div class="lv1-song-card" style="background:linear-gradient(135deg,rgba(212,160,32,0.08),rgba(46,128,208,0.06))">
-        <div class="lv1-song-card-title">One line of the song = 8 bits</div>
+        <div class="lv1-song-card-title">One line of the song = 10 bits</div>
         <div class="lv4-bit-row" style="margin-top:8px" id="lv4-disc-row">${discRow}</div>
         <button class="lv1-btn primary" style="margin-top:14px" onclick="lv4IYHADiscoverPlay()">
           ${icon('play',13)} Play & highlight

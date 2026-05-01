@@ -522,7 +522,7 @@ function lv1P3Read(main) {
         <div class="lv1-read-block" id="lv1-read-${i}">
           <button class="lv1-read-line-btn" onclick="lv1ReadToggle(${i})">
             <span class="lv1-read-expand-icon">${icon(c.icon, 14)}</span>
-            <span class="lv1-read-code" style="font-family:inherit;font-size:13px;font-weight:700;color:var(--text)">${c.title}</span>
+            <span class="lv1-read-code">${c.title}</span>
             <span class="ct-concept-tag">${c.tag}</span>
           </button>
           <div class="lv1-read-explanation" id="lv1-re-${i}">${c.body}</div>
