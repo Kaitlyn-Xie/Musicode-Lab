@@ -291,23 +291,20 @@ async function lv2PlayNote(note) {
 // ══════════════════════════════════════════════════════
 // PHASE 2 — Build Happy Birthday
 // ══════════════════════════════════════════════════════
+let lv2P2DragKey = null;
+let lv2P2DragIdx = null; // index if dragging an existing canvas block
+let lv2P2DropIdx = -1;
+
 function lv2RenderPhase2(body) {
   lv2P2Blocks = [];
-
-  const palBlocks = ['p1','p2','p3','p4'].map(k => {
-    const col = LV2_PHRASE_COLORS[k];
-    const lbl = LV2_PHRASE_LABELS[k];
-    return `
-      <div class="lv2-pal-block" style="background:${col}" onclick="lv2P2AddBlock('${k}')">
-        ${icon('music',12)} play( <span class="lv2-pal-badge">${lbl}</span> )
-      </div>`;
-  }).join('');
+  lv2P2DragKey = null;
+  lv2P2DragIdx = null;
+  lv2P2DropIdx = -1;
 
   const varDefs = ['p1','p2','p3','p4'].map(k => {
     const col   = LV2_PHRASE_COLORS[k];
     const lbl   = LV2_PHRASE_LABELS[k];
     const nm    = LV2_PHRASE_NAMES[k];
-    // Use the user-typed phrases if available, otherwise fall back to the defaults
     const notes = (lv2UserPhrases[k].length ? lv2UserPhrases[k] : LV2_PHRASES[k]).map(n => `"${n}"`).join(', ');
     return `
       <div class="lv2-defined-var" style="font-size:12px">
@@ -323,19 +320,22 @@ function lv2RenderPhase2(body) {
     <div class="lv1-scroll">
       <div class="lv1-activity-heading">Build Happy Birthday</div>
       <p class="lv1-activity-sub">
-        All four variables are ready. Tap each block <strong>once</strong> to arrange the song:
+        All four variables are ready. <strong>Drag</strong> each block into the canvas in order:
         <strong>phrase1 → phrase2 → phrase3 → phrase4</strong>
       </p>
       <div style="display:flex;flex-direction:column;gap:4px">${varDefs}</div>
       <div class="lv1-blocks-area">
         <div class="lv1-mini-palette">
           <div class="lv1-palette-label">Blocks</div>
-          ${palBlocks}
-          <div class="lv1-palette-hint" style="margin-top:4px">tap to add</div>
+          <div id="lv2-p2-palette"></div>
+          <div class="lv1-palette-hint" style="margin-top:4px">drag to add</div>
         </div>
         <div style="display:flex;flex-direction:column;gap:10px;flex:1">
-          <div class="lv1-dropzone" id="lv2-p2-canvas" style="min-height:120px">
-            <div class="lv1-dz-placeholder" id="lv2-p2-ph">Tap blocks to build the song...</div>
+          <div class="lv1-dropzone" id="lv2-p2-canvas" style="min-height:160px;padding:8px;display:flex;flex-direction:column;gap:6px"
+            ondragover="lv2P2DragOver(event)"
+            ondrop="lv2P2Drop(event)"
+            ondragleave="lv2P2DragLeave(event)">
+            <div class="lv1-dz-placeholder" id="lv2-p2-ph">Drag blocks here to build the song…</div>
           </div>
           <div class="lv1-actions">
             <button class="lv1-btn secondary" onclick="lv2P2Clear()">Clear</button>
@@ -348,40 +348,155 @@ function lv2RenderPhase2(body) {
       </div>
     </div>
   `;
-  lv2P2RenderCanvas();
-}
-
-function lv2P2AddBlock(k) {
-  if (lv2P2Blocks.length >= 4) return;
-  lv2P2Blocks.push(k);
-  lv2P2RenderCanvas();
+  lv2P2RenderAll();
 }
 
 function lv2P2RemoveBlock(i) {
   lv2P2Blocks.splice(i, 1);
+  lv2P2RenderAll();
+}
+
+function lv2P2RenderAll() {
+  lv2P2RenderPalette();
   lv2P2RenderCanvas();
+}
+
+function lv2P2RenderPalette() {
+  const pal = document.getElementById('lv2-p2-palette');
+  if (!pal) return;
+  pal.innerHTML = '';
+  ['p1','p2','p3','p4'].forEach(k => {
+    const col = LV2_PHRASE_COLORS[k];
+    const lbl = LV2_PHRASE_LABELS[k];
+    const el = document.createElement('div');
+    el.className = 'lv2-pal-block';
+    el.style.background = col;
+    el.draggable = true;
+    el.innerHTML = `${icon('music',12)} play( <span class="lv2-pal-badge">${lbl}</span> )`;
+    el.ondragstart = e => {
+      lv2P2DragKey = k;
+      lv2P2DragIdx = null;
+      e.dataTransfer.effectAllowed = 'copy';
+      el.style.opacity = '0.5';
+    };
+    el.ondragend = () => { el.style.opacity = '1'; };
+    pal.appendChild(el);
+  });
 }
 
 function lv2P2RenderCanvas() {
   const cv = document.getElementById('lv2-p2-canvas');
   const ph = document.getElementById('lv2-p2-ph');
   if (!cv) return;
-  cv.querySelectorAll('.lv1-seq-block').forEach(e => e.remove());
-  if (ph) ph.style.display = lv2P2Blocks.length ? 'none' : 'block';
+  cv.querySelectorAll('.lv2-canvas-block').forEach(e => e.remove());
+  lv2P2RemoveDropLine();
+  if (ph) ph.style.display = lv2P2Blocks.length ? 'none' : '';
+
   lv2P2Blocks.forEach((k, i) => {
-    const el = document.createElement('div');
-    el.className = 'lv1-seq-block';
-    el.style.background = LV2_PHRASE_COLORS[k];
+    const col = LV2_PHRASE_COLORS[k];
     const lbl = LV2_PHRASE_LABELS[k];
-    el.innerHTML = `${icon('music',12)} play( <span style="background:rgba(255,255,255,0.28);padding:1px 7px;border-radius:4px;font-weight:700;font-size:12px">${lbl}</span> )
-      <button class="lv1-rm-btn" onclick="lv2P2RemoveBlock(${i})">${icon('close',11)}</button>`;
+    const el = document.createElement('div');
+    el.className = 'lv2-canvas-block block';
+    el.style.background = col;
+    el.draggable = true;
+    el.dataset.idx = i;
+    el.innerHTML = `${icon('music',12)} play( <span style="background:rgba(255,255,255,0.28);padding:1px 7px;border-radius:4px;font-weight:700;font-size:12px">${lbl}</span> )`;
+    // delete button
+    const del = document.createElement('button');
+    del.className = 'block-del';
+    del.innerHTML = icon('close', 11);
+    del.style.opacity = '0';
+    el.addEventListener('mouseenter', () => del.style.opacity = '1');
+    el.addEventListener('mouseleave', () => del.style.opacity = '0');
+    del.onclick = e => { e.stopPropagation(); lv2P2RemoveBlock(i); };
+    el.appendChild(del);
+    // drag to reorder
+    el.ondragstart = e => {
+      lv2P2DragKey = null;
+      lv2P2DragIdx = i;
+      e.dataTransfer.effectAllowed = 'move';
+      el.style.opacity = '0.4';
+    };
+    el.ondragend = () => { el.style.opacity = '1'; };
     cv.appendChild(el);
   });
 }
 
+// ── Drop-line helpers ──
+function lv2P2GetDropIdx(cv, clientY) {
+  const blocks = Array.from(cv.querySelectorAll('.lv2-canvas-block'));
+  for (let i = 0; i < blocks.length; i++) {
+    const r = blocks[i].getBoundingClientRect();
+    if (clientY < r.top + r.height / 2) return i;
+  }
+  return lv2P2Blocks.length;
+}
+
+function lv2P2ShowDropLine(cv, idx) {
+  lv2P2RemoveDropLine();
+  const line = document.createElement('div');
+  line.id = 'lv2-p2-drop-line';
+  line.className = 'canvas-drop-line';
+  const blocks = Array.from(cv.querySelectorAll('.lv2-canvas-block'));
+  const cRect = cv.getBoundingClientRect();
+  let y;
+  if (!blocks.length) { y = cRect.top + 16; }
+  else if (idx === 0) { y = blocks[0].getBoundingClientRect().top - 3; }
+  else if (idx >= blocks.length) { y = blocks[blocks.length-1].getBoundingClientRect().bottom + 3; }
+  else { y = (blocks[idx-1].getBoundingClientRect().bottom + blocks[idx].getBoundingClientRect().top) / 2; }
+  line.style.cssText = `position:fixed;left:${cRect.left+8}px;top:${y-2}px;width:${cRect.width-16}px;height:4px;border-radius:2px;background:#2E80D0;pointer-events:none;z-index:9999;box-shadow:0 0 0 2px rgba(46,128,208,0.25)`;
+  document.body.appendChild(line);
+}
+
+function lv2P2RemoveDropLine() {
+  const l = document.getElementById('lv2-p2-drop-line');
+  if (l) l.remove();
+  lv2P2DropIdx = -1;
+}
+
+// ── Canvas drag handlers ──
+function lv2P2DragOver(e) {
+  e.preventDefault();
+  const cv = document.getElementById('lv2-p2-canvas');
+  cv.classList.add('drag-over');
+  lv2P2DropIdx = lv2P2GetDropIdx(cv, e.clientY);
+  lv2P2ShowDropLine(cv, lv2P2DropIdx);
+}
+
+function lv2P2DragLeave(e) {
+  const cv = document.getElementById('lv2-p2-canvas');
+  if (!cv.contains(e.relatedTarget)) {
+    cv.classList.remove('drag-over');
+    lv2P2RemoveDropLine();
+  }
+}
+
+function lv2P2Drop(e) {
+  e.preventDefault();
+  const cv = document.getElementById('lv2-p2-canvas');
+  cv.classList.remove('drag-over');
+  lv2P2RemoveDropLine();
+  const idx = lv2P2DropIdx >= 0 ? lv2P2DropIdx : lv2P2Blocks.length;
+
+  if (lv2P2DragKey !== null) {
+    // New block from palette
+    if (lv2P2Blocks.length >= 4) return;
+    lv2P2Blocks.splice(idx, 0, lv2P2DragKey);
+    lv2P2DragKey = null;
+  } else if (lv2P2DragIdx !== null) {
+    // Reorder existing canvas block
+    const orig = lv2P2DragIdx;
+    const block = lv2P2Blocks.splice(orig, 1)[0];
+    const dest = orig < idx ? idx - 1 : idx;
+    lv2P2Blocks.splice(Math.max(0, Math.min(dest, lv2P2Blocks.length)), 0, block);
+    lv2P2DragIdx = null;
+  }
+  lv2P2RenderAll();
+}
+
 function lv2P2Clear() {
   lv2P2Blocks = [];
-  lv2P2RenderCanvas();
+  lv2P2RenderAll();
   const fb = document.getElementById('lv2-p2-fb');
   if (fb) fb.style.display = 'none';
   const nb = document.getElementById('lv2-p2-next');
