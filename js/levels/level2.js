@@ -7,6 +7,8 @@ let lv2P2Blocks = [];
 let lv2OwnNotes = ['C4', 'E4', 'G4'];
 let lv2P3Step = 0;
 let lv2ReadOpened = [false, false, false];
+// User-typed phrase notes (starts empty; user fills them in Phase 1)
+let lv2UserPhrases = { p1: [], p2: [], p3: [], p4: [] };
 
 const LV2_NOTE_OPTIONS = ['C4', 'D4', 'E4', 'F4', 'G4', 'A4'];
 const LV2_PITCH_PCT = { 'C4': 12, 'D4': 25, 'E4': 38, 'F4': 50, 'G4': 63, 'A4': 75 };
@@ -64,56 +66,167 @@ function lv2ShowPhase(p) {
 }
 
 // ══════════════════════════════════════════════════════
-// PHASE 1 — Meet Your Four Phrases
+// PHASE 1 — Define Your Four Variables
 // ══════════════════════════════════════════════════════
 function lv2RenderPhase1(body) {
-  const phraseCards = ['p1','p2','p3','p4'].map(k => {
-    const col   = LV2_PHRASE_COLORS[k];
-    const bg    = LV2_PHRASE_BGALPHA[k];
-    const lbl   = LV2_PHRASE_LABELS[k];
-    const nm    = LV2_PHRASE_NAMES[k];
-    const notes = LV2_PHRASES[k];
-    return `
-      <div style="background:var(--surface);border:1.5px solid var(--border);border-left:4px solid ${col};border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:8px">
-        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-          <span style="background:${col};color:#fff;font-size:11px;font-weight:800;padding:3px 10px;border-radius:20px;font-family:'JetBrains Mono',monospace">${lbl}</span>
-          <span style="font-size:12px;color:var(--text-muted);font-style:italic">"${nm}"</span>
-        </div>
-        <div style="display:flex;gap:4px;flex-wrap:wrap">
-          ${notes.map(n => `<span class="lv1-song-note-pill" style="background:${bg};border-color:${col}55">${n}</span>`).join('')}
-        </div>
-        <button class="lv1-btn secondary" style="font-size:12px;padding:6px 12px;align-self:flex-start" onclick="lv2PlayP1Phrase('${k}')">
-          ${icon('play',11)} Hear it
-        </button>
-      </div>`;
-  }).join('');
+  // Reset user phrases
+  lv2UserPhrases = { p1: [], p2: [], p3: [], p4: [] };
 
   body.innerHTML = `
     <div class="lv1-scroll">
-      <div class="lv1-activity-heading">Meet Your Four Phrases</div>
+      <div class="lv1-activity-heading">Set Up Your Four Variables</div>
       <p class="lv1-activity-sub">
         <em>Happy Birthday</em> is built from four musical lines. We'll store each one as a
-        <strong>variable</strong> — a named box. Hear each phrase, then arrange them to build the song!
+        <strong>variable</strong> — a named box that holds notes. Type the notes into each box
+        (space-separated). We've included hints!
       </p>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-        ${phraseCards}
-      </div>
-      <div class="lv1-concept" style="border-left-color:#7050D0">
+      <div style="display:flex;flex-direction:column;gap:10px" id="lv2-p1-cards"></div>
+      <div class="lv1-concept" style="border-left-color:#7050D0;margin-top:4px">
         <div class="lv1-concept-label">What is a Variable?</div>
         <p>Each phrase has a <strong>name</strong> (like <code>phrase1</code>) and a <strong>value</strong>
         (the list of notes). Write <code>play(phrase1)</code> and the computer plays all those notes
         automatically. Change the notes once — every use updates!</p>
       </div>
       <div class="lv1-actions">
-        <button class="lv1-btn primary" onclick="lv2ShowPhase(2)">Build the song! →</button>
+        <button class="lv1-btn primary" id="lv2-p1-next" onclick="lv2ShowPhase(2)" disabled style="opacity:0.45;cursor:not-allowed">
+          Build the song! →
+        </button>
+        <span id="lv2-p1-hint" style="font-size:12px;color:var(--text-muted)">Fill all 4 phrases to continue</span>
       </div>
     </div>
   `;
+  lv2P1RenderCards();
+}
+
+function lv2P1RenderCards() {
+  const container = document.getElementById('lv2-p1-cards');
+  if (!container) return;
+  container.innerHTML = '';
+
+  const hints = {
+    p1: 'C4 C4 D4 C4 F4 E4',
+    p2: 'C4 C4 D4 C4 G4 F4',
+    p3: 'C4 C4 A4 F4 E4 D4',
+    p4: 'F4 F4 E4 C4 D4 C4',
+  };
+
+  ['p1','p2','p3','p4'].forEach(k => {
+    const col  = LV2_PHRASE_COLORS[k];
+    const bg   = LV2_PHRASE_BGALPHA[k];
+    const lbl  = LV2_PHRASE_LABELS[k];
+    const nm   = LV2_PHRASE_NAMES[k];
+    const hint = hints[k];
+
+    const card = document.createElement('div');
+    card.className = 'lv2-var-setup-card';
+    card.style.borderLeftColor = col;
+    card.id = 'lv2-p1-card-' + k;
+
+    card.innerHTML = `
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px">
+        <span style="background:${col};color:#fff;font-size:11px;font-weight:800;padding:3px 10px;border-radius:20px;font-family:'JetBrains Mono',monospace">${lbl}</span>
+        <span style="font-size:12px;color:var(--text-muted);font-style:italic">"${nm}"</span>
+        <span id="lv2-p1-status-${k}" style="margin-left:auto;font-size:11px;font-weight:700;color:var(--text-muted)">empty</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <span style="font-size:12px;font-weight:700;color:${col};font-family:'JetBrains Mono',monospace;white-space:nowrap">${lbl} =</span>
+        <input
+          id="lv2-p1-input-${k}"
+          class="lv2-var-notes-input"
+          placeholder="e.g. ${hint}"
+          autocomplete="off" spellcheck="false"
+          oninput="lv2P1OnInput('${k}')"
+          style="border-color:${col}55;flex:1;min-width:180px"
+        />
+        <button class="lv1-btn secondary" style="font-size:11px;padding:5px 10px;white-space:nowrap"
+          onclick="lv2P1HearPhrase('${k}')">${icon('play',10)} Hear it</button>
+      </div>
+      <div id="lv2-p1-pills-${k}" style="display:flex;gap:4px;flex-wrap:wrap;margin-top:6px;min-height:22px"></div>
+      <div id="lv2-p1-err-${k}" style="display:none;font-size:11px;color:#c04040;margin-top:2px"></div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function lv2P1OnInput(k) {
+  const inp = document.getElementById('lv2-p1-input-' + k);
+  if (!inp) return;
+  const raw = inp.value.trim();
+  const parts = raw ? raw.split(/\s+/) : [];
+  const valid = parts.filter(n => isValidNote(n));
+  const invalid = parts.filter(n => n && !isValidNote(n));
+
+  // Update stored phrase
+  lv2UserPhrases[k] = valid;
+
+  // Update pills
+  const col = LV2_PHRASE_COLORS[k];
+  const bg  = LV2_PHRASE_BGALPHA[k];
+  const pillsEl = document.getElementById('lv2-p1-pills-' + k);
+  if (pillsEl) {
+    pillsEl.innerHTML = valid.map(n =>
+      `<span class="lv1-song-note-pill" style="background:${bg};border-color:${col}55">${n}</span>`
+    ).join('');
+  }
+
+  // Update status label
+  const statusEl = document.getElementById('lv2-p1-status-' + k);
+  if (statusEl) {
+    if (valid.length === 0) {
+      statusEl.textContent = 'empty';
+      statusEl.style.color = 'var(--text-muted)';
+    } else {
+      statusEl.textContent = `✓ ${valid.length} note${valid.length>1?'s':''}`;
+      statusEl.style.color = col;
+    }
+  }
+
+  // Show error for unrecognised notes
+  const errEl = document.getElementById('lv2-p1-err-' + k);
+  if (errEl) {
+    if (invalid.length) {
+      errEl.textContent = `Unknown note${invalid.length>1?'s':''}: ${invalid.join(', ')} — use C4, D4, E4, F4, G4, A4, B4 (or other octaves)`;
+      errEl.style.display = 'block';
+    } else {
+      errEl.style.display = 'none';
+    }
+  }
+
+  // Highlight card border
+  const card = document.getElementById('lv2-p1-card-' + k);
+  if (card) card.style.borderLeftWidth = valid.length ? '5px' : '4px';
+
+  // Enable/disable next button
+  lv2P1UpdateNextBtn();
+}
+
+function lv2P1UpdateNextBtn() {
+  const allFilled = ['p1','p2','p3','p4'].every(k => lv2UserPhrases[k].length > 0);
+  const btn  = document.getElementById('lv2-p1-next');
+  const hint = document.getElementById('lv2-p1-hint');
+  if (btn) {
+    btn.disabled = !allFilled;
+    btn.style.opacity = allFilled ? '1' : '0.45';
+    btn.style.cursor  = allFilled ? 'pointer' : 'not-allowed';
+  }
+  if (hint) {
+    const filled = ['p1','p2','p3','p4'].filter(k => lv2UserPhrases[k].length > 0).length;
+    hint.textContent = allFilled ? '✓ All phrases ready!' : `${filled} / 4 phrases filled`;
+    hint.style.color  = allFilled ? '#20A060' : 'var(--text-muted)';
+  }
 }
 
 async function lv2PlayP1Phrase(k) {
+  const notes = lv2UserPhrases[k].length ? lv2UserPhrases[k] : LV2_PHRASES[k];
   await initTone();
-  for (const n of LV2_PHRASES[k]) { await playNote(n, 0.65); }
+  for (const n of notes) { await playNote(n, 0.65); }
+}
+
+async function lv2P1HearPhrase(k) {
+  const notes = lv2UserPhrases[k].length ? lv2UserPhrases[k] : [];
+  if (!notes.length) { showToast('Type some notes first!'); return; }
+  await initTone();
+  for (const n of notes) { await playNote(n, 0.65); }
 }
 
 async function lv2PlayNote(note) {
@@ -140,7 +253,8 @@ function lv2RenderPhase2(body) {
     const col   = LV2_PHRASE_COLORS[k];
     const lbl   = LV2_PHRASE_LABELS[k];
     const nm    = LV2_PHRASE_NAMES[k];
-    const notes = LV2_PHRASES[k].map(n => `"${n}"`).join(', ');
+    // Use the user-typed phrases if available, otherwise fall back to the defaults
+    const notes = (lv2UserPhrases[k].length ? lv2UserPhrases[k] : LV2_PHRASES[k]).map(n => `"${n}"`).join(', ');
     return `
       <div class="lv2-defined-var" style="font-size:12px">
         <span class="lv2-dv-label" style="color:${col};font-weight:800">${lbl} =</span>
@@ -224,7 +338,8 @@ async function lv2P2Play() {
   if (!lv2P2Blocks.length) return;
   await initTone();
   for (const k of lv2P2Blocks) {
-    for (const n of LV2_PHRASES[k]) { await playNote(n, 0.65); }
+    const notes = lv2UserPhrases[k].length ? lv2UserPhrases[k] : LV2_PHRASES[k];
+    for (const n of notes) { await playNote(n, 0.65); }
   }
 }
 
@@ -242,10 +357,11 @@ async function lv2P2CheckAnswer() {
     return;
   }
   fb.className = 'lv1-feedback success';
-  fb.textContent = '🎂 Perfect! Playing Happy Birthday…';
+  fb.textContent = '🎂 Perfect! Playing your Happy Birthday…';
   await initTone();
   for (const k of LV2_HCB_TARGET) {
-    for (const n of LV2_PHRASES[k]) { await playNote(n, 0.65); }
+    const notes = lv2UserPhrases[k].length ? lv2UserPhrases[k] : LV2_PHRASES[k];
+    for (const n of notes) { await playNote(n, 0.65); }
   }
   fb.innerHTML = '🎂 <strong>Happy Birthday!</strong> Four variables, one song — that\'s the power of variables!';
   document.getElementById('lv2-p2-next').style.display = 'inline-flex';
@@ -370,7 +486,7 @@ function lv2HCBListen(main) {
     const bg    = LV2_PHRASE_BGALPHA[k];
     const label = LV2_PHRASE_LABELS[k];
     const name  = LV2_PHRASE_NAMES[k];
-    const notes = LV2_PHRASES[k];
+    const notes = lv2UserPhrases[k].length ? lv2UserPhrases[k] : LV2_PHRASES[k];
     return `
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
         <span style="font-size:11px;font-weight:800;color:${col};background:${bg};border-radius:6px;padding:3px 8px;white-space:nowrap;min-width:56px;text-align:center">${label}</span>
@@ -414,7 +530,8 @@ async function lv2HCBPlayFull() {
   if (ind) ind.style.display = 'block';
   await initTone();
   for (const k of LV2_HCB_TARGET) {
-    for (const n of LV2_PHRASES[k]) { await playNote(n, 0.65); }
+    const notes = lv2UserPhrases[k].length ? lv2UserPhrases[k] : LV2_PHRASES[k];
+    for (const n of notes) { await playNote(n, 0.65); }
   }
   if (ind) ind.style.display = 'none';
 }
@@ -425,7 +542,8 @@ async function lv2HCBDiscover(main) {
     const col   = LV2_PHRASE_COLORS[k];
     const bg    = LV2_PHRASE_BGALPHA[k];
     const label = LV2_PHRASE_LABELS[k];
-    const pills = LV2_PHRASES[k].map((n, j) =>
+    const phrase = lv2UserPhrases[k].length ? lv2UserPhrases[k] : LV2_PHRASES[k];
+    const pills = phrase.map((n, j) =>
       `<span class="lv1-song-note-pill" style="background:${bg};border:1.5px solid ${col}50" id="lv2-disc-${k}-${j}">${n}</span>`
     ).join('');
     return `
@@ -485,7 +603,7 @@ async function lv2HCBDiscoverPlay() {
   await initTone();
   document.querySelectorAll('.lv1-song-note-pill').forEach(p => p.classList.remove('playing'));
   for (const k of LV2_HCB_TARGET) {
-    const phrase = LV2_PHRASES[k];
+    const phrase = lv2UserPhrases[k].length ? lv2UserPhrases[k] : LV2_PHRASES[k];
     for (let j = 0; j < phrase.length; j++) {
       document.querySelectorAll('.lv1-song-note-pill').forEach(p => p.classList.remove('playing'));
       const pill = document.getElementById(`lv2-disc-${k}-${j}`);
