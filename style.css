@@ -3241,6 +3241,56 @@ body {
   background: #4CAF50; color: #fff; border-radius: 6px;
 }
 
+/* Level 5 Phase 2 — block-style note sequence (replaces Python code view) */
+.lv5-note-seq { display: flex; flex-direction: column; gap: 6px; }
+.lv5-note-seq-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  user-select: none;
+}
+.lv5-note-seq-item:hover:not(.ok-note) { border-color: #D04040; background: rgba(208,64,64,0.04); }
+.lv5-note-seq-item.selected { border-color: #D04040; background: rgba(208,64,64,0.07); }
+.lv5-note-seq-item.bug-note { border-color: #EF5350; background: rgba(208,64,64,0.09); cursor: default; }
+.lv5-note-seq-item.ok-note  { border-color: #4CAF50; background: rgba(76,175,80,0.07); opacity: 0.75; cursor: default; }
+.lv5-seq-idx {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: var(--border);
+  color: var(--text-muted);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 800;
+  flex-shrink: 0;
+  transition: all 0.15s;
+}
+.lv5-note-seq-item.selected .lv5-seq-idx { background: #D04040; color: #fff; }
+.lv5-note-seq-item.bug-note .lv5-seq-idx { background: #EF5350; color: #fff; }
+.lv5-note-seq-item.ok-note  .lv5-seq-idx { background: #4CAF50; color: #fff; }
+.lv5-seq-note-name {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text);
+}
+.lv5-seq-play-btn {
+  width: 30px; height: 30px;
+  border: none; border-radius: 8px;
+  background: var(--border);
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+.lv5-seq-play-btn:hover { background: #2E80D0; color: #fff; }
+
 /* Phase 3 — fix panel */
 .lv5-fix-line {
   display: flex;

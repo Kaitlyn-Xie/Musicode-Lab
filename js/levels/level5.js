@@ -5,57 +5,58 @@
 let lv5Phase = 1;
 let lv5P1Playing = false;
 let lv5BugGuessed = false;
-let lv5P2SelectedLine = null;
+let lv5P2SelectedNote = null;
 let lv5P2Checked = false;
-let lv5FixedNotes = ['C4', 'E4', 'G4', 'A4']; // student edits note[2]
 let lv5P3Playing = false;
-let lv5P3Fixed = false;
 let lv5P3Step = 0;
 let lv5ReadOpened = [false, false, false];
 
-// Song Workshop state
-const LV5_MARY = ['E4','D4','C4','D4','E4','E4','E4'];
-const LV5_MARY_PALETTE = ['C4','D4','E4'];
-let lv5MarySeq = [];
+// ── Baby Shark (key of C, 5=G4 6=A4 7=B4 i=C5) ──────────────
+// Correct opening phrase: "Ba-by Shark doo doo doo, Ba-by Shark"
+const LV5_CORRECT   = ['G4','A4','C5','C5','C5','G4','A4','C5'];
+// Bug: note index 2 = F4 instead of C5 (jumps DOWN — sounds very wrong)
+const LV5_BUGGY     = ['G4','A4','F4','C5','C5','G4','A4','C5'];
+const LV5_BUG_IDX   = 2;
+
+// Full 5-bar listen sequence (simplified beat-by-beat):
+// Bar 1 (pickup): G4 A4
+// Bar 2: C5 C5 C5 C5 G4 A4  (Baby shark doo doo doo doo)
+// Bar 3: C5 C5 C5 C5 G4 A4  (Baby shark doo doo doo doo)
+// Bar 4: C5 C5 C5 C5 C5     (Baby shark!)
+// Bar 5: B4 G4 G4 A4
+const LV5_BABY_FULL = [
+  'G4','A4',
+  'C5','C5','C5','C5','G4','A4',
+  'C5','C5','C5','C5','G4','A4',
+  'C5','C5','C5','C5','C5',
+  'B4','G4','G4','A4'
+];
+
+// Simplified 8-note phrase for Build step
+const LV5_BABY        = ['G4','A4','C5','C5','C5','G4','A4','C5'];
+const LV5_BABY_PALETTE = ['G4','A4','B4','C5'];
+let lv5BabySeq = [];
+
 const LV5_OWN_NOTE_OPTIONS = ['C4','D4','E4','F4','G4','A4','B4'];
 const LV5_OWN_PITCH_PCT = { 'C4':12,'D4':25,'E4':38,'F4':50,'G4':63,'A4':75,'B4':88 };
-let lv5OwnPickedNotes = ['C4','E4','G4'];
+let lv5OwnPickedNotes = ['G4','A4','C5'];
 
 const LV5_CT_CONCEPTS = [
   {
     title: 'Debugging',
     icon: 'algorithm',
-    body: 'A <strong>bug</strong> is any mistake that causes unexpected behaviour. Finding bugs requires <em>reading</em> code like a computer — step by step — until the behaviour diverges from expectation.'
+    body: 'A <strong>bug</strong> is any mistake that causes unexpected behaviour. Finding bugs requires <em>reading</em> output like a computer — step by step — until the result diverges from what was expected.'
   },
   {
     title: 'Testing',
     icon: 'blocks',
-    body: '<strong>Testing</strong> means running code and checking if the output matches what you expected. A good test compares the <em>intended</em> result against the <em>actual</em> result — and flags the difference.'
+    body: '<strong>Testing</strong> means running a sequence and checking if the output matches what you expected. A good test compares the <em>intended</em> result against the <em>actual</em> result — and flags the difference.'
   },
   {
     title: 'Decomposition',
     icon: 'variable',
     body: 'Break a complex problem into smaller pieces — <strong>decomposition</strong>. Debug one note at a time instead of the whole melody. One small fix often reveals the root cause.'
   }
-];
-
-// The "correct" scale is C4 E4 G4 A4
-// The buggy code has B3 instead of G4 at index 2
-const LV5_CORRECT = ['C4', 'E4', 'G4', 'A4'];
-const LV5_BUGGY   = ['C4', 'E4', 'B3', 'A4']; // bug: B3 should be G4
-const LV5_BUG_IDX = 2; // index of the wrong note
-
-// Code lines shown in Phase 2
-const LV5_CODE = [
-  { n: 1, html: '<span class="py-var">scale</span><span class="py-op"> = </span>[<span class="py-str">"C4"</span><span class="py-op">, </span><span class="py-str">"E4"</span><span class="py-op">, </span><span class="py-str">"B3"</span><span class="py-op">, </span><span class="py-str">"A4"</span>]',
-    plain: 'scale = ["C4", "E4", "B3", "A4"]',
-    hasBug: true,
-    bugExplain: 'The third note is <code>"B3"</code> — but B3 is <em>lower</em> than E4, so the scale jumps down instead of up. It should be <code>"G4"</code>.' },
-  { n: 2, html: '',  plain: '', hasBug: false }, // blank separator
-  { n: 3, html: '<span class="py-kw">for</span> <span class="py-var">note</span> <span class="py-kw">in</span> <span class="py-var">scale</span><span class="py-op">:</span>',
-    plain: 'for note in scale:', hasBug: false },
-  { n: 4, html: '&nbsp;&nbsp;&nbsp;&nbsp;<span class="py-fn">play</span><span class="py-op">(</span><span class="py-var">note</span><span class="py-op">)</span>',
-    plain: '    play(note)', hasBug: false },
 ];
 
 // ─── Entry point ─────────────────────────────────────────────
@@ -83,11 +84,9 @@ function renderLevel5() {
   lv5Phase = 1;
   lv5P1Playing = false;
   lv5BugGuessed = false;
-  lv5P2SelectedLine = null;
+  lv5P2SelectedNote = null;
   lv5P2Checked = false;
-  lv5FixedNotes = ['C4', 'E4', 'G4', 'A4'];
   lv5P3Playing = false;
-  lv5P3Fixed = false;
   lv5ShowPhase(1);
 }
 
@@ -105,7 +104,7 @@ function lv5ShowPhase(p) {
 }
 
 // ══════════════════════════════════════════════════════
-// PHASE 1 — Reading Code (listen + compare)
+// PHASE 1 — Listen & hear the difference
 // ══════════════════════════════════════════════════════
 function lv5RenderPhase1(body) {
   lv5P1Playing = false;
@@ -115,9 +114,9 @@ function lv5RenderPhase1(body) {
     <div class="lv1-scroll">
       <div class="lv1-activity-heading">Something Sounds Wrong…</div>
       <p class="lv1-activity-sub">
-        A student wrote code to play a rising scale: <strong>C4 → E4 → G4 → A4</strong>.
-        But when they ran it, it sounded wrong!
-        Listen to both versions — can you hear the difference?
+        A student coded the opening of <strong>Baby Shark 🦈</strong>:
+        <strong>G4 → A4 → C5 → C5 → C5 → G4 → A4 → C5</strong>.
+        But one note is wrong! Listen to both versions — can you hear the mistake?
       </p>
 
       <div class="lv5-listen-row">
@@ -134,7 +133,7 @@ function lv5RenderPhase1(body) {
         <div class="lv5-listen-vs">${icon('debug', 18)}</div>
 
         <div class="lv5-listen-card buggy" id="lv5-buggy-card">
-          <div class="lv5-listen-label">Student's code (buggy)</div>
+          <div class="lv5-listen-label">Student's sequence (buggy)</div>
           <div class="lv5-listen-notes" id="lv5-buggy-notes">
             ${LV5_BUGGY.map((n, i) =>
               `<div class="lv5-note-pill ${i === LV5_BUG_IDX ? 'bug' : 'correct'}" id="lv5-bn-${i}">${n}</div>`
@@ -152,20 +151,20 @@ function lv5RenderPhase1(body) {
         </div>
         <div class="lv5-note-opts" id="lv5-note-opts">
           ${LV5_BUGGY.map((n, i) =>
-            `<button class="lv5-note-opt" onclick="lv5P1GuessNote(${i},'${n}')">${n} (note ${i+1})</button>`
+            `<button class="lv5-note-opt" onclick="lv5P1GuessNote(${i},'${n}')">note ${i+1}: ${n}</button>`
           ).join('')}
         </div>
         <div id="lv5-p1-fb" class="lv1-feedback" style="display:none"></div>
       </div>
 
       <div class="lv1-success-concept" id="lv5-bug-reveal">
-        <div class="lv1-success-concept-label">You Found the Bug!</div>
-        <p>The third note is <strong>"B3"</strong> — but B3 is <em>below</em> E4, so instead of going up, the scale dips down. The fix: change <code>"B3"</code> to <code>"G4"</code>.</p>
-        <p>This is exactly what <strong>debugging</strong> is: reading output carefully, comparing to what was expected, and tracing the problem back to the source code.</p>
+        <div class="lv1-success-concept-label">You Found the Bug! 🐛</div>
+        <p>Note 3 is <strong>F4</strong> — but Baby Shark rises from G4 → A4 → <em>C5</em>. F4 is <em>lower</em> than A4, so the melody dips down instead of jumping up. The fix: change <strong>F4</strong> to <strong>C5</strong>.</p>
+        <p>This is exactly what <strong>debugging</strong> means: listen carefully, compare to the expected result, and trace the error back to its source.</p>
       </div>
 
       <div class="lv1-actions" id="lv5-p1-next-row" style="display:none">
-        <button class="lv1-btn primary" onclick="lv5ShowPhase(2)">Next: Spot the Bug in Code →</button>
+        <button class="lv1-btn primary" onclick="lv5ShowPhase(2)">Next: Find it in the Sequence →</button>
       </div>
     </div>
   `;
@@ -185,12 +184,11 @@ async function lv5PlayVersion(version) {
       const pill = document.getElementById('lv5-bn-' + i);
       if (pill) pill.classList.add('playing');
     }
-    await playNote(notes[i], 1);
+    await playNote(notes[i], 0.55);
   }
   document.querySelectorAll('.lv5-note-pill.playing').forEach(el => el.classList.remove('playing'));
   if (btn) btn.disabled = false;
   lv5P1Playing = false;
-  // Show question after they've listened to at least one version
   const q = document.getElementById('lv5-p1-question');
   if (q) q.style.display = 'block';
 }
@@ -200,13 +198,13 @@ function lv5P1GuessNote(idx, note) {
   const fb = document.getElementById('lv5-p1-fb');
   const btns = document.querySelectorAll('.lv5-note-opt');
   btns.forEach(b => { b.disabled = true; b.style.opacity = '0.45'; });
-  const picked = [...btns].find((_, i) => i === idx);
+  const picked = [...btns][idx];
   if (idx === LV5_BUG_IDX) {
     if (picked) { picked.style.opacity = '1'; picked.classList.add('correct'); }
     if (fb) {
       fb.style.display = 'block';
       fb.className = 'lv1-feedback success';
-      fb.innerHTML = `Correct! Note 3 (${note}) is wrong — it should be going <em>up</em> but B3 goes down.`;
+      fb.innerHTML = `Correct! Note 3 (${note}) is wrong — Baby Shark goes <em>up</em> to C5, but F4 dips down.`;
     }
     lv5BugGuessed = true;
     document.getElementById('lv5-bug-reveal').classList.add('visible');
@@ -217,31 +215,34 @@ function lv5P1GuessNote(idx, note) {
     if (fb) {
       fb.style.display = 'block';
       fb.className = 'lv1-feedback error';
-      fb.textContent = 'That note sounds fine — it fits the rising pattern. Listen again and find which beat breaks the upward direction.';
+      fb.textContent = 'That note sounds fine — it fits the pattern. Listen again and find which beat sounds unexpectedly low.';
     }
   }
 }
 
 // ══════════════════════════════════════════════════════
-// PHASE 2 — Spot the Bug in Code
+// PHASE 2 — Spot the Bug in the Sequence (no Python)
 // ══════════════════════════════════════════════════════
 function lv5RenderPhase2(body) {
-  lv5P2SelectedLine = null;
+  lv5P2SelectedNote = null;
   lv5P2Checked = false;
 
   body.innerHTML = `
     <div class="lv1-scroll">
       <div class="lv1-concept">
-        <div class="lv1-concept-label">Read the Code — Find the Bug</div>
-        <p>Below is the student's Python code. Click the line you think contains the bug.</p>
+        <div class="lv1-concept-label">Find the Bug in the Sequence</div>
+        <p>Below is the student's note sequence. Each block is one note in the order it plays.
+           Click the block you think has the wrong note — you can also tap ${icon('volume',11)} to hear each one.</p>
       </div>
 
-      <div class="lv5-code-clickable" id="lv5-code-clickable">
-        ${LV5_CODE.filter(l => l.plain !== '').map((line, i) => `
-          <div class="lv5-code-line-btn" id="lv5-cl-${i}" onclick="lv5P2Select(${i})">
-            <span class="lv5-ln">${line.n}</span>
-            <span class="lv5-code-content">${line.html}</span>
-            <span class="lv5-line-tag" id="lv5-tag-${i}"></span>
+      <div class="lv5-note-seq" id="lv5-note-seq">
+        ${LV5_BUGGY.map((note, i) => `
+          <div class="lv5-note-seq-item" id="lv5-nsi-${i}" onclick="lv5P2SelectNote(${i})">
+            <div class="lv5-seq-idx">${i + 1}</div>
+            <div class="lv5-seq-note-name">${note}</div>
+            <button class="lv5-seq-play-btn" title="Play this note"
+              onclick="event.stopPropagation();initTone().then(()=>playNote('${note}',0.6))">${icon('volume',11)}</button>
+            <span class="lv5-line-tag" id="lv5-ntag-${i}"></span>
           </div>
         `).join('')}
       </div>
@@ -255,21 +256,22 @@ function lv5RenderPhase2(body) {
       <div id="lv5-p2-fb" class="lv1-feedback" style="display:none"></div>
 
       <div class="lv1-success-concept" id="lv5-p2-reveal">
-        <div class="lv1-success-concept-label">Line 1 has the bug</div>
-        <p>The list <code>["C4", "E4", <strong>"B3"</strong>, "A4"]</code> has <code>"B3"</code> where it should say <code>"G4"</code>. Lines 3–4 (the loop) are perfectly fine — the problem is in the <em>data</em>, not the logic.</p>
-        <p>This is a common bug type: <strong>wrong value</strong>. The code structure is correct, but one piece of data is wrong.</p>
+        <div class="lv1-success-concept-label">Block 3 has the bug</div>
+        <p>Note 3 is <strong>F4</strong> — but the correct Baby Shark melody needs <strong>C5</strong> there.
+           Blocks 1, 2, 4–8 are all correct; only the data in block 3 is wrong.</p>
+        <p>This is called a <strong>wrong-value bug</strong>: the structure (how many notes, what order) is correct,
+           but one piece of data is wrong.</p>
       </div>
     </div>
   `;
 }
 
-function lv5P2Select(idx) {
+function lv5P2SelectNote(idx) {
   if (lv5P2Checked) return;
-  lv5P2SelectedLine = idx;
-  document.querySelectorAll('.lv5-code-line-btn').forEach((el, i) => {
+  lv5P2SelectedNote = idx;
+  document.querySelectorAll('.lv5-note-seq-item').forEach((el, i) => {
     el.classList.toggle('selected', i === idx);
   });
-  document.querySelectorAll('.lv5-line-tag').forEach(el => el.textContent = '');
 }
 
 function lv5P2Check() {
@@ -277,35 +279,34 @@ function lv5P2Check() {
   if (!fb) return;
   fb.style.display = 'block';
 
-  if (lv5P2SelectedLine === null) {
+  if (lv5P2SelectedNote === null) {
     fb.className = 'lv1-feedback error';
-    fb.textContent = 'Click a line in the code above to select it, then check.';
+    fb.textContent = 'Click a note block above to select it, then check.';
     return;
   }
 
-  // Line index 0 = line 1 (the list definition = the bug)
-  const isCorrect = lv5P2SelectedLine === 0;
+  const isCorrect = lv5P2SelectedNote === LV5_BUG_IDX;
   lv5P2Checked = true;
 
-  document.querySelectorAll('.lv5-code-line-btn').forEach((el, i) => {
+  document.querySelectorAll('.lv5-note-seq-item').forEach((el, i) => {
     el.classList.remove('selected');
     el.onclick = null;
-    const tag = document.getElementById('lv5-tag-' + i);
-    if (i === 0) {
-      el.classList.add('bug-line');
+    const tag = document.getElementById('lv5-ntag-' + i);
+    if (i === LV5_BUG_IDX) {
+      el.classList.add('bug-note');
       if (tag) tag.innerHTML = '<span class="lv5-bug-badge">bug here</span>';
     } else {
-      el.classList.add('ok-line');
+      el.classList.add('ok-note');
       if (tag) tag.innerHTML = '<span class="lv5-ok-badge">ok</span>';
     }
   });
 
   if (isCorrect) {
     fb.className = 'lv1-feedback success';
-    fb.innerHTML = 'Correct! Line 1 has the wrong note value — <code>"B3"</code> should be <code>"G4"</code>. The loop on lines 3–4 is fine.';
+    fb.innerHTML = `Correct! Block 3 has <strong>F4</strong> — it should be <strong>C5</strong>. The rest of the sequence is fine.`;
   } else {
     fb.className = 'lv1-feedback error';
-    fb.innerHTML = 'Not quite — the bug is actually on <strong>line 1</strong> in the list. See the highlight above.';
+    fb.innerHTML = `Not quite — the bug is actually in <strong>block 3</strong> (F4 should be C5). See the highlight above.`;
   }
 
   document.getElementById('lv5-p2-reveal').classList.add('visible');
@@ -315,15 +316,16 @@ function lv5P2Check() {
 // ══════════════════════════════════════════════════════
 // PHASE 3 — How Computers Think (Song Workshop)
 // ══════════════════════════════════════════════════════
-
 function lv5RenderPhase3(body) {
   lv5P3Step = 0;
+  body.style.display = 'flex';
+  body.style.flexDirection = 'column';
   body.innerHTML = `
-    <div style="max-width:700px;margin:0 auto;padding:0 4px">
-      <div class="lv1-p3-nav-bar">
-        <div class="lv1-p3-nav" id="lv5-p3-nav"></div>
-      </div>
-      <div style="padding:16px 0 24px">
+    <div class="lv1-p3-nav-bar">
+      <div class="lv1-p3-nav" id="lv5-p3-nav"></div>
+    </div>
+    <div class="lv1-p3-right-scroll">
+      <div style="max-width:700px;margin:0 auto;width:100%;box-sizing:border-box">
         <div id="lv5-p3-main"></div>
       </div>
     </div>
@@ -360,9 +362,9 @@ function lv5P3Goto(step) {
   const main = document.getElementById('lv5-p3-main');
   if (!main) return;
   if (step === 0) lv5P3Read(main);
-  else if (step === 1) lv5MaryListen(main);
-  else if (step === 2) lv5MaryBuild(main);
-  else if (step === 3) lv5MaryDiscover(main);
+  else if (step === 1) lv5BabyListen(main);
+  else if (step === 2) lv5BabyBuild(main);
+  else if (step === 3) lv5BabyDiscover(main);
   else if (step === 4) lv5P3WriteOwn(main);
 }
 
@@ -373,7 +375,7 @@ function lv5P3Read(main) {
     <div style="display:flex;flex-direction:column;gap:12px;padding-top:4px">
       <div class="lv1-concept">
         <div class="lv1-concept-label">Three Big Ideas</div>
-        <p>You just debugged code by testing and isolating a bug. Click each card to explore what that means in Computational Thinking.</p>
+        <p>You just debugged a sequence by listening and tracing. Click each card to explore what that means in Computational Thinking.</p>
       </div>
       ${LV5_CT_CONCEPTS.map((c, i) => `
         <div class="lv1-read-block" id="lv5-read-${i}">
@@ -386,7 +388,7 @@ function lv5P3Read(main) {
         </div>
       `).join('')}
       <div class="lv1-actions">
-        <button class="lv1-btn primary" id="lv5-read-next" onclick="lv5P3Goto(1)" style="display:none">Next: Build the Song →</button>
+        <button class="lv1-btn primary" id="lv5-read-next" onclick="lv5P3Goto(1)" style="display:none">Next: Listen to Baby Shark →</button>
       </div>
     </div>
   `;
@@ -404,25 +406,33 @@ function lv5ReadToggle(idx) {
   }
 }
 
-/* Step 1 — Listen */
-function lv5MaryListen(main) {
+/* Step 1 — Listen: Baby Shark (5 bars) */
+function lv5BabyListen(main) {
   main.innerHTML = `
     <div style="display:flex;flex-direction:column;gap:14px;padding-top:4px">
       <div class="lv1-concept">
-        <div class="lv1-concept-label">玛丽有只小羊 — Mary Had a Little Lamb</div>
-        <p>Listen to the opening phrase of Mary Had a Little Lamb! Notice how the melody steps down then comes back up — like tracing a bug step by step.</p>
+        <div class="lv1-concept-label">🦈 Baby Shark — Bars 1–5</div>
+        <p>Listen to the first five bars of Baby Shark! Notice how the melody is a pattern that repeats —
+           just like a loop in code. Each bar builds on the same note shapes.</p>
       </div>
 
       <div class="lv1-song-card">
-        <div class="lv1-song-card-title">♪ Mary Had a Little Lamb 玛丽有只小羊</div>
-        <div class="lv1-song-card-lyrics">"玛丽有只小羊，小羊，小羊..."</div>
-        <div class="lv1-song-card-notes">
-          ${LV5_MARY.map(n => `<span class="lv1-song-note-pill">${n}</span>`).join('')}
+        <div class="lv1-song-card-title">🎶 Baby Shark — opening phrase (5 bars)</div>
+        <div class="lv1-song-card-lyrics">"Ba-by shark, doo doo doo doo doo doo…"</div>
+        <div class="lv1-song-card-notes" style="flex-wrap:wrap;gap:6px">
+          ${LV5_BABY_FULL.map(n => `<span class="lv1-song-note-pill">${n}</span>`).join('')}
         </div>
-        <button class="lv1-btn primary" style="margin-top:14px;gap:8px" onclick="lv5MaryPlayTarget()">
-          ${icon('play',13)} Listen to the phrase
+        <button class="lv1-btn primary" style="margin-top:14px" onclick="lv5BabyPlayFull()">
+          ${icon('play',13)} Listen to 5 bars
         </button>
-        <div id="lv5-mary-playing" style="display:none;font-size:12px;color:var(--text-muted);margin-top:8px;text-align:center">♩ playing...</div>
+        <div id="lv5-baby-playing" style="display:none;font-size:12px;color:var(--text-muted);margin-top:8px;text-align:center">🦈 playing...</div>
+      </div>
+
+      <div class="lv1-concept" style="border-left-color:#D04040;background:rgba(208,64,64,0.05)">
+        <div class="lv1-concept-label" style="color:#D04040">The debug connection</div>
+        <p>When the student swapped <strong>C5 → F4</strong> in note 3, the melody suddenly dipped down.
+           A listener — or a programmer testing output — notices immediately because the pattern is broken.
+           <strong>Testing = comparing expected vs actual, one step at a time.</strong></p>
       </div>
 
       <div class="lv1-actions">
@@ -432,62 +442,62 @@ function lv5MaryListen(main) {
   `;
 }
 
-async function lv5MaryPlayTarget() {
-  const ind = document.getElementById('lv5-mary-playing');
+async function lv5BabyPlayFull() {
+  const ind = document.getElementById('lv5-baby-playing');
   if (ind) ind.style.display = 'block';
   await initTone();
-  for (const n of LV5_MARY) { await playNote(n, 0.75); }
+  for (const n of LV5_BABY_FULL) { await playNote(n, 0.45); }
   if (ind) ind.style.display = 'none';
 }
 
-/* Step 2 — Build */
-function lv5MaryBuild(main) {
-  lv5MarySeq = [];
+/* Step 2 — Build the opening phrase */
+function lv5BabyBuild(main) {
+  lv5BabySeq = [];
   main.innerHTML = `
     <div style="display:flex;flex-direction:column;gap:12px;padding-top:4px">
-      <div class="lv1-activity-heading">Build the Sequence</div>
+      <div class="lv1-activity-heading">Build the Phrase</div>
       <p class="lv1-activity-sub">
-        Tap the note tiles below to place them in order. The song needs <strong>7 notes</strong>.
+        Tap the note tiles to spell out the opening Baby Shark phrase — <strong>${LV5_BABY.length} notes</strong>.
         Use the hint if you get stuck!
       </p>
 
-      <div class="lv1-tw-slots" id="lv5-mary-slots"></div>
+      <div class="lv1-tw-slots" id="lv5-baby-slots"></div>
 
       <div class="lv1-tw-palette">
-        ${LV5_MARY_PALETTE.map(n => `
-          <div class="lv1-tw-tile" onclick="lv5MaryTap('${n}')">
+        ${LV5_BABY_PALETTE.map(n => `
+          <div class="lv1-tw-tile" onclick="lv5BabyTap('${n}')">
             <div class="lv1-tw-tile-name">${n}</div>
-            <button class="lv1-play-btn" style="margin-top:4px" onclick="event.stopPropagation();lv1PlaySingleNote('${n}')">${icon('volume',11)}</button>
-          </div>
-        `).join('')}
+            <button class="lv1-play-btn" style="margin-top:4px"
+              onclick="event.stopPropagation();lv1PlaySingleNote('${n}')">${icon('volume',11)}</button>
+          </div>`).join('')}
       </div>
 
       <div class="lv1-actions">
-        <button class="lv1-btn secondary" onclick="lv5MaryClear()">Clear</button>
-        <button class="lv1-btn secondary" onclick="lv5MaryPlaySeq()">Play</button>
-        <button class="lv1-btn secondary" onclick="lv5MaryHint()">Hint</button>
-        <button class="lv1-btn secondary" onclick="lv5MaryCheck()">Check</button>
+        <button class="lv1-btn secondary" onclick="lv5BabyClear()">Clear</button>
+        <button class="lv1-btn secondary" onclick="lv5BabyPlaySeq()">${icon('play',12)} Play</button>
+        <button class="lv1-btn secondary" onclick="lv5BabyHint()">Hint</button>
+        <button class="lv1-btn secondary" onclick="lv5BabyCheck()">Check</button>
       </div>
-      <div id="lv5-mary-fb" class="lv1-feedback" style="display:none"></div>
-      <div id="lv5-mary-hint" class="lv1-hint-box" style="display:none">
-        <strong>Hint:</strong> Mary Had a Little Lamb steps down E D C D, then E E E.<br>
-        <span style="font-family:monospace;font-size:12px;color:var(--text)">E4 D4 C4 D4 E4 E4 E4</span>
+      <div id="lv5-baby-fb" class="lv1-feedback" style="display:none"></div>
+      <div id="lv5-baby-hint" class="lv1-hint-box" style="display:none">
+        <strong>Hint:</strong> "Ba-by shark" = G4 A4, then three C5s, then back to G4 A4, then C5 again.<br>
+        <span style="font-family:monospace;font-size:12px;color:var(--text)">G4 A4 C5 C5 C5 G4 A4 C5</span>
       </div>
     </div>
   `;
-  lv5MaryRenderSlots();
+  lv5BabyRenderSlots();
 }
 
-function lv5MaryRenderSlots() {
-  const container = document.getElementById('lv5-mary-slots');
+function lv5BabyRenderSlots() {
+  const container = document.getElementById('lv5-baby-slots');
   if (!container) return;
   container.innerHTML = '';
-  for (let i = 0; i < 7; i++) {
+  for (let i = 0; i < LV5_BABY.length; i++) {
     const slot = document.createElement('div');
-    slot.className = 'lv1-tw-slot' + (i < lv5MarySeq.length ? ' filled' : '');
-    if (i < lv5MarySeq.length) {
-      slot.textContent = lv5MarySeq[i];
-      slot.onclick = () => { lv5MarySeq.splice(i, 1); lv5MaryRenderSlots(); };
+    slot.className = 'lv1-tw-slot' + (i < lv5BabySeq.length ? ' filled' : '');
+    if (i < lv5BabySeq.length) {
+      slot.textContent = lv5BabySeq[i];
+      slot.onclick = () => { lv5BabySeq.splice(i, 1); lv5BabyRenderSlots(); };
       slot.title = 'Click to remove';
     } else {
       slot.textContent = (i + 1);
@@ -497,69 +507,70 @@ function lv5MaryRenderSlots() {
   }
 }
 
-function lv5MaryTap(note) {
-  if (lv5MarySeq.length >= 7) return;
-  lv5MarySeq.push(note);
-  lv5MaryRenderSlots();
+function lv5BabyTap(note) {
+  if (lv5BabySeq.length >= LV5_BABY.length) return;
+  lv5BabySeq.push(note);
+  lv5BabyRenderSlots();
 }
 
-function lv5MaryClear() {
-  lv5MarySeq = [];
-  lv5MaryRenderSlots();
-  const fb = document.getElementById('lv5-mary-fb');
+function lv5BabyClear() {
+  lv5BabySeq = [];
+  lv5BabyRenderSlots();
+  const fb = document.getElementById('lv5-baby-fb');
   if (fb) fb.style.display = 'none';
 }
 
-async function lv5MaryPlaySeq() {
-  if (!lv5MarySeq.length) return;
+async function lv5BabyPlaySeq() {
+  if (!lv5BabySeq.length) return;
   await initTone();
-  for (const n of lv5MarySeq) { await playNote(n, 0.75); }
+  for (const n of lv5BabySeq) { await playNote(n, 0.55); }
 }
 
-function lv5MaryHint() {
-  const h = document.getElementById('lv5-mary-hint');
+function lv5BabyHint() {
+  const h = document.getElementById('lv5-baby-hint');
   if (h) h.classList.toggle('visible');
 }
 
-async function lv5MaryCheck() {
-  const fb = document.getElementById('lv5-mary-fb');
+async function lv5BabyCheck() {
+  const fb = document.getElementById('lv5-baby-fb');
   if (!fb) return;
   fb.style.display = 'block';
-  if (lv5MarySeq.length < 7) {
+  if (lv5BabySeq.length < LV5_BABY.length) {
     fb.className = 'lv1-feedback error';
-    fb.textContent = `You need 7 notes — you have ${lv5MarySeq.length} so far. Keep going!`;
+    fb.textContent = `You need ${LV5_BABY.length} notes — you have ${lv5BabySeq.length} so far.`;
     return;
   }
-  const correct = lv5MarySeq.every((n, i) => n === LV5_MARY[i]);
+  const correct = lv5BabySeq.every((n, i) => n === LV5_BABY[i]);
   if (correct) {
     fb.className = 'lv1-feedback success';
-    fb.textContent = 'Perfect! Listen to your sequence...';
+    fb.textContent = '🦈 Perfect! Playing your sequence...';
     await initTone();
-    for (const n of LV5_MARY) { await playNote(n, 0.75); }
-    fb.textContent = '🎵 That\'s Mary Had a Little Lamb! Now let\'s see what you discovered...';
+    for (const n of LV5_BABY) { await playNote(n, 0.55); }
+    fb.textContent = '🎵 That\'s Baby Shark! Now let\'s see what you discovered...';
     setTimeout(() => lv5P3Goto(3), 1400);
   } else {
     fb.className = 'lv1-feedback error';
-    fb.textContent = 'Not quite — the order isn\'t right yet. Try playing your sequence and compare it to the Listen step!';
+    fb.textContent = 'Not quite — try playing your sequence and compare it to the Listen step!';
   }
 }
 
 /* Step 3 — Discover */
-async function lv5MaryDiscover(main) {
+async function lv5BabyDiscover(main) {
   main.innerHTML = `
     <div style="display:flex;flex-direction:column;gap:14px;padding-top:4px">
       <div class="lv1-concept">
-        <div class="lv1-concept-label">You traced the melody!</div>
-        <p>You stepped through note by note — exactly like debugging. <strong>Decompose</strong> the problem into small pieces, <strong>test</strong> each one, and fix what's wrong.</p>
+        <div class="lv1-concept-label">You traced the melody — just like debugging!</div>
+        <p>You placed note 1, then note 2, then note 3… checking each one matches the expected sound.
+           That's exactly what a programmer does: <strong>decompose</strong> the problem, <strong>test</strong> each piece, and <strong>fix</strong> what's wrong.</p>
       </div>
 
       <div class="lv1-song-card" style="background:linear-gradient(135deg,rgba(200,50,50,0.08),rgba(200,120,30,0.08))">
-        <div class="lv1-song-card-title">Your sequence = systematic tracing</div>
+        <div class="lv1-song-card-title">Your phrase = systematic tracing</div>
         <div class="lv1-song-card-notes" id="lv5-disc-notes">
-          ${LV5_MARY.map((n,i) => `<span class="lv1-song-note-pill" id="lv5-disc-${i}">${n}</span>`).join('')}
+          ${LV5_BABY.map((n,i) => `<span class="lv1-song-note-pill" id="lv5-disc-${i}">${n}</span>`).join('')}
         </div>
-        <button class="lv1-btn primary" style="margin-top:12px" onclick="lv5MaryPlayAndHighlight()">
-          ${icon('play',13)} Play & highlight
+        <button class="lv1-btn primary" style="margin-top:12px" onclick="lv5BabyPlayAndHighlight()">
+          ${icon('play',13)} Play &amp; highlight
         </button>
       </div>
 
@@ -568,7 +579,7 @@ async function lv5MaryDiscover(main) {
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%">
           <div style="background:rgba(200,50,50,0.12);border-radius:10px;padding:10px;text-align:center">
             <div style="font-size:11px;font-weight:800;color:#882000;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Debugging</div>
-            <div style="font-size:11.5px;color:var(--text);line-height:1.5">Step-by-step until output diverges</div>
+            <div style="font-size:11.5px;color:var(--text);line-height:1.5">Trace step-by-step until output diverges</div>
           </div>
           <div style="background:rgba(200,120,30,0.12);border-radius:10px;padding:10px;text-align:center">
             <div style="font-size:11px;font-weight:800;color:#885020;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Testing</div>
@@ -587,27 +598,27 @@ async function lv5MaryDiscover(main) {
     </div>
   `;
   await initTone();
-  for (const n of LV5_MARY) { await playNote(n, 0.75); }
+  for (const n of LV5_BABY) { await playNote(n, 0.55); }
 }
 
-async function lv5MaryPlayAndHighlight() {
+async function lv5BabyPlayAndHighlight() {
   await initTone();
-  for (let i = 0; i < LV5_MARY.length; i++) {
+  for (let i = 0; i < LV5_BABY.length; i++) {
     document.querySelectorAll('#lv5-disc-notes .lv1-song-note-pill').forEach(p => p.classList.remove('playing'));
     const pill = document.getElementById('lv5-disc-' + i);
     if (pill) pill.classList.add('playing');
-    await playNote(LV5_MARY[i], 0.75);
+    await playNote(LV5_BABY[i], 0.55);
   }
   document.querySelectorAll('#lv5-disc-notes .lv1-song-note-pill').forEach(p => p.classList.remove('playing'));
 }
 
 /* Step 4 — Create! */
 function lv5P3WriteOwn(main) {
-  lv5OwnPickedNotes = ['C4','E4','G4'];
+  lv5OwnPickedNotes = ['G4','A4','C5'];
   main.innerHTML = `
     <div style="display:flex;flex-direction:column;gap:12px;padding-top:4px">
       <div class="lv1-activity-heading">Make It Your Own</div>
-      <p class="lv1-activity-sub">Pick up to 7 notes to create your own melody, then play it!</p>
+      <p class="lv1-activity-sub">Pick up to 7 notes to compose your own melody, then play it!</p>
 
       <div class="lv2-note-picker" id="lv5-own-picker">
         ${LV5_OWN_NOTE_OPTIONS.map(note => `
