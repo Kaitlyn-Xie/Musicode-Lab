@@ -69,6 +69,7 @@ const LEVELS = [
     id: 4,
     icon: 'binary',
     title: 'Binary',
+    song: 'If You\'re Happy and You Know It',
     desc: 'Clap = 1, Rest = 0. Decode a binary rhythm and encode your own!',
     tag: 'CT: Binary',
     tagColor: '#186840', tagBg: '#E3FFE8',

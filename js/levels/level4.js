@@ -53,7 +53,7 @@ function renderLevel4() {
         <button class="lv1-back" onclick="backToLevels()">← Levels</button>
         <div class="lv1-breadcrumb">
           <div class="lv1-lvbadge lv-4">Level 4</div>
-          <div class="lv1-title-text">Binary Music</div>
+          <div class="lv1-title-text">Binary</div>
         </div>
         <div class="lv1-phases">
           <div class="lv1-phase active" id="lv4-ph-0">1 — Binary?</div>
