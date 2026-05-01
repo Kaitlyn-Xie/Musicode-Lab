@@ -569,13 +569,13 @@ function lv6OdeListen(main) {
   main.innerHTML = `
     <div style="display:flex;flex-direction:column;gap:14px;padding-top:4px">
       <div class="lv1-concept">
-        <div class="lv1-concept-label">欢乐颂 — Ode to Joy</div>
+        <div class="lv1-concept-label">Ode to Joy</div>
         <p>Listen to the opening phrase of Ode to Joy! The notes step up and then back down — just like how sorted data makes searching and comparing easier.</p>
       </div>
 
       <div class="lv1-song-card">
-        <div class="lv1-song-card-title">♪ Ode to Joy 欢乐颂</div>
-        <div class="lv1-song-card-lyrics">"欢乐颂，欢乐颂，欢乐女神圣洁美..."</div>
+        <div class="lv1-song-card-title">♪ Ode to Joy</div>
+        <div class="lv1-song-card-lyrics">"Joyful, joyful, we adore thee…"</div>
         <div class="lv1-song-card-notes">
           ${LV6_ODE.map(n => `<span class="lv1-song-note-pill">${n}</span>`).join('')}
         </div>
