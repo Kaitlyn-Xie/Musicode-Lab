@@ -133,7 +133,7 @@ function lv2P1RenderCards() {
         <input
           id="lv2-p1-input-${k}"
           class="lv2-var-notes-input"
-          placeholder="e.g. ${hint}"
+          placeholder="type notes here…"
           autocomplete="off" spellcheck="false"
           oninput="lv2P1OnInput('${k}')"
           style="border-color:${col}55;flex:1;min-width:180px"
@@ -141,11 +141,29 @@ function lv2P1RenderCards() {
         <button class="lv1-btn secondary" style="font-size:11px;padding:5px 10px;white-space:nowrap"
           onclick="lv2P1HearPhrase('${k}')">${icon('play',10)} Hear it</button>
       </div>
-      <div id="lv2-p1-pills-${k}" style="display:flex;gap:4px;flex-wrap:wrap;margin-top:6px;min-height:22px"></div>
+      <div class="lv2-p1-hint-row" style="border-color:${col}33">
+        <span style="font-size:10px;font-weight:800;color:${col};text-transform:uppercase;letter-spacing:.05em;margin-right:4px">Hint:</span>
+        ${hint.split(' ').map(n =>
+          `<span class="lv2-p1-hint-pill" style="background:${bg};border-color:${col}55;cursor:pointer"
+            onclick="lv2P1ClickHint('${k}','${n}')">${n}</span>`
+        ).join('')}
+        <span style="font-size:10px;color:var(--text-muted);margin-left:4px">(tap a note to add it)</span>
+      </div>
+      <div id="lv2-p1-pills-${k}" style="display:flex;gap:4px;flex-wrap:wrap;margin-top:4px;min-height:22px"></div>
       <div id="lv2-p1-err-${k}" style="display:none;font-size:11px;color:#c04040;margin-top:2px"></div>
     `;
     container.appendChild(card);
   });
+}
+
+// Clicking a hint pill appends that note to the input
+function lv2P1ClickHint(k, note) {
+  const inp = document.getElementById('lv2-p1-input-' + k);
+  if (!inp) return;
+  const cur = inp.value.trimEnd();
+  inp.value = cur ? cur + ' ' + note : note;
+  inp.focus();
+  lv2P1OnInput(k);
 }
 
 function lv2P1OnInput(k) {
