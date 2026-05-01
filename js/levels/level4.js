@@ -16,13 +16,15 @@ let lv4ReadOpened = [false, false, false];
 const LV4_INTRO_BITS = [1, 0, 1, 1]; // Phase 1 demo
 const LV4_SECRET     = [1, 0, 1, 1, 0, 1, 0, 0]; // Phase 2 target
 
-// Song Workshop state
-const LV4_HBD = ['C4','C4','D4','C4','F4','E4'];
-const LV4_HBD_PALETTE = ['C4','D4','E4','F4'];
-let lv4HBDSeq = [];
-const LV4_OWN_NOTE_OPTIONS = ['C4','D4','E4','F4','G4','A4','B4'];
-const LV4_OWN_PITCH_PCT = { 'C4':12,'D4':25,'E4':38,'F4':50,'G4':63,'A4':75,'B4':88 };
-let lv4OwnPickedNotes = ['C4','E4','G4'];
+// "If You're Happy and You Know It" — opening phrase
+// "If you're hap-py and you know it clap your hands"
+const LV4_IYHA        = ['C4','C4','F4','F4','F4','E4','F4','G4']; // melody
+const LV4_IYHA_PALETTE = ['C4','D4','E4','F4','G4'];
+let lv4IYHASeq = [];
+// Clap pattern for the song (1=clap 🙌, 0=rest): two claps at end of each line
+const LV4_CLAP_PATTERN = [0,0,0,0,0,0,1,1];
+// Own rhythm
+let lv4OwnPattern = new Array(8).fill(0);
 
 const LV4_CT_CONCEPTS = [
   {
@@ -418,9 +420,9 @@ function lv4P3Goto(step) {
   const main = document.getElementById('lv4-p3-main');
   if (!main) return;
   if (step === 0) lv4P3Read(main);
-  else if (step === 1) lv4HBDListen(main);
-  else if (step === 2) lv4HBDBuild(main);
-  else if (step === 3) lv4HBDDiscover(main);
+  else if (step === 1) lv4IYHAListen(main);
+  else if (step === 2) lv4IYHABuild(main);
+  else if (step === 3) lv4IYHADiscover(main);
   else if (step === 4) lv4P3WriteOwn(main);
 }
 
@@ -462,90 +464,105 @@ function lv4ReadToggle(idx) {
   }
 }
 
-/* Step 1 — Listen */
-function lv4HBDListen(main) {
+/* Step 1 — Listen: "If You're Happy and You Know It" */
+function lv4IYHAListen(main) {
+  const clapRow = LV4_CLAP_PATTERN.map((b, i) => `
+    <div class="lv4-intro-bit" style="cursor:default">
+      <div class="lv4-bit-num">${b}</div>
+      <div class="lv4-bit-icon" style="font-size:18px">${b === 1 ? '👏' : '—'}</div>
+      <div class="lv4-bit-label">${b === 1 ? 'clap!' : 'rest'}</div>
+    </div>`).join('');
+
   main.innerHTML = `
     <div style="display:flex;flex-direction:column;gap:14px;padding-top:4px">
       <div class="lv1-concept">
-        <div class="lv1-concept-label">生日快乐 — Happy Birthday</div>
-        <p>Listen to the opening notes of Happy Birthday! Each note is encoded as data — C4 is MIDI 60, D4 is 62, and so on.</p>
+        <div class="lv1-concept-label">👏 If You're Happy and You Know It!</div>
+        <p>This song is <strong>literally about clapping and not clapping</strong> — which is exactly what binary is!
+          <strong>1 = CLAP 👏</strong>, <strong>0 = rest (no clap)</strong>. The chorus ends with two big claps — that's <code>…0 0 0 0 0 0 <strong>1 1</strong></code> in binary!</p>
       </div>
 
       <div class="lv1-song-card">
-        <div class="lv1-song-card-title">♪ Happy Birthday 生日快乐</div>
-        <div class="lv1-song-card-lyrics">"祝你生日快乐，祝你生日快乐..."</div>
-        <div class="lv1-song-card-notes">
-          ${LV4_HBD.map(n => `<span class="lv1-song-note-pill">${n}</span>`).join('')}
+        <div class="lv1-song-card-title">🎶 If You're Happy and You Know It</div>
+        <div class="lv1-song-card-lyrics">"If you're happy and you know it — <strong>CLAP CLAP</strong> 👏👏"</div>
+        <div class="lv1-song-card-notes" style="margin-top:8px">
+          ${LV4_IYHA.map(n => `<span class="lv1-song-note-pill">${n}</span>`).join('')}
+          <span class="lv1-song-note-pill" style="background:rgba(212,160,32,0.2);border-color:#C49020aa;font-size:15px">👏</span>
+          <span class="lv1-song-note-pill" style="background:rgba(212,160,32,0.2);border-color:#C49020aa;font-size:15px">👏</span>
         </div>
-        <button class="lv1-btn primary" style="margin-top:14px;gap:8px" onclick="lv4HBDPlayTarget()">
+        <button class="lv1-btn primary" style="margin-top:14px" onclick="lv4IYHAPlayTarget()">
           ${icon('play',13)} Listen to the phrase
         </button>
-        <div id="lv4-hbd-playing" style="display:none;font-size:12px;color:var(--text-muted);margin-top:8px;text-align:center">♩ playing...</div>
+        <div id="lv4-iyha-playing" style="display:none;font-size:12px;color:var(--text-muted);margin-top:8px;text-align:center">♩ playing...</div>
+      </div>
+
+      <div class="lv1-concept" style="border-left-color:#C49020;background:rgba(212,160,32,0.07)">
+        <div class="lv1-concept-label" style="color:#B87800">The clap pattern in binary</div>
+        <p>One line of the song = 8 beats. The melody plays for 6 beats, then <strong>CLAP CLAP</strong> on beats 7 & 8:</p>
+        <div class="lv4-bit-row" style="margin-top:8px">${clapRow}</div>
       </div>
 
       <div class="lv1-actions">
-        <button class="lv1-btn primary" onclick="lv4P3Goto(2)">Next: Build it →</button>
+        <button class="lv1-btn primary" onclick="lv4P3Goto(2)">Next: Build the melody →</button>
       </div>
     </div>
   `;
 }
 
-async function lv4HBDPlayTarget() {
-  const ind = document.getElementById('lv4-hbd-playing');
+async function lv4IYHAPlayTarget() {
+  const ind = document.getElementById('lv4-iyha-playing');
   if (ind) ind.style.display = 'block';
   await initTone();
-  for (const n of LV4_HBD) { await playNote(n, 0.75); }
+  for (const n of LV4_IYHA) { await playNote(n, 0.6); }
+  await playNote('clap', 0.8);
+  await playNote('clap', 0.8);
   if (ind) ind.style.display = 'none';
 }
 
-/* Step 2 — Build */
-function lv4HBDBuild(main) {
-  lv4HBDSeq = [];
+/* Step 2 — Build the melody */
+function lv4IYHABuild(main) {
+  lv4IYHASeq = [];
+  const target = LV4_IYHA;
   main.innerHTML = `
     <div style="display:flex;flex-direction:column;gap:12px;padding-top:4px">
-      <div class="lv1-activity-heading">Build the Sequence</div>
+      <div class="lv1-activity-heading">Build the Melody</div>
       <p class="lv1-activity-sub">
-        Tap the note tiles below to place them in order. The song needs <strong>6 notes</strong>.
+        Tap the note tiles to spell out <strong>"If you're happy and you know it"</strong> — 8 notes.
         Use the hint if you get stuck!
       </p>
-
-      <div class="lv1-tw-slots" id="lv4-hbd-slots"></div>
-
+      <div class="lv1-tw-slots" id="lv4-iyha-slots"></div>
       <div class="lv1-tw-palette">
-        ${LV4_HBD_PALETTE.map(n => `
-          <div class="lv1-tw-tile" onclick="lv4HBDTap('${n}')">
+        ${LV4_IYHA_PALETTE.map(n => `
+          <div class="lv1-tw-tile" onclick="lv4IYHATap('${n}')">
             <div class="lv1-tw-tile-name">${n}</div>
             <button class="lv1-play-btn" style="margin-top:4px" onclick="event.stopPropagation();lv1PlaySingleNote('${n}')">${icon('volume',11)}</button>
-          </div>
-        `).join('')}
+          </div>`).join('')}
       </div>
-
       <div class="lv1-actions">
-        <button class="lv1-btn secondary" onclick="lv4HBDClear()">Clear</button>
-        <button class="lv1-btn secondary" onclick="lv4HBDPlaySeq()">Play</button>
-        <button class="lv1-btn secondary" onclick="lv4HBDHint()">Hint</button>
-        <button class="lv1-btn secondary" onclick="lv4HBDCheck()">Check</button>
+        <button class="lv1-btn secondary" onclick="lv4IYHAClear()">Clear</button>
+        <button class="lv1-btn secondary" onclick="lv4IYHAPlaySeq()">${icon('play',12)} Play</button>
+        <button class="lv1-btn secondary" onclick="lv4IYHAHint()">Hint</button>
+        <button class="lv1-btn secondary" onclick="lv4IYHACheck()">Check</button>
       </div>
-      <div id="lv4-hbd-fb" class="lv1-feedback" style="display:none"></div>
-      <div id="lv4-hbd-hint" class="lv1-hint-box" style="display:none">
-        <strong>Hint:</strong> Happy Birthday starts C C, then jumps up to D, back to C, then up to F, then E.<br>
-        <span style="font-family:monospace;font-size:12px;color:var(--text)">C4 C4 D4 C4 F4 E4</span>
+      <div id="lv4-iyha-fb" class="lv1-feedback" style="display:none"></div>
+      <div id="lv4-iyha-hint" class="lv1-hint-box" style="display:none">
+        <strong>Hint:</strong> "If you're hap-py and you know it" — starts C C, then F F F, then down to E, up to F, then G.<br>
+        <span style="font-family:monospace;font-size:12px;color:var(--text)">C4 C4 F4 F4 F4 E4 F4 G4</span>
       </div>
     </div>
   `;
-  lv4HBDRenderSlots();
+  lv4IYHARenderSlots();
 }
 
-function lv4HBDRenderSlots() {
-  const container = document.getElementById('lv4-hbd-slots');
+function lv4IYHARenderSlots() {
+  const container = document.getElementById('lv4-iyha-slots');
   if (!container) return;
   container.innerHTML = '';
-  for (let i = 0; i < 6; i++) {
+  for (let i = 0; i < LV4_IYHA.length; i++) {
     const slot = document.createElement('div');
-    slot.className = 'lv1-tw-slot' + (i < lv4HBDSeq.length ? ' filled' : '');
-    if (i < lv4HBDSeq.length) {
-      slot.textContent = lv4HBDSeq[i];
-      slot.onclick = () => { lv4HBDSeq.splice(i, 1); lv4HBDRenderSlots(); };
+    slot.className = 'lv1-tw-slot' + (i < lv4IYHASeq.length ? ' filled' : '');
+    if (i < lv4IYHASeq.length) {
+      slot.textContent = lv4IYHASeq[i];
+      slot.onclick = () => { lv4IYHASeq.splice(i, 1); lv4IYHARenderSlots(); };
       slot.title = 'Click to remove';
     } else {
       slot.textContent = (i + 1);
@@ -555,156 +572,178 @@ function lv4HBDRenderSlots() {
   }
 }
 
-function lv4HBDTap(note) {
-  if (lv4HBDSeq.length >= 6) return;
-  lv4HBDSeq.push(note);
-  lv4HBDRenderSlots();
+function lv4IYHATap(note) {
+  if (lv4IYHASeq.length >= LV4_IYHA.length) return;
+  lv4IYHASeq.push(note);
+  lv4IYHARenderSlots();
 }
 
-function lv4HBDClear() {
-  lv4HBDSeq = [];
-  lv4HBDRenderSlots();
-  const fb = document.getElementById('lv4-hbd-fb');
+function lv4IYHAClear() {
+  lv4IYHASeq = [];
+  lv4IYHARenderSlots();
+  const fb = document.getElementById('lv4-iyha-fb');
   if (fb) fb.style.display = 'none';
 }
 
-async function lv4HBDPlaySeq() {
-  if (!lv4HBDSeq.length) return;
+async function lv4IYHAPlaySeq() {
+  if (!lv4IYHASeq.length) return;
   await initTone();
-  for (const n of lv4HBDSeq) { await playNote(n, 0.75); }
+  for (const n of lv4IYHASeq) { await playNote(n, 0.6); }
 }
 
-function lv4HBDHint() {
-  const h = document.getElementById('lv4-hbd-hint');
+function lv4IYHAHint() {
+  const h = document.getElementById('lv4-iyha-hint');
   if (h) h.classList.toggle('visible');
 }
 
-async function lv4HBDCheck() {
-  const fb = document.getElementById('lv4-hbd-fb');
+async function lv4IYHACheck() {
+  const fb = document.getElementById('lv4-iyha-fb');
   if (!fb) return;
   fb.style.display = 'block';
-  if (lv4HBDSeq.length < 6) {
+  if (lv4IYHASeq.length < LV4_IYHA.length) {
     fb.className = 'lv1-feedback error';
-    fb.textContent = `You need 6 notes — you have ${lv4HBDSeq.length} so far. Keep going!`;
+    fb.textContent = `You need ${LV4_IYHA.length} notes — you have ${lv4IYHASeq.length} so far.`;
     return;
   }
-  const correct = lv4HBDSeq.every((n, i) => n === LV4_HBD[i]);
+  const correct = lv4IYHASeq.every((n, i) => n === LV4_IYHA[i]);
   if (correct) {
     fb.className = 'lv1-feedback success';
-    fb.textContent = 'Perfect! Listen to your sequence...';
+    fb.textContent = 'Perfect! Playing with the claps…';
     await initTone();
-    for (const n of LV4_HBD) { await playNote(n, 0.75); }
-    fb.textContent = '🎵 That\'s Happy Birthday! Now let\'s see what you discovered...';
-    setTimeout(() => lv4P3Goto(3), 1400);
+    for (const n of LV4_IYHA) { await playNote(n, 0.6); }
+    await playNote('clap', 0.8);
+    await playNote('clap', 0.8);
+    fb.textContent = '👏👏 "If you\'re happy and you know it — CLAP CLAP!" Now let\'s see the binary connection…';
+    setTimeout(() => lv4P3Goto(3), 1600);
   } else {
     fb.className = 'lv1-feedback error';
-    fb.textContent = 'Not quite — the order isn\'t right yet. Try playing your sequence and compare it to the Listen step!';
+    fb.textContent = 'Not quite — try playing your sequence and compare to the Listen step!';
   }
 }
 
-/* Step 3 — Discover */
-async function lv4HBDDiscover(main) {
+/* Step 3 — Discover: clap = 1, rest = 0 */
+async function lv4IYHADiscover(main) {
+  const discRow = LV4_CLAP_PATTERN.map((b, i) => `
+    <div class="lv4-intro-bit" id="lv4-disc-bit-${i}" style="cursor:default">
+      <div class="lv4-bit-num">${b}</div>
+      <div class="lv4-bit-icon" style="font-size:16px">${b === 1 ? '👏' : '—'}</div>
+      <div class="lv4-bit-label" style="font-size:9px">${b === 1 ? 'CLAP' : 'rest'}</div>
+    </div>`).join('');
+
   main.innerHTML = `
     <div style="display:flex;flex-direction:column;gap:14px;padding-top:4px">
       <div class="lv1-concept">
-        <div class="lv1-concept-label">You encoded a melody!</div>
-        <p>Each note you placed is data — <strong>C4 = MIDI 60</strong>, <strong>D4 = 62</strong>, <strong>E4 = 64</strong>, <strong>F4 = 65</strong>. The same melody can be encoded as text, numbers, or binary.</p>
+        <div class="lv1-concept-label">👏 Clapping IS binary encoding!</div>
+        <p>The mystery pattern you decoded in Phase 2 (<code>${LV4_SECRET.join(' ')}</code>) was a <strong>clap rhythm</strong> just like this song! Computers store every note, beat, and sound using the exact same 0s and 1s.</p>
       </div>
 
-      <div class="lv1-song-card" style="background:linear-gradient(135deg,rgba(24,160,80,0.08),rgba(46,128,208,0.08))">
-        <div class="lv1-song-card-title">Your sequence = encoded data</div>
-        <div class="lv1-song-card-notes" id="lv4-disc-notes">
-          ${LV4_HBD.map((n,i) => `<span class="lv1-song-note-pill" id="lv4-disc-${i}">${n}</span>`).join('')}
-        </div>
-        <button class="lv1-btn primary" style="margin-top:12px" onclick="lv4HBDPlayAndHighlight()">
+      <div class="lv1-song-card" style="background:linear-gradient(135deg,rgba(212,160,32,0.08),rgba(46,128,208,0.06))">
+        <div class="lv1-song-card-title">One line of the song = 8 bits</div>
+        <div class="lv4-bit-row" style="margin-top:8px" id="lv4-disc-row">${discRow}</div>
+        <button class="lv1-btn primary" style="margin-top:14px" onclick="lv4IYHADiscoverPlay()">
           ${icon('play',13)} Play & highlight
         </button>
       </div>
 
-      <div class="lv1-song-card" style="padding:14px 16px;align-items:flex-start;text-align:left;background:linear-gradient(135deg,rgba(24,160,80,0.07),rgba(46,128,208,0.05))">
+      <div class="lv1-song-card" style="padding:14px 16px;align-items:flex-start;text-align:left">
         <div class="lv1-song-card-title" style="margin-bottom:10px">Computational Thinking in Action</div>
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%">
-          <div style="background:rgba(24,160,80,0.12);border-radius:10px;padding:10px;text-align:center">
-            <div style="font-size:11px;font-weight:800;color:#1A7040;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Encoding</div>
-            <div style="font-size:11.5px;color:var(--text);line-height:1.5">Human idea → machine format</div>
+          <div style="background:rgba(212,160,32,0.12);border-radius:10px;padding:10px;text-align:center">
+            <div style="font-size:11px;font-weight:800;color:#B87800;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Encoding</div>
+            <div style="font-size:11.5px;color:var(--text);line-height:1.5">Clap / no-clap → 1 / 0</div>
           </div>
           <div style="background:rgba(46,128,208,0.12);border-radius:10px;padding:10px;text-align:center">
             <div style="font-size:11px;font-weight:800;color:#1860A0;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Binary</div>
-            <div style="font-size:11.5px;color:var(--text);line-height:1.5">Every note is 0s and 1s inside</div>
+            <div style="font-size:11.5px;color:var(--text);line-height:1.5">Two values = infinite patterns</div>
           </div>
           <div style="background:rgba(112,80,208,0.12);border-radius:10px;padding:10px;text-align:center">
-            <div style="font-size:11px;font-weight:800;color:#7050D0;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Data Representation</div>
-            <div style="font-size:11.5px;color:var(--text);line-height:1.5">Same note, many formats</div>
+            <div style="font-size:11px;font-weight:800;color:#7050D0;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Data</div>
+            <div style="font-size:11.5px;color:var(--text);line-height:1.5">Sound, music, images — all bits</div>
           </div>
         </div>
       </div>
 
       <div class="lv1-actions">
-        <button class="lv1-btn primary" onclick="lv4P3Goto(4)">Next: Make it your own →</button>
+        <button class="lv1-btn primary" onclick="lv4P3Goto(4)">Next: Make your own pattern →</button>
       </div>
     </div>
   `;
   await initTone();
-  for (const n of LV4_HBD) { await playNote(n, 0.75); }
+  for (const n of LV4_IYHA) { await playNote(n, 0.6); }
+  await playNote('clap', 0.8); await playNote('clap', 0.8);
 }
 
-async function lv4HBDPlayAndHighlight() {
+async function lv4IYHADiscoverPlay() {
   await initTone();
-  for (let i = 0; i < LV4_HBD.length; i++) {
-    document.querySelectorAll('#lv4-disc-notes .lv1-song-note-pill').forEach(p => p.classList.remove('playing'));
-    const pill = document.getElementById('lv4-disc-' + i);
-    if (pill) pill.classList.add('playing');
-    await playNote(LV4_HBD[i], 0.75);
+  // play melody beats (highlighted)
+  for (let i = 0; i < LV4_CLAP_PATTERN.length; i++) {
+    document.querySelectorAll('.lv4-intro-bit').forEach(el => el.classList.remove('active'));
+    const bit = document.getElementById('lv4-disc-bit-' + i);
+    if (bit) bit.classList.add('active');
+    if (i < LV4_IYHA.length) {
+      await playNote(LV4_IYHA[i], 0.6);
+    } else {
+      await playNote('clap', 0.8);
+    }
   }
-  document.querySelectorAll('#lv4-disc-notes .lv1-song-note-pill').forEach(p => p.classList.remove('playing'));
+  document.querySelectorAll('.lv4-intro-bit').forEach(el => el.classList.remove('active'));
 }
 
-/* Step 4 — Create! */
+/* Step 4 — Create! — design your own 8-bit clap pattern */
 function lv4P3WriteOwn(main) {
-  lv4OwnPickedNotes = ['C4','E4','G4'];
+  lv4OwnPattern = new Array(8).fill(0);
   main.innerHTML = `
-    <div style="display:flex;flex-direction:column;gap:12px;padding-top:4px">
-      <div class="lv1-activity-heading">Make It Your Own</div>
-      <p class="lv1-activity-sub">Pick up to 7 notes to create your own melody, then play it!</p>
-
-      <div class="lv2-note-picker" id="lv4-own-picker">
-        ${LV4_OWN_NOTE_OPTIONS.map(note => `
-          <div class="lv2-note-tile" id="lv4-own-tile-${note}" onclick="lv4OwnToggleNote('${note}')">
-            <div class="lv1-note-name" style="font-size:13px;font-weight:900;font-family:'JetBrains Mono',monospace">${note}</div>
-            <div class="lv1-pitch-track" style="margin:5px 0 2px">
-              <div class="lv1-pitch-fill" style="width:${LV4_OWN_PITCH_PCT[note]}%"></div>
-            </div>
-          </div>
-        `).join('')}
+    <div style="display:flex;flex-direction:column;gap:14px;padding-top:4px">
+      <div class="lv1-activity-heading">Make Your Own Clap Pattern</div>
+      <p class="lv1-activity-sub">
+        Click each beat to toggle between <strong>1 (clap 👏)</strong> and <strong>0 (rest)</strong>.
+        Design your own 8-bit rhythm, then play it!
+      </p>
+      <div class="lv4-bit-row" id="lv4-own-row"></div>
+      <div class="lv1-concept" style="padding:10px 14px">
+        <span style="font-size:12px;color:var(--text-muted)">Your binary code: </span>
+        <code id="lv4-own-code" style="font-size:13px;color:var(--text);font-weight:700">0 0 0 0 0 0 0 0</code>
       </div>
-
       <div class="lv1-actions">
-        <button class="lv1-btn secondary" onclick="lv4OwnPlay()">${icon('play',12)} Play my melody</button>
-        <button class="lv1-btn success" onclick="lv4Complete()">Complete Level 4!</button>
+        <button class="lv1-btn secondary" onclick="lv4OwnPlay()">${icon('play',12)} Play my pattern</button>
+        <button class="lv1-btn primary" onclick="lv4Complete()">Complete Level 4!</button>
       </div>
     </div>
   `;
-  lv4UpdateOwnPicker();
+  lv4OwnRenderRow();
 }
 
-function lv4OwnToggleNote(note) {
-  const idx = lv4OwnPickedNotes.indexOf(note);
-  if (idx >= 0) lv4OwnPickedNotes.splice(idx, 1);
-  else { if (lv4OwnPickedNotes.length >= 7) return; lv4OwnPickedNotes.push(note); }
-  lv4UpdateOwnPicker();
-}
-
-function lv4UpdateOwnPicker() {
-  LV4_OWN_NOTE_OPTIONS.forEach(note => {
-    const tile = document.getElementById('lv4-own-tile-' + note);
-    if (tile) tile.classList.toggle('selected', lv4OwnPickedNotes.includes(note));
+function lv4OwnRenderRow() {
+  const row = document.getElementById('lv4-own-row');
+  if (!row) return;
+  row.innerHTML = '';
+  lv4OwnPattern.forEach((b, i) => {
+    const bit = document.createElement('div');
+    bit.className = 'lv4-intro-bit' + (b === 1 ? ' one' : ' zero');
+    bit.style.cursor = 'pointer';
+    bit.innerHTML = `
+      <div class="lv4-bit-num">${b}</div>
+      <div class="lv4-bit-icon" style="font-size:18px">${b === 1 ? '👏' : '—'}</div>
+      <div class="lv4-bit-label">${b === 1 ? 'clap' : 'rest'}</div>`;
+    bit.onclick = () => {
+      lv4OwnPattern[i] = lv4OwnPattern[i] === 0 ? 1 : 0;
+      lv4OwnRenderRow();
+    };
+    row.appendChild(bit);
   });
+  const code = document.getElementById('lv4-own-code');
+  if (code) code.textContent = lv4OwnPattern.join(' ');
 }
 
 async function lv4OwnPlay() {
-  if (!lv4OwnPickedNotes.length) return;
   await initTone();
-  for (const n of lv4OwnPickedNotes) { await playNote(n, 1); }
+  for (let i = 0; i < lv4OwnPattern.length; i++) {
+    document.querySelectorAll('#lv4-own-row .lv4-intro-bit').forEach(el => el.classList.remove('active'));
+    const bits = document.querySelectorAll('#lv4-own-row .lv4-intro-bit');
+    if (bits[i]) bits[i].classList.add('active');
+    await playNote(lv4OwnPattern[i] === 1 ? 'clap' : 'rest', 0.7);
+  }
+  document.querySelectorAll('#lv4-own-row .lv4-intro-bit').forEach(el => el.classList.remove('active'));
 }
 
 function lv4Complete() {
