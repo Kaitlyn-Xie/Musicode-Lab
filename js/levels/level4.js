@@ -379,15 +379,17 @@ function lv4P2Check() {
 
 function lv4RenderPhase3(body) {
   lv4P3Step = 0;
+  // lv1-body needs to be a flex column so the nav bar stays fixed
+  // and lv1-p3-right-scroll takes the remaining height and scrolls
+  body.style.display = 'flex';
+  body.style.flexDirection = 'column';
   body.innerHTML = `
-    <div class="lv1-scroll" style="gap:0;padding-top:0">
-      <div style="max-width:700px;margin:0 auto;width:100%;padding:0 4px;box-sizing:border-box">
-        <div class="lv1-p3-nav-bar">
-          <div class="lv1-p3-nav" id="lv4-p3-nav"></div>
-        </div>
-        <div style="padding:16px 0 24px">
-          <div id="lv4-p3-main"></div>
-        </div>
+    <div class="lv1-p3-nav-bar">
+      <div class="lv1-p3-nav" id="lv4-p3-nav"></div>
+    </div>
+    <div class="lv1-p3-right-scroll">
+      <div style="max-width:700px;margin:0 auto;width:100%;box-sizing:border-box">
+        <div id="lv4-p3-main"></div>
       </div>
     </div>
   `;
