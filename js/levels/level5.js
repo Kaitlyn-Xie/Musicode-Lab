@@ -45,17 +45,17 @@ const LV5_CT_CONCEPTS = [
   {
     title: 'Debugging',
     icon: 'algorithm',
-    body: 'A <strong>bug</strong> is any mistake that causes unexpected behaviour. Finding bugs requires <em>reading</em> output like a computer — step by step — until the result diverges from what was expected.'
+    body: 'A bug is any error that causes unexpected behavior. <strong>Debugging</strong> involves tracing a process step by step to identify where the output differs from what was expected.'
   },
   {
     title: 'Testing',
     icon: 'blocks',
-    body: '<strong>Testing</strong> means running a sequence and checking if the output matches what you expected. A good test compares the <em>intended</em> result against the <em>actual</em> result — and flags the difference.'
+    body: '<strong>Testing</strong> means running a sequence and checking whether the output matches the expected result. It helps you identify discrepancies and verify that your solution works as intended.'
   },
   {
     title: 'Decomposition',
     icon: 'variable',
-    body: 'Break a complex problem into smaller pieces — <strong>decomposition</strong>. Debug one note at a time instead of the whole melody. One small fix often reveals the root cause.'
+    body: '<strong>Decomposition</strong> is the process of breaking a complex problem into smaller, manageable parts. By focusing on one part at a time, you can isolate issues more easily and solve problems more effectively.'
   }
 ];
 
