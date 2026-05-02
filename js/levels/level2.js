@@ -545,17 +545,17 @@ function lv2GetCTConcepts() {
     {
       title: 'Variable',
       icon: 'variable',
-      body: `A <em>variable</em> is a named container for data. <code>phrase1</code>, <code>phrase2</code>, <code>phrase3</code>, <code>phrase4</code> — four different variables, each storing one musical line of Happy Birthday.`
+      body: `A variable is a named container for data. Here, <code>phrase1</code>, <code>phrase2</code>, <code>phrase3</code>, and <code>phrase4</code> each store a different musical phrase from Happy Birthday. You can reuse or modify these variables to change how the song is played.`
     },
     {
       title: 'Abstraction',
       icon: 'blocks',
-      body: `Instead of listing every note every time, write <code>play(phrase2)</code>. The computer fills in all the notes automatically. This is <strong>abstraction</strong>: hiding complexity behind a simple, meaningful name.`
+      body: `Instead of writing out every note each time, you can simply call <code>play(phrase2)</code>. The details are handled automatically. This is <strong>abstraction</strong>: hiding complex details behind a simple, meaningful name so you can focus on the overall structure.`
     },
     {
       title: 'Composition',
       icon: 'algorithm',
-      body: `Four separate variables, played one after another, form a complete song. This is <strong>composition</strong> — combining small, independent pieces into something bigger. Each piece is self-contained and reusable.`
+      body: `By combining <code>phrase1</code>, <code>phrase2</code>, <code>phrase3</code>, and <code>phrase4</code> in sequence, you create a complete song. This is <strong>composition</strong> — building a larger system by putting together smaller, self-contained pieces that can be reused and rearranged.`
     }
   ];
 }
