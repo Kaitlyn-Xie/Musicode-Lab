@@ -118,44 +118,52 @@ async function lv3PlayPhrase(k) {
 }
 
 // ══════════════════════════════════════════════════════
-// PHASE 2 — Build Frère Jacques with Loop Blocks
+// PHASE 2 — Build Frère Jacques with Loop Blocks (drag & drop)
 // lv3P2Blocks: array of { phrase: 'p1'|null }
-//   phrase=null → empty loop waiting for a variable
-// Visually mirrors Free Create's renderRepeatBlock exactly.
 // ══════════════════════════════════════════════════════
+
+// Drag state
+let lv3P2DragType    = null; // 'loop' | 'var' | 'block'
+let lv3P2DragKey     = null; // phrase key when type='var'
+let lv3P2DragFromIdx = null; // canvas index when type='block'
+let lv3P2DropIdx     = null;
+
 function lv3RenderPhase2(body) {
   lv3P2Blocks = [];
+  lv3P2DragType = lv3P2DragKey = lv3P2DragFromIdx = lv3P2DropIdx = null;
 
-  // Palette: ONE generic loop block chip (mirrors loop-block header style)
-  // then 4 variable chips below
   body.innerHTML = `
     <div class="lv1-scroll">
       <div class="lv1-activity-heading">Build Frère Jacques with Loops</div>
       <p class="lv1-activity-sub">
-        <strong>Step 1</strong> — tap the loop block to add it to your program.
-        <strong>Step 2</strong> — tap a variable chip to place it inside the loop.
+        <strong>Drag</strong> a loop block onto the canvas, then <strong>drag</strong> a variable chip into the loop body.
         Build: phrase1 → phrase2 → phrase3 → phrase4, each looping <strong>2×</strong>.
       </p>
       <div class="lv1-blocks-area">
         <div class="lv1-mini-palette" id="lv3-p2-palette">
           <div class="lv1-palette-label">Loop Block</div>
-          <div class="lv3-pal-loop-chip" onclick="lv3P2AddLoop()">
-            <div class="loop-header" style="border-radius:8px 8px 0 0;cursor:pointer">
+          <div class="lv3-pal-loop-chip" draggable="true"
+               ondragstart="lv3P2DragStartLoop(event)">
+            <div class="loop-header" style="border-radius:8px 8px 0 0;cursor:grab">
               <span>${icon('repeat',12)} repeat </span>
               <span class="count-val" style="margin:0 4px">2</span>
               <span>times:</span>
             </div>
             <div style="background:rgba(212,160,32,0.18);border-left:4px solid #C49020;border-right:4px solid #C49020;padding:7px 12px;font-size:11px;color:var(--text-muted);font-style:italic">
-              ← tap variable to fill
+              ← drag variable to fill
             </div>
-            <div class="loop-footer" style="border-radius:0 0 8px 8px;cursor:pointer">end</div>
+            <div class="loop-footer" style="border-radius:0 0 8px 8px">end</div>
           </div>
           <div class="lv1-palette-label" style="margin-top:10px">Variables</div>
           <div id="lv3-p2-var-chips"></div>
         </div>
         <div style="display:flex;flex-direction:column;gap:10px;flex:1">
-          <div class="lv1-dropzone" id="lv3-p2-canvas" style="min-height:180px;padding:10px;gap:8px;display:flex;flex-direction:column">
-            <div class="lv1-dz-placeholder" id="lv3-p2-ph">Tap the loop block to start building…</div>
+          <div class="lv1-dropzone" id="lv3-p2-canvas"
+               style="min-height:180px;padding:10px;gap:0;display:flex;flex-direction:column"
+               ondragover="lv3P2CanvasDragOver(event)"
+               ondragleave="lv3P2CanvasDragLeave(event)"
+               ondrop="lv3P2CanvasDrop(event)">
+            <div class="lv1-dz-placeholder" id="lv3-p2-ph">Drag a loop block here to start…</div>
           </div>
           <div class="lv1-actions">
             <button class="lv1-btn secondary" onclick="lv3P2Clear()">Clear</button>
@@ -182,8 +190,9 @@ function lv3P2RenderVarChips() {
     const chip = document.createElement('div');
     chip.className = 'lv3-pal-var-chip';
     chip.style.background = col;
-    chip.onclick = () => lv3P2AssignPhrase(k);
-    chip.title = `Assign ${lbl} to the next empty loop`;
+    chip.draggable = true;
+    chip.title = `Drag into a loop body`;
+    chip.ondragstart = e => lv3P2DragStartVar(e, k);
     chip.innerHTML = `
       <div style="display:flex;align-items:center;gap:6px">
         <span style="width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.5);flex-shrink:0"></span>
@@ -196,21 +205,121 @@ function lv3P2RenderVarChips() {
   });
 }
 
-// Add an empty loop block to canvas
+// ── Drag start ──────────────────────────────────────────
+function lv3P2DragStartLoop(e) {
+  lv3P2DragType = 'loop'; lv3P2DragKey = null; lv3P2DragFromIdx = null;
+  e.dataTransfer.effectAllowed = 'copy';
+}
+function lv3P2DragStartVar(e, k) {
+  lv3P2DragType = 'var'; lv3P2DragKey = k; lv3P2DragFromIdx = null;
+  e.dataTransfer.effectAllowed = 'copy';
+  e.stopPropagation();
+}
+function lv3P2DragStartBlock(e, idx) {
+  lv3P2DragType = 'block'; lv3P2DragKey = null; lv3P2DragFromIdx = idx;
+  e.dataTransfer.effectAllowed = 'move';
+  e.stopPropagation();
+}
+
+// ── Canvas drop-line helpers ────────────────────────────
+function lv3P2GetDropIdx(e) {
+  const cv = document.getElementById('lv3-p2-canvas');
+  if (!cv) return lv3P2Blocks.length;
+  const blocks = [...cv.querySelectorAll('.lv3-canvas-loop')];
+  if (!blocks.length) return 0;
+  for (let i = 0; i < blocks.length; i++) {
+    const rect = blocks[i].getBoundingClientRect();
+    if (e.clientY < rect.top + rect.height / 2) return i;
+  }
+  return blocks.length;
+}
+function lv3P2ShowDropLine(idx) {
+  lv3P2RemoveDropLine();
+  const cv = document.getElementById('lv3-p2-canvas');
+  if (!cv) return;
+  const line = document.createElement('div');
+  line.id = 'lv3-p2-drop-line';
+  line.style.cssText = 'height:3px;background:#2E80D0;border-radius:2px;margin:2px 4px;pointer-events:none;flex-shrink:0';
+  const blocks = [...cv.querySelectorAll('.lv3-canvas-loop')];
+  if (idx >= blocks.length) cv.appendChild(line);
+  else cv.insertBefore(line, blocks[idx]);
+  lv3P2DropIdx = idx;
+}
+function lv3P2RemoveDropLine() {
+  const line = document.getElementById('lv3-p2-drop-line');
+  if (line) line.remove();
+}
+
+// ── Canvas drag handlers ────────────────────────────────
+function lv3P2CanvasDragOver(e) {
+  if (!['loop','var','block'].includes(lv3P2DragType)) return;
+  e.preventDefault();
+  const idx = lv3P2GetDropIdx(e);
+  lv3P2ShowDropLine(idx);
+  e.dataTransfer.dropEffect = lv3P2DragType === 'block' ? 'move' : 'copy';
+}
+function lv3P2CanvasDragLeave(e) {
+  const cv = document.getElementById('lv3-p2-canvas');
+  if (!cv || cv.contains(e.relatedTarget)) return;
+  lv3P2RemoveDropLine();
+}
+function lv3P2CanvasDrop(e) {
+  e.preventDefault();
+  lv3P2RemoveDropLine();
+  const idx = lv3P2DropIdx !== null ? lv3P2DropIdx : lv3P2Blocks.length;
+  lv3P2DropIdx = null;
+
+  if (lv3P2DragType === 'loop') {
+    if (lv3P2Blocks.length >= 4) { showToast('Max 4 loop blocks!'); return; }
+    lv3P2Blocks.splice(idx, 0, { phrase: null });
+  } else if (lv3P2DragType === 'var') {
+    // Drop variable on canvas → insert a pre-filled loop
+    if (lv3P2Blocks.length >= 4) { showToast('Max 4 loop blocks!'); return; }
+    lv3P2Blocks.splice(idx, 0, { phrase: lv3P2DragKey });
+  } else if (lv3P2DragType === 'block') {
+    const from = lv3P2DragFromIdx;
+    if (from === null || from === idx || from === idx - 1) { lv3P2RenderCanvas(); return; }
+    const block = lv3P2Blocks.splice(from, 1)[0];
+    lv3P2Blocks.splice(from < idx ? idx - 1 : idx, 0, block);
+  }
+  lv3P2RenderCanvas();
+}
+
+// ── Loop-body drag handlers (for variable fill) ─────────
+function lv3P2BodyDragOver(e, i) {
+  if (lv3P2DragType !== 'var') return;
+  e.preventDefault(); e.stopPropagation();
+  const b = document.getElementById('lv3-body-' + i);
+  if (b) b.classList.add('drag-over');
+  e.dataTransfer.dropEffect = 'copy';
+}
+function lv3P2BodyDragLeave(e, i) {
+  const b = document.getElementById('lv3-body-' + i);
+  if (b) b.classList.remove('drag-over');
+}
+function lv3P2BodyDrop(e, i) {
+  e.preventDefault(); e.stopPropagation();
+  lv3P2RemoveDropLine();
+  const b = document.getElementById('lv3-body-' + i);
+  if (b) b.classList.remove('drag-over');
+  if (lv3P2DragType === 'var' && lv3P2DragKey) {
+    lv3P2Blocks[i].phrase = lv3P2DragKey;
+    lv3P2RenderCanvas();
+  }
+}
+
+// ── Fallback helpers (click still works) ───────────────
 function lv3P2AddLoop() {
   if (lv3P2Blocks.length >= 4) { showToast('Max 4 loop blocks!'); return; }
   lv3P2Blocks.push({ phrase: null });
   lv3P2RenderCanvas();
 }
-
-// Assign a phrase to the first empty loop
 function lv3P2AssignPhrase(k) {
   const emptyIdx = lv3P2Blocks.findIndex(b => b.phrase === null);
   if (emptyIdx < 0) { showToast('Add a loop block first!'); return; }
   lv3P2Blocks[emptyIdx].phrase = k;
   lv3P2RenderCanvas();
 }
-
 function lv3P2RemoveBlock(i) {
   lv3P2Blocks.splice(i, 1);
   lv3P2RenderCanvas();
@@ -220,20 +329,21 @@ function lv3P2RenderCanvas() {
   const cv = document.getElementById('lv3-p2-canvas');
   const ph = document.getElementById('lv3-p2-ph');
   if (!cv) return;
-  // Remove existing loop blocks
   cv.querySelectorAll('.lv3-canvas-loop').forEach(e => e.remove());
   if (ph) ph.style.display = lv3P2Blocks.length ? 'none' : '';
 
   lv3P2Blocks.forEach((b, i) => {
-    // Build a block that looks exactly like renderRepeatBlock in blocks.js
     const wrap = document.createElement('div');
     wrap.className = 'loop-block lv3-canvas-loop';
+    wrap.style.marginBottom = '8px';
+    wrap.draggable = true;
+    wrap.ondragstart = e => lv3P2DragStartBlock(e, i);
 
     // ── Header ──
     const header = document.createElement('div');
     header.className = 'loop-header';
+    header.style.cursor = 'grab';
     header.innerHTML = icon('repeat', 12) + ' repeat ';
-    // count display (fixed at 2, no editing needed in the challenge)
     const countWrap = document.createElement('div');
     countWrap.className = 'count-btns';
     countWrap.innerHTML = `<span class="count-val">${LV3_REPEAT}</span>`;
@@ -241,37 +351,37 @@ function lv3P2RenderCanvas() {
     const timesLbl = document.createElement('span');
     timesLbl.textContent = ' times:';
     header.appendChild(timesLbl);
-    // delete button
     const delB = document.createElement('button');
     delB.className = 'block-del';
     delB.innerHTML = icon('close', 11);
     delB.style.opacity = '0';
+    delB.ondragstart = e => e.stopPropagation();
     delB.onclick = e => { e.stopPropagation(); lv3P2RemoveBlock(i); };
     header.addEventListener('mouseenter', () => delB.style.opacity = '1');
     header.addEventListener('mouseleave', () => delB.style.opacity = '0');
     header.appendChild(delB);
     wrap.appendChild(header);
 
-    // ── Body ──
+    // ── Body (drop target for variable chips) ──
     const loopBody = document.createElement('div');
     loopBody.className = 'loop-body';
+    loopBody.id = 'lv3-body-' + i;
+    loopBody.ondragover  = e => lv3P2BodyDragOver(e, i);
+    loopBody.ondragleave = e => lv3P2BodyDragLeave(e, i);
+    loopBody.ondrop      = e => lv3P2BodyDrop(e, i);
 
     if (b.phrase === null) {
-      // empty — show hint, clicking assigns first pending variable
       const hint = document.createElement('div');
       hint.className = 'drop-hint';
-      hint.style.cursor = 'pointer';
-      hint.textContent = '← tap a variable to fill';
+      hint.textContent = '← drag a variable here';
       loopBody.appendChild(hint);
     } else {
-      // filled — show a play block in the phrase color
       const col = LV3_PHRASE_COLORS[b.phrase];
       const lbl = LV3_PHRASE_LABELS[b.phrase];
       const playEl = document.createElement('div');
       playEl.className = 'block';
       playEl.style.background = col;
       playEl.innerHTML = `${icon('music', 12)} play( <span class="block-badge" style="background:rgba(0,0,0,0.25)">${lbl}</span> )`;
-      // clicking the play block unassigns the phrase
       playEl.title = 'Click to remove';
       playEl.onclick = e => { e.stopPropagation(); lv3P2Blocks[i].phrase = null; lv3P2RenderCanvas(); };
       loopBody.appendChild(playEl);
