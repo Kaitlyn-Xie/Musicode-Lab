@@ -435,19 +435,19 @@ const LV1_CT_CONCEPTS = [
   {
     title: 'Sequencing',
     icon: 'algorithm',
-    body: 'You put notes in a specific order — C4, then E4, then G4, then A4. This is <strong>sequencing</strong>: arranging steps in a precise order. Computers execute instructions exactly as written — change the order, change the result!',
+    body: 'You arranged notes in a specific order — C4, then E4, then G4, then A4. This is <strong>sequencing</strong>: defining the exact order in which instructions are executed. Computers follow this order strictly — change the sequence, and you change the result.',
     tag: 'Computational Thinking'
   },
   {
     title: 'Variable',
     icon: 'variable',
-    body: '<code>scale</code> is a <strong>variable</strong> — a named container that holds your data. You chose that name; you could have called it <code>melody</code>, <code>myNotes</code>, or anything. The name is just a label — what\'s inside is what matters.',
+    body: '<code>"scale"</code> is a <strong>variable</strong> — a named container that stores your data. In this case, it holds your notes, and you can modify or replace them to create different melodies. The name is just a label — what matters is the data it contains.',
     tag: 'Computational Thinking'
   },
   {
     title: 'Algorithm',
     icon: 'blocks',
-    body: 'Your set of instructions is an <strong>algorithm</strong>: a complete, step-by-step process a computer can follow exactly. "Define the notes, then play each one in order" — precise, repeatable, always gives the same result.',
+    body: 'Your set of instructions is an <strong>algorithm</strong>: a step-by-step process designed to achieve a specific outcome. Here, you define the notes and then play each one in sequence — a precise and repeatable process that a computer can execute.',
     tag: 'Computational Thinking'
   }
 ];
