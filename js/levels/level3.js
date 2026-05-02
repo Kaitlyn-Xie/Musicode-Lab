@@ -456,17 +456,17 @@ function lv3GetCTConcepts() {
     {
       title: 'Loop',
       icon: 'repeat',
-      body: `A <em>loop</em> runs the same code multiple times. Instead of writing <code>play(phrase1)</code> twice, a loop handles it: <code>repeat 2 times: play(phrase1)</code>. Save effort, avoid mistakes.`
+      body: `A loop repeats the same set of instructions multiple times. Instead of writing <code>play(phrase1)</code> twice, you can use a loop: <code>repeat 2 times: play(phrase1)</code>. This makes the process more systematic and reduces repetition.`
     },
     {
       title: 'Variables + Loops',
       icon: 'variable',
-      body: `Loops become more powerful with variables. Name your phrase once with a variable, loop it any number of times. Change the phrase's notes — the loop still works perfectly. They work together!`
+      body: `Loops become more powerful when combined with variables. You can define a phrase once as a variable, then repeat it using a loop. If the phrase changes, the loop still works — making your code more flexible and easier to update.`
     },
     {
       title: 'Efficiency',
       icon: 'blocks',
-      body: `Without loops, Frère Jacques needs <strong>8 play blocks</strong>. With 4 loop blocks (each ×2) we get the same result with half the code. Shorter, clearer, easier to change — that's efficiency!`
+      body: `Using loops reduces unnecessary repetition. Instead of writing out every step, you can achieve the same result with fewer instructions. This makes your code shorter, clearer, and easier to modify — an important aspect of computational efficiency.`
     }
   ];
 }
